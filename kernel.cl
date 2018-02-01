@@ -48,10 +48,51 @@ __kernel void buildTransformationMatrixCL(__global float **rotation, __global fl
 }
 
 //  shift_and_roll_without_sum
-__kernel void computeCorrespondencesCL(__global std::vector<std::vector<float>> guess, __global float ****input, __global ****target, ****target  ) {
+__kernel void computeCorrespondencesCL(__global std::vector<std::vector<float>> guess4f, __global std::vector<std::vector<float>>input, __global ****target, ****target  ) {
   //TODO : Best way to send a matrix
+
+  bool ident = true;
+  //check for identity
+  for (int i = 0 ; i < 4 ; i++) {
+    for (int k = 0; i < 4 ; k++) {
+      if (i == k ) {
+        if (guess4f[i][k]!= 1) {
+          ident = false;
+          break;
+        }
+      }
+      else {
+        if(guess4f[i][k]!= 0) {
+          ident = false;
+          break
+        }
+      }
+    }
+  }
+  //TODO Affine transformations https://en.wikipedia.org/wiki/Transformation_matrix
+  //RIGID transformation Definition at line 190 of file transforms.h.
+  //https://libpointmatcher.readthedocs.io/en/latest/Transformations/
+  if (ident) {
+
+  }
+
+
+
 }
 
+__kernel void  sum_up_correspondence(__global float **correspondent_count, __global int *size, __global ) {
+  int gid = get_global_id(0);
+  float angle_tmp = correspondent_count[gid][0];
+  float shift_tmp = correspondent_count[gid][1];
+  float count_tmp = correspondent_count[gid][2];
+  float **it;
+
+}
+__kernel void rigidTransformationCL (__global std::vector<std::float>> input, __global float **transformation_matrix) {
+
+}
+
+__kernel void rotationCL (__global std::vector<std::float> )
 //  shift_and_roll_without_sum
 // NOTE : This might not be useful :
 __kernel void compute
