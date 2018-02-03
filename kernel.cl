@@ -48,9 +48,9 @@ __kernel void buildTransformationMatrixCL(__global float **rotation, __global fl
 }
 
 //  shift_and_roll_without_sum
-__kernel void computeCorrespondencesCL(__global std::vector<std::vector<float>> guess4f, __global std::vector<std::vector<float>>input, __global ****target, ****target  ) {
+__kernel void computeCorrespondencesCL(__global float **guess4f, __global float **input, __global float **target, ****target  ) {
   //TODO : Best way to send a matrix
-
+  float **input_transformed;
   bool ident = true;
   //check for identity
   for (int i = 0 ; i < 4 ; i++) {
@@ -73,26 +73,35 @@ __kernel void computeCorrespondencesCL(__global std::vector<std::vector<float>> 
   //RIGID transformation Definition at line 190 of file transforms.h.
   //https://libpointmatcher.readthedocs.io/en/latest/Transformations/
   if (ident) {
-
+    rigidTransformation(guess4f,input,input_transformed);
   }
-
+  else {
+    input_transformed = input;
+  }
+  //Correspondence Estimation ?
 
 
 }
 
-__kernel void  sum_up_correspondence(__global float **correspondent_count, __global int *size, __global ) {
-  int gid = get_global_id(0);
-  float angle_tmp = correspondent_count[gid][0];
-  float shift_tmp = correspondent_count[gid][1];
-  float count_tmp = correspondent_count[gid][2];
-  float **it;
 
+__kernel void rigidTransformation (__global int size, __global float **input, __global float **transformation_matrix) {
+  for (int i = 0; i< size ; i++) {
+      float temp = input[i][0];
+      input[i][0] = temp*transformation_matrix[0][0] + input[i][1]*transformation_matrix[0][1] + input[i][2]*transformation_matrix[0][2]+ + input[i][3]*transformation_matrix[0][3];
+      input[i][1] = temp*transformation_matrix[1][0] + input[i][1]*transformation_matrix[1][1] + input[i][2]*transformation_matrix[1][2]+ + input[i][3]*transformation_matrix[1][3];
+      input[i][2] = temp*transformation_matrix[2][0] + input[i][1]*transformation_matrix[2][1] + input[i][2]*transformation_matrix[2][2]+ + input[i][3]*transformation_matrix[2][3];
+      input[i][3] = temp*transformation_matrix[3][0] + input[i][1]*transformation_matrix[3][1] + input[i][2]*transformation_matrix[3][2]+ + input[i][3]*transformation_matrix[3][3];
+  }
 }
-__kernel void rigidTransformationCL (__global std::vector<std::float>> input, __global float **transformation_matrix) {
-
-}
-
-__kernel void rotationCL (__global std::vector<std::float> )
 //  shift_and_roll_without_sum
 // NOTE : This might not be useful :
 __kernel void compute
+
+
+__kernel void computeDifferencesForCorrespondence(__global float **correspondence_count, __global int size,) {
+  for (int i = 0 ; i <size ; i++) {
+    float angle_temp = correspondence_count[i][0];
+    float shift_temp = correspondence_count[i][1];
+    float count_temp = correspondence_count[i][2];
+  }
+}
