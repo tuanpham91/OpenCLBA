@@ -98,10 +98,48 @@ __kernel void rigidTransformation (__global int size, __global float **input, __
 __kernel void compute
 
 
-__kernel void computeDifferencesForCorrespondence(__global float **correspondence_count, __global int size,) {
-  for (int i = 0 ; i <size ; i++) {
+__kernel void computeDifferencesForCorrespondence(__global float **correspondence_count, __global int size, __global i **angle_count,) {
+    int i  = get_global_id(0);
     float angle_temp = correspondence_count[i][0];
     float shift_temp = correspondence_count[i][1];
     float count_temp = correspondence_count[i][2];
-  }
+
+    float **iterator;
+    int iter_help;
+    for (int  i = 0; i < size ; i++) {
+      if (angle_count[i][0]==angle_temp) {
+        iter_help = i;
+        break;
+      }
+    }
+
+    if (iter_help != size) {
+      angle_count[iter_help][1] += count_temp;
+    } else {
+      angle_count.push_back //TODO :
+    }
+
+    for (int  i = 0; i < size ; i++) {
+      if (shift_count[i][0]==shift_temp) {
+        iter_help = i;
+        break;
+      }
+    }
+
+    if (iter_help != size) {
+      shift_count[iter_help][1] += shift_temp;
+    } else {
+      angle_count.push_back //TODO :
+    }
+    //TODO
+    int max_index_angles = findMaxIndexOfVectorOfPairsCL(angle_count);
+
+}
+
+__kernel void findMaxIndexOfVectorOfPairsCL(__global float **angle_count, __global int size ) {
+    int max_index =0;
+    float max= 0.0f;
+    for (int i = 0 ; i < size ; i++) {
+
+    }
 }
