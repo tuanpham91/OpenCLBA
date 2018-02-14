@@ -98,12 +98,14 @@ __kernel void rigidTransformation (__global int size, __global float **input, __
 __kernel void compute
 
 
-__kernel void computeDifferencesForCorrespondence(__global float **correspondence_count, __global int size, __global i **angle_count,) {
+__kernel void computeDifferencesForCorrespondence(__global float **correspondence_count, __global int size, __global int **angle_count,) {
     int i  = get_global_id(0);
     float angle_temp = correspondence_count[i][0];
     float shift_temp = correspondence_count[i][1];
     float count_temp = correspondence_count[i][2];
-
+    float angleStart;
+    float angleStep;
+    float angleEnd;
     float **iterator;
     int iter_help;
     for (int  i = 0; i < size ; i++) {
@@ -131,15 +133,62 @@ __kernel void computeDifferencesForCorrespondence(__global float **correspondenc
     } else {
       angle_count.push_back //TODO :
     }
-    //TODO
-    int max_index_angles = findMaxIndexOfVectorOfPairsCL(angle_count);
 
+    int max_index_angles = findMaxIndexOfVectorOfPairsCL(angle_count);
+    int max_index_shift = findMaxIndexOfVectorOfPairsCL(shift_count);
+    int correspondence_index == findMaxIndexOfVectorOfTuplesCL(correspondence_count);
+
+
+    float max_angle = angle_count[max_index_angles][0];
+    float max_shift = angle_count[max_index_angles][0];
+
+    angleStart = checkMinBoundsForValueCL(max_angle,angleStart,angleStep);
+    angleEnd =
+    //TODO :
 }
 
-__kernel void findMaxIndexOfVectorOfPairsCL(__global float **angle_count, __global int size ) {
-    int max_index =0;
-    float max= 0.0f;
-    for (int i = 0 ; i < size ; i++) {
-
+//https://stackoverflow.com/questions/7627098/what-is-a-lambda-expression-in-c11
+__kernel void findMaxIndexOfVectorOfPairsCL(__global float **angle_count, __global int *size, global int *res) {
+  int max_index =0;
+  float max= 0.0f;
+  for (int i = 0 ; i < size ; i++) {
+    if (angle_count[i][1]>max) {
+      max = angle_count[i][1];
+      max_index = i;
     }
+  }
+  res = max_index;
+}
+
+__kernel void findMaxIndexOfVectorOfTuplesCL(__global float **tuples, __global int size. global int *res) {
+  int max_index =0;
+  float max= 0.0f;
+  for (int i = 0 ; i < size ; i++) {
+    if (angle_count[i][2]>max) {
+      max = angle_count[i][2];
+      max_index = i;
+    }
+  }
+  res = max_index;
+}
+
+float checkMinBoundsForValueCL(float value, float start, float step) {
+	float val = value - step;
+	if (val > start) {
+		if (val - step >= start) {
+			return val - step;
+		}
+		return val;
+	}
+	return start;
+}
+float checkMaxBoundsForValueCL(float value, float end, float step) {
+	float val = value + step;
+	if (val < end) {
+		if (val + step <= end) {
+			return val + step;
+		}
+		return val;
+	}
+	return end;
 }
