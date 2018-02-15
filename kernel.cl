@@ -106,6 +106,9 @@ __kernel void computeDifferencesForCorrespondence(__global float **correspondenc
     float angleStart;
     float angleStep;
     float angleEnd;
+    float shiftStart = 0.0f;
+    float shiftEnd = 0.5;
+    float shiftStep = 0.05f;
     float **iterator;
     int iter_help;
     for (int  i = 0; i < size ; i++) {
@@ -138,12 +141,16 @@ __kernel void computeDifferencesForCorrespondence(__global float **correspondenc
     int max_index_shift = findMaxIndexOfVectorOfPairsCL(shift_count);
     int correspondence_index == findMaxIndexOfVectorOfTuplesCL(correspondence_count);
 
-
+    ;
     float max_angle = angle_count[max_index_angles][0];
     float max_shift = angle_count[max_index_angles][0];
 
     angleStart = checkMinBoundsForValueCL(max_angle,angleStart,angleStep);
-    angleEnd =
+    angleEnd = checkMaxBoundsForValueCL(max_angle,angleEnd, angleStep);
+    shiftStart = checkMinBoundsForValueCL(max_shift,shiftStart,shiftStep);
+    shiftEnd = checkMaxBoundsForValueCL(max_shift,shiftEnd,shiftStep);
+    angleStep /= 5.0f;
+		shiftStep /= 5.0f
     //TODO :
 }
 
@@ -191,4 +198,11 @@ float checkMaxBoundsForValueCL(float value, float end, float step) {
 		return val;
 	}
 	return end;
+}
+
+//http://docs.pointclouds.org/1.7.0/classpcl_1_1registration_1_1_correspondence_estimation.html
+
+//https://github.com/PointCloudLibrary/pcl/blob/master/registration/include/pcl/registration/impl/correspondence_estimation.hpp
+__kernel void estimate_correspondence(__global float **input, __global float **output) {
+
 }
