@@ -1,0 +1,11 @@
+17.02.2018
+
+1. ComputeCorresdoncences
+    1.1 Meaning ?
+        - Point Cloud registration : http://pointclouds.org/documentation/tutorials/registration_api.php
+        - return a number of correspondences
+        - correspondence_estimation->determineCorrespondences(*correspondences, 0.02f) : Meaning max distance between 2 points, to be called as correspondence is 0.02f, whatever the unit is
+
+    1.2 Source code  :  pcl/registration/impl/correspondence_estimation.hpp
+    1.3 How ?
+        - 

@@ -204,5 +204,5 @@ float checkMaxBoundsForValueCL(float value, float end, float step) {
 
 //https://github.com/PointCloudLibrary/pcl/blob/master/registration/include/pcl/registration/impl/correspondence_estimation.hpp
 __kernel void estimate_correspondence(__global float **input, __global float **output) {
-
+  
 }
