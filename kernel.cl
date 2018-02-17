@@ -203,6 +203,23 @@ float checkMaxBoundsForValueCL(float value, float end, float step) {
 //http://docs.pointclouds.org/1.7.0/classpcl_1_1registration_1_1_correspondence_estimation.html
 
 //https://github.com/PointCloudLibrary/pcl/blob/master/registration/include/pcl/registration/impl/correspondence_estimation.hpp
-__kernel void estimate_correspondence(__global float **input, __global float **output) {
-  
+void estimate_correspondence( float **input, float **output, float max_distance, float size_source, float size_target) {
+  double max_distance_sqr = max_distance*max_distance;
+  for (int i = 0 ; i!= size_source; i++) {
+    for (int k = 0; k!= size_target; k++  ) {
+      if (calculate_distance(input[i],input[k])>max_distance) {
+        continue;
+      }
+
+      //ADD TO Correspondence cloud.
+    }
+  }
+}
+
+
+double calculate_distance(float *pointA, float *pointB)  {
+  double a = (pointA[0] - pointB[0])*(pointA[0] - pointB[0]);
+  double b = (pointA[1] - pointB[1])*(pointA[1] - pointB[1]);
+  double c = (pointA[2] - pointB[2])*(pointA[2] - pointB[2]);
+  return sqrt(a+b+c);
 }
