@@ -10,7 +10,9 @@
 #include <pcl/cloud_iterator.h>
 #include <util.h>
 #include <transformations.h>
-
+#include <graphUtils/GraphUtils.h>
+#include <CL/cl.h>
+#include <pcl/common/intersections.h>
 
 /* Programm to replicate OPENCV part, without shifting algorithmus */
 using namespace std;
@@ -18,12 +20,75 @@ using namespace std;
 #define SCALE_X 2.7
 #define SCALE_Y 2.4
 #define SCALE_Z 3.0
+
 void generatePoint(pcl::PointXYZ& point, float x, float y, float z, float width, float height) {
     point.x = (float)x / width * SCALE_X;
     point.y = (float)y / height * SCALE_Y;
     point.z = (float)z / NUM_FRAMES * SCALE_Z;
 }
 
+float computeTipX(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, std::pair<Eigen::Vector3f, Eigen::Vector3f> origin_and_direction_needle, float x_middle_OCT, float z_min_OCT) {
+    pcl::PointXYZ min = getMinPoint(cloud);
+    Eigen::VectorXf line1(6);
+    line1 << x_middle_OCT, 0.0f, z_min_OCT, std::get<1>(origin_and_direction_needle)(0), 0.0f, std::get<1>(origin_and_direction_needle)(2);
+    Eigen::VectorXf line2(6);
+    line2 << min.x, 0.0f, min.z, std::get<1>(origin_and_direction_needle)(2), 0.0f, -std::get<1>(origin_and_direction_needle)(0);
+    Eigen::Vector4f point;
+
+    pcl::lineWithLineIntersection(line1, line2, point);
+    return point.x();
+}
+
+
+Eigen::Matrix4f tipApproximation(pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud_ptr, pcl::PointCloud<pcl::PointXYZ>::Ptr& modelTransformed,
+    pcl::PointCloud<pcl::PointXYZ>::Ptr model_voxelized, std::pair<Eigen::Vector3f, Eigen::Vector3f> direction, const Eigen::Matrix4f& transformation) {
+    Eigen::Matrix4f transform = transformation;
+    //compute middle of OCT
+    float z_min_OCT = getMinZValue(point_cloud_ptr);
+    float x_middle_OCT = computeMiddle(point_cloud_ptr, z_min_OCT);
+
+    //compute middle of CAD model
+    float z_min_model = getMinZValue(modelTransformed);
+    float x_middle_model = computeMiddle(modelTransformed, z_min_model);
+
+    Eigen::Vector3f OCT_point(x_middle_OCT, 0.0f, 0.0f);
+    //compute x-value which is the approximated tip
+    float x_in_direction = computeTipX(modelTransformed, direction, x_middle_OCT, z_min_OCT);
+
+
+    float angle_to_rotate = 0.5f;
+    float sign = 1.0f;
+    //rotate model until computed x-value is reached
+    {
+        pcl::ScopeTime t("Tip Approximation");
+        float first = 0.0f;
+        float second = 0.0f;
+        float r = 0.0f;
+        if (x_middle_model < x_in_direction) {
+            sign = -1.0f;
+            first = x_middle_model;
+            second = x_in_direction;
+        }
+        else if (x_middle_model > x_in_direction) {
+            sign = 1.0f;
+            first = x_in_direction;
+            second = x_middle_model;
+        }
+        //Tuan TODO : Here could be much better
+        while (r < 360.0f && first < second) {
+            transform = buildTransformationMatrix(rotateByAngle(sign * angle_to_rotate, transform.block(0, 0, 3, 3)), transform.block(0, 3, 3, 0));
+            pcl::transformPointCloud(*model_voxelized, *modelTransformed, transform);
+            if (sign < 0) {
+                first = computeMiddle(modelTransformed, getMinZValue(modelTransformed));
+            }
+            else {
+                second = computeMiddle(modelTransformed, getMinZValue(modelTransformed));
+            }
+            r += angle_to_rotate;
+        }
+    }
+    return transform;
+}
 std::pair<Eigen::Vector3f, Eigen::Vector3f> computeNeedleDirection(pcl::PointCloud<pcl::PointXYZ>::Ptr& peak_points) {
     pcl::PointCloud<pcl::PointXYZ>::Ptr peak_inliers(new pcl::PointCloud<pcl::PointXYZ>);
     std::vector<int> inliers = getInliers(peak_points);
@@ -248,31 +313,151 @@ int main()
 
     boost::shared_ptr<std::vector<std::tuple<int, int, cv::Mat, cv::Mat>>> needle_width = recognizeOTC(point_cloud_not_cut, peak_points, "oct_dir", true);
     pcl::visualization::CloudViewer viewer("Simple Cloud Viewer");
-
+    /*
     viewer.showCloud(point_cloud_not_cut);
     while (!viewer.wasStopped ())   {
     }
+    */
     //Copied Code
     std::cout<<"End";
     pcl::PointCloud<pcl::PointXYZ>::Ptr modelCloud(new pcl::PointCloud<pcl::PointXYZ>);
     pcl::PointCloud<pcl::PointXYZ>::Ptr model_voxelized(new pcl::PointCloud<pcl::PointXYZ>());
-    cutPartOfModel(point_cloud_not_cut, point_cloud_ptr, getModelSize(model_voxelized) - 0.1f + getMinZValue(point_cloud_not_cut));
-    std::pair<Eigen::Vector3f, Eigen::Vector3f> direction = computeNeedleDirection(peak_points);
-
-    std::cout << "origin: " << std::endl << std::get<0>(direction) << std::endl << "direction: " << std::endl << std::get<1>(direction) << std::endl;
-
+    std::cout<<"Hey here is fine"<<std::endl;
 
     generatePointCloudFromModel(modelCloud, model_voxelized, path);
 
     cutPartOfModel(point_cloud_not_cut, point_cloud_ptr, getModelSize(model_voxelized) - 0.1f + getMinZValue(point_cloud_not_cut));
     std::pair<Eigen::Vector3f, Eigen::Vector3f> direction = computeNeedleDirection(peak_points);
+    std::cout << "origin: " << std::endl << std::get<0>(direction) << std::endl << "direction: " << std::endl << std::get<1>(direction) << std::endl;
 
     Eigen::Matrix3f rotation = computeNeedleRotation(direction);
+    
+    //WTF is this shit
     Eigen::Vector3f euler = rotation.eulerAngles(0, 1, 2) * 180 / M_PI;
+    rotation = rotateByAngle(180 - euler.z(), rotation);
+    std::cout << "euler angles: " << std::endl << rotation.eulerAngles(0, 1, 2) * 180 / M_PI << std::endl;
+
+    float tangencyPoint = regression(needle_width) / (float)NUM_FRAMES * SCALE_Z; //scaling
+    std::cout << "tangency point: " << tangencyPoint << std::endl;
+
+    Eigen::Vector3f initialTranslation = computeNeedleTranslation(tangencyPoint, std::get<0>(direction),std::get<1>(direction), getModelSize(model_voxelized) / 2);
+    std::cout << "translation: " << std::endl << initialTranslation << std::endl;
+
+    Eigen::Matrix4f transformation = buildTransformationMatrix(rotation, initialTranslation);
+
+    pcl::PointCloud<pcl::PointXYZ>::Ptr modelTransformed(new pcl::PointCloud<pcl::PointXYZ>);
+
+    pcl::transformPointCloud(*model_voxelized, *modelTransformed, transformation);
+
+    transformation = tipApproximation(point_cloud_ptr, modelTransformed, model_voxelized, direction, transformation);
+
+    float end_angle = getAngleFromMatrix(transformation);
+
+    std::vector<std::tuple<float, float, float>> correspondence_count;
+    //angle and count
+    std::vector<std::pair<float, float>> angle_count;
+    //shift and count
+    std::vector<std::pair<float, float>> shift_count;
+
+    //initialize interval values -90,90
+    float angleStart = end_angle - 5.0f;
+    float angleEnd = end_angle + 5.0f;
+    float angleStep = 1.0f;
+    float shiftStart = 0.0f;
+    float shiftEnd = 0.5;
+    float shiftStep = 0.05f;
+    //more initialization
+    int max_index_angles = 0;
+    int max_index_shift = 0;
+    int correspondence_index = 0;
+    float max_angle = 0.0f;
+    float max_shift = 0.0f;
+    //STAND :: FROM NOW ON OPENCL
 
 
 
-    //STAND
+    //OPENCL PART:
+
+    //https://streamhpc.com/blog/2013-04-28/opencl-error-codes/
+    cl_device_id device_id = NULL;
+    cl_context context = NULL;
+    cl_command_queue command_queue = NULL;
+    cl_mem memobj , resobj = NULL;
+
+    cl_program program = NULL;
+    cl_kernel kernel = NULL;
+    cl_platform_id platform_id = NULL;
+    cl_uint ret_num_devices;
+    cl_uint ret_num_platforms;
+    cl_int ret;
+    std::vector<int> input {1,2,3,4,5,6,7,8,9,10};
+
+    int length = 10 ;
+
+
+    FILE *fp;
+    char fileName[] = "/home/tuan/Desktop/OpenCLBA-Local/OpenCLBA-Prod/hello.cl";
+    char *source_str;
+    size_t source_size;
+
+    /* Load the source code containing the kernel*/
+    fp = fopen(fileName, "r");
+    if (!fp) {
+    fprintf(stderr, "Failed to load kernel.\n");
+    exit(1);
+    }
+    source_str = (char*)malloc(0x100000);
+    source_size = fread(source_str,1,0x100000, fp);
+    fclose(fp);
+
+    ret = clGetPlatformIDs(1, &platform_id, &ret_num_platforms);
+    std::cout<<ret<<" code"<<std::endl;
+
+    ret = clGetDeviceIDs(platform_id, CL_DEVICE_TYPE_DEFAULT, 1, &device_id, &ret_num_devices);
+    std::cout<<ret<<" code"<<std::endl;
+
+    context = clCreateContext(NULL, 1, &device_id, NULL, NULL, &ret);
+    std::cout<<ret<<" code"<<std::endl;
+
+    command_queue = clCreateCommandQueue(context, device_id, 0, &ret);
+    //Check Concept of memory
+    memobj = clCreateBuffer(context, CL_MEM_READ_WRITE,length * sizeof(int), NULL, &ret);
+    std::cout<<ret<<" code"<<std::endl;
+
+
+    resobj = clCreateBuffer(context, CL_MEM_WRITE_ONLY, length * sizeof(int), NULL, &ret);
+    std::cout<<ret<<" code"<<std::endl;
+
+
+    program = clCreateProgramWithSource(context,1,(const char**)&source_str, (const size_t*)&source_size, &ret);
+    std::cout<<ret<<" code"<<std::endl;
+
+    ret = clBuildProgram(program, 1, &device_id, NULL, NULL, NULL);
+    std::cout<<ret<<" code"<<std::endl;
+
+    kernel = clCreateKernel(program, "hello", &ret);
+    std::cout<<ret<<" code"<<std::endl;
+
+    ret = clSetKernelArg(kernel,0, sizeof(memobj),(void *)&memobj);
+    std::cout<<ret<<" code"<<std::endl;
+
+    ret = clEnqueueTask(command_queue, kernel, 0, NULL,NULL);
+    std::cout<<ret<<" code"<<std::endl;
+
+    ret = clEnqueueReadBuffer(command_queue, memobj, CL_TRUE, 0, 10 * sizeof(int),&input[0], 0, NULL, NULL);
+
+    ret = clFlush(command_queue);
+    ret = clFinish(command_queue);
+    ret = clReleaseKernel(kernel);
+    ret = clReleaseProgram(program);
+    ret = clReleaseMemObject(memobj);
+    ret = clReleaseCommandQueue(command_queue);
+    ret = clReleaseContext(context);
+    for (int i = 0 ; i <10 ; i++) {
+        std::cout<<input[i]<<" "<<std::endl;
+    }
+
+
 
 
 
