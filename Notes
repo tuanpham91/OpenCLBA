@@ -1,4 +1,4 @@
-17.02.2018
+18.02.2018
 
 1. ComputeCorresdoncences
     1.1 Meaning ?
@@ -11,4 +11,7 @@
         A lot of steps here :
           - Find the nearest Point
           - Calculate distance to the nearest point
-          - ArrayFire ?
+          - ArrayFire
+
+2. Project:
+    2.1. STAND : Replicating 
