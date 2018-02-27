@@ -359,7 +359,25 @@ int main()
     //shift and count
     std::vector<std::pair<float, float>> shift_count;
 
+    std::vector<std::tuple<float, float, float>> correspondence_count2;
+    //angle and count
+    std::vector<std::pair<float, float>> angle_count2;
+    //shift and count
+    std::vector<std::pair<float, float>> shift_count2;
+
+    std::vector<std::tuple<float, float, float>> correspondence_count3;
+    //angle and count
+    std::vector<std::pair<float, float>> angle_count3;
+    //shift and count
+    std::vector<std::pair<float, float>> shift_count3;
+
+    std::vector<std::tuple<float, float, float>> correspondence_count4;
+    //angle and count
+    std::vector<std::pair<float, float>> angle_count4;
+    //shift and count
+    std::vector<std::pair<float, float>> shift_count4;
     //initialize interval values -90,90
+
     float angleStart = end_angle - 5.0f;
     float angleEnd = end_angle + 5.0f;
     float angleStep = 1.0f;
@@ -457,7 +475,7 @@ int main()
         std::cout<<input[i]<<" "<<std::endl;
     }
 
-    
+
 
 
 
