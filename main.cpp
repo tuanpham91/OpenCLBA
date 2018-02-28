@@ -331,7 +331,7 @@ int main()
     std::cout << "origin: " << std::endl << std::get<0>(direction) << std::endl << "direction: " << std::endl << std::get<1>(direction) << std::endl;
 
     Eigen::Matrix3f rotation = computeNeedleRotation(direction);
-    
+
     //WTF is this shit
     Eigen::Vector3f euler = rotation.eulerAngles(0, 1, 2) * 180 / M_PI;
     rotation = rotateByAngle(180 - euler.z(), rotation);
@@ -463,6 +463,28 @@ int main()
     std::cout<<ret<<" code"<<std::endl;
 
     ret = clEnqueueReadBuffer(command_queue, memobj, CL_TRUE, 0, 10 * sizeof(int),&input[0], 0, NULL, NULL);
+
+
+    //TODO :
+
+    cl_mem correspondence_count_mem = clCreateBuffer(context,CL_MEM_READ_WRITE, 1000, NULL, &ret);
+
+    cl_mem angle_count_mem = clCreateBuffer(context,CL_MEM_READ_WRITE, 1000, NULL, &ret);
+
+    cl_mem shift_count_mem = clCreateBuffer(context,CL_MEM_READ_WRITE, 1000, NULL, &ret);
+
+    //TODO : 4 big work Group
+
+
+
+
+
+
+
+
+
+
+
 
     ret = clFlush(command_queue);
     ret = clFinish(command_queue);
