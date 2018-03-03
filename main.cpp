@@ -475,7 +475,7 @@ int main()
 
     //TODO : 4 big work Group
 
-
+    https://stackoverflow.com/questions/26804153/opencl-work-group-concept
 
 
 
