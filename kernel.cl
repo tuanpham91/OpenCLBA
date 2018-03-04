@@ -1,22 +1,24 @@
 M_PI = 3.141592;
 //The idea is to represent row or columns of
-__kernel void * rotateWithCL(__global float angleInDegrees, __global float *matrix1, __global float *matrix2, __global float *matrix3, __global float *res) {
-  res[0] = cos(angle);
+kernel void rotateWithCL(float angleInDegrees, float** res) {
   float angle = angleInDegrees * M_PI/180.0f;
-  res[1] = -sin(angle);
-  res[2] = 0;
-  res[3] = sin(angle);
-  res[4] = cos(angle);
-  res[5] = 0;
-  res[6] = 0;
-  res[7] = 0;
-  res[8] = 1;
+  res[0][0] = cos(angle);
+  res[0][1] = -sin(angle);
+  res[0][2] = 0;
+  res[1][0] = sin(angle);
+  res[1][1] = cos(angle);
+  res[1][2] = 0;
+  res[2][0] = 0;
+  res[2][1] = 0;
+  res[2][2] = 1;
 }
 
 //  shift_and_roll_without_sum
-__kernel void shiftByValueCL(__global float shift, __global float *currentTranslation, __global float direction ) {
+__kernel void shiftByValueCL(__global float shift, __global float *currentTranslation, __global float* direction ) {
   //TODO : Pass size of currentTranslation
-  currentTranslation = currentTranslation*shift/direction;
+  currentTranslation[0] = currentTranslation[0]*shift/direction[2];
+  currentTranslation[1] = currentTranslation[1]*shift/direction[2];
+  currentTranslation[2] = currentTranslation[2]*shift/direction[2];
 }
 /*
 __kernel void buildTransformationMatrixCL(__global float *rotationDim1, __global float *rotationDim2, __global float *rotationDim3, __global float *translation ) {
@@ -215,7 +217,7 @@ void estimate_correspondence( float **input, float **output, float max_distance,
         continue;
       }
       //What if it finds more than 1 ?
-      
+
       result[found]= output[k];
       found = found+1;
       break;
@@ -230,4 +232,14 @@ double calculate_distance(float *pointA, float *pointB)  {
   double b = (pointA[1] - pointB[1])*(pointA[1] - pointB[1]);
   double c = (pointA[2] - pointB[2])*(pointA[2] - pointB[2]);
   return sqrt(a+b+c);
+}
+
+__kernel void shift_and_roll_without_sum_loop(__global float* angle_min,__global float angle, __global float** rotation, __global float* trans, __global float** transform, __global float* correspondence_count) {
+  //TODO get two dimension of global work size here. 1.angle step, 2. shift_step;
+  int angle_step;
+  int shift_step;
+  float **rotated;
+
+  rotateWithCL(angle_min+ angle*angle_step, rot, rotated);
+  shiftByValueCL(shift)
 }
