@@ -53,7 +53,7 @@ __kernel void buildTransformationMatrixCL(float **rotation, float3 *translation,
 }
 
 //  shift_and_roll_without_sum
-__kernel void computeCorrespondencesCL(__global float **guess4f, __global float **input, __global float **target, ****target  ) {
+__kernel void computeCorrespondencesCL(__global float **guess4f, __global float **input, __global float **target ) {
   //TODO : Best way to send a matrix
   float **input_transformed;
   bool ident = true;
@@ -84,8 +84,6 @@ __kernel void computeCorrespondencesCL(__global float **guess4f, __global float 
     input_transformed = input;
   }
   //Correspondence Estimation ?
-
-
 }
 
 
@@ -243,8 +241,6 @@ __kernel void shift_and_roll_without_sum_loop(__global float* initialTranslation
                                               __global float* direction, __global float* angle_max, __global float* shift_min,
                                               __global float* shift_max, __global float** model_voxelized, __global float** point_cloud_ptr
                                               __global float** model_transformed) {
-  //TODO get two dimension of global work size here. 1.angle step, 2. shift_step;
-
 
   int angle_step = get_global_id(0);
   int shift_step = get_global_id(1);
@@ -255,9 +251,7 @@ __kernel void shift_and_roll_without_sum_loop(__global float* initialTranslation
   float3 trans = shiftByValueCL(shift_min+ shift*shift_step, initialTranslation, direction );
   buildTransformationMatrixCL(rotated,&trans,transform);
 
-
-  //TODO :
+  //TODO : Assert this
   correspondence_count = computeCorrespondencesCL(transform,model_voxelized,point_cloud_ptr );
-
 
 }
