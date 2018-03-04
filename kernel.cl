@@ -14,11 +14,14 @@ kernel void rotateWithCL(float angleInDegrees, float** res) {
 }
 
 //  shift_and_roll_without_sum
-__kernel void shiftByValueCL(__global float shift, __global float *currentTranslation, __global float* direction ) {
+__kernel float3 shiftByValueCL(__global float shift, __global float *currentTranslation, __global float* direction ) {
   //TODO : Pass size of currentTranslation
-  currentTranslation[0] = currentTranslation[0]*shift/direction[2];
-  currentTranslation[1] = currentTranslation[1]*shift/direction[2];
-  currentTranslation[2] = currentTranslation[2]*shift/direction[2];
+
+
+  float v1 = currentTranslation[0]*shift/direction[2];
+  float v2 = currentTranslation[1]*shift/direction[2];
+  float v3 = currentTranslation[2]*shift/direction[2];
+  return (float4)(v1,v2,v3);
 }
 /*
 __kernel void buildTransformationMatrixCL(__global float *rotationDim1, __global float *rotationDim2, __global float *rotationDim3, __global float *translation ) {
@@ -29,7 +32,7 @@ __kernel void buildTransformationMatrixCL(__global float *rotationDim1, __global
 //https://stackoverflow.com/questions/36410745/how-to-pass-c-vector-of-vectors-to-opencl-kernel
 
 //  shift_and_roll_without_sum
-__kernel void buildTransformationMatrixCL(__global float **rotation, __global float *translation, __global float **transformation ) {
+__kernel void buildTransformationMatrixCL(float **rotation, float3 *translation, float **transformation ) {
 //TODO : Is this fast ? Access global memory ?
   transformation[0][0] = rotation[0][0];
   transformation[0][1] = rotation[0][1];
@@ -234,12 +237,27 @@ double calculate_distance(float *pointA, float *pointB)  {
   return sqrt(a+b+c);
 }
 
-__kernel void shift_and_roll_without_sum_loop(__global float* angle_min,__global float angle, __global float** rotation, __global float* trans, __global float** transform, __global float* correspondence_count) {
+__kernel void shift_and_roll_without_sum_loop(__global float* initialTranslation, __global float* shift, __global float* angle_min,
+                                              __global float angle, __global float** rotation, __global float* trans,
+                                              __global float** transform, __global float* correspondence_count,
+                                              __global float* direction, __global float* angle_max, __global float* shift_min,
+                                              __global float* shift_max, __global float** model_voxelized, __global float** point_cloud_ptr
+                                              __global float** model_transformed) {
   //TODO get two dimension of global work size here. 1.angle step, 2. shift_step;
-  int angle_step;
-  int shift_step;
+
+
+  int angle_step = get_global_id(0);
+  int shift_step = get_global_id(1);
   float **rotated;
+  float **transform;
 
   rotateWithCL(angle_min+ angle*angle_step, rot, rotated);
-  shiftByValueCL(shift)
+  float3 trans = shiftByValueCL(shift_min+ shift*shift_step, initialTranslation, direction );
+  buildTransformationMatrixCL(rotated,&trans,transform);
+
+
+  //TODO :
+  correspondence_count = computeCorrespondencesCL(transform,model_voxelized,point_cloud_ptr );
+
+
 }
