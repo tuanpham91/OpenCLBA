@@ -26,7 +26,7 @@ using namespace std;
 cl_device_id device_id = NULL;
 cl_context context = NULL;
 cl_command_queue command_queue = NULL;
-cl_mem memobj , resobj = NULL;
+cl_mem memobj , resobj, argsMemObj, countMemobj, initialTranslationMemObj =NULL;
 
 cl_program program = NULL;
 cl_kernel kernel = NULL;
@@ -41,7 +41,6 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
                                       Eigen::Matrix3f rotation, Eigen::Vector3f initialTranslation, Eigen::Vector3f direction,
                                       pcl::PointCloud<pcl::PointXYZ>::Ptr model_voxelized, pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud_ptr,
                                       pcl::PointCloud<pcl::PointXYZ>::Ptr& modelTransformed) {
-
 
     FILE *fp;
     char fileName[] = "/home/tuan/Desktop/OpenCLBA-Local/OpenCLBA-Prod/hello.cl";
@@ -77,11 +76,14 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     context = clCreateContext(NULL, 1, &device_id, NULL, NULL, &ret);
     std::cout<<ret<<" code"<<std::endl;
 
-
     command_queue = clCreateCommandQueue(context, device_id, 0, &ret);
 
 
     //Check Concept of memory
+    float args[6] ={angle_min, angle_max, angle_step, shift_min, shift_max, shift_step }:
+
+    argsMemObj = clCreateBuffer(context,CL_MEM_READ_WRITE,6*sizeof(float),NULL,&ret);
+
     memobj = clCreateBuffer(context, CL_MEM_READ_WRITE,3*prod*sizeof(float), NULL, &ret);
     std::cout<<ret<<" code"<<std::endl;
 
@@ -94,20 +96,32 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     ret = clBuildProgram(program, 1, &device_id, NULL, NULL, NULL);
     std::cout<<ret<<" code"<<std::endl;
 
-
-    // TODO : Adjust kernel here.
+    // TODO : Adjust kernel here. 2. Args
     kernel = clCreateKernel(program, "hello", &ret);
     std::cout<<ret<<" code"<<std::endl;
 
-    ret = clSetKernelArg(kernel,0, sizeof(memobj),(void *)&memobj);
+
+    //0. Arg
+    ret = clSetKernelArg(kernel,0, sizeof(argsMemObj),(void *)&argsMemObj);
     std::cout<<ret<<" code"<<std::endl;
+
+    //1. Arg count
+    countMemobj = clCreateBuffer(context,CL_MEM_READ_WRITE,prod*sizeof(float));
+    ret = clSetKernelArg(kernel,1 , sizeof(countMemobj), (void *)&countMemobj);
+    std::cout<<ret<<" code"<<std::endl;
+
+    //2. Arg initialTranslation
+    initialTranslationMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE,3*sizeof(float))
+
+
 
     ret = clEnqueueTask(command_queue, kernel, 0, NULL,NULL);
     std::cout<<ret<<" code"<<std::endl;
 
+    //3. Arg initialTranslation
+
+
     ret = clEnqueueReadBuffer(command_queue, memobj, CL_TRUE, 0, 10 * sizeof(int),&input[0], 0, NULL, NULL);
-
-
 
 }
 
@@ -289,14 +303,14 @@ int main()
                                      correspondence_count, rotation,
                                      initialTranslation, std::get<1>(direction), model_voxelized,
                                      point_cloud_ptr, modelTransformed);
-    
 
 
 
 
 
 
-    
+
+
 
     ret = clFlush(command_queue);
     ret = clFinish(command_queue);
@@ -311,5 +325,3 @@ int main()
 
     return 0;
 }
-
-

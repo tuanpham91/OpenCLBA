@@ -235,15 +235,32 @@ double calculate_distance(float *pointA, float *pointB)  {
   return sqrt(a+b+c);
 }
 
+/*
+
 __kernel void shift_and_roll_without_sum_loop(__global float* initialTranslation, __global float* shift, __global float* angle_min,
-                                              __global float angle, __global float** rotation, __global float* trans,
+                                              __global float* angle, __global float** rotation, __global float* trans,
                                               __global float** transform, __global float* correspondence_count,
                                               __global float* direction, __global float* angle_max, __global float* shift_min,
                                               __global float* shift_max, __global float** model_voxelized, __global float** point_cloud_ptr
                                               __global float** model_transformed) {
+*/
 
-  int angle_step = get_global_id(0);
-  int shift_step = get_global_id(1);
+
+__kernel void shift_and_roll_without_sum_loop(__global float* floatArgs, __global float* count, __global float* initialTranslation, __global float* direction,
+                                              __global float** model_voxelized, __global float** point_cloud_ptr, __global float **modelTransformed) {}
+  int angle = get_global_id(0);
+  int shift = get_global_id(1);
+
+  float angle_min = floatArgs[0];
+  float angle_max = floatArgs[1];
+
+  float angle_step = floatArgs[2];
+  float shift_min  = floatArgs[3];
+
+  float shift_max = floatArgs[4];
+  float shift_step = floatArgs[5];
+
+
   float **rotated;
   float **transform;
 
@@ -252,6 +269,6 @@ __kernel void shift_and_roll_without_sum_loop(__global float* initialTranslation
   buildTransformationMatrixCL(rotated,&trans,transform);
 
   //TODO : Assert this
-  correspondence_count = computeCorrespondencesCL(transform,model_voxelized,point_cloud_ptr );
+  count = computeCorrespondencesCL(transform,model_voxelized,point_cloud_ptr );
 
 }
