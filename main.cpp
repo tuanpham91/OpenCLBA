@@ -11,7 +11,7 @@
 #include <util.h>
 #include <transformations.h>
 #include <graphUtils/GraphUtils.h>
-#include <CL/cl.h>
+#include <CL/cl2.hpp>
 #include <pcl/common/intersections.h>
 #include "misc.h"
 /* Programm to replicate OPENCV part, without shifting algorithmus */
@@ -100,25 +100,24 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     kernel = clCreateKernel(program, "hello", &ret);
     std::cout<<ret<<" code"<<std::endl;
 
-
     //0. Arg
-    ret = clSetKernelArg(kernel,0, sizeof(argsMemObj),(void *)&argsMemObj, );
+    ret = clSetKernelArg(kernel,0, sizeof(argsMemObj),(void *)&argsMemObj, &args);
     std::cout<<ret<<" code"<<std::endl;
 
     //1. Arg count
-    countMemobj = clCreateBuffer(context,CL_MEM_READ_WRITE,prod*sizeof(float), count);
-    ret = clSetKernelArg(kernel,1 , sizeof(countMemobj), (void *)&countMemobj,);
+    countMemobj = clCreateBuffer(context,CL_MEM_READ_WRITE,prod*sizeof(float));
+    ret = clSetKernelArg(kernel,1 , sizeof(countMemobj), (void *)&countMemobj, &count[0]);
     std::cout<<ret<<" code"<<std::endl;
 
     //2. Arg initialTranslation
     initialTranslationMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE,3*sizeof(float));
-    ret = clSetKernelArg(kernel,2,sizeof(initialTranslation), (void *)&initialTranslationMemObj,);
+    ret = clSetKernelArg(kernel,2,sizeof(initialTranslation), (void *)&initialTranslationMemObj, &initialTranslation.data());
     std::cout<<ret<<" code"<<std::endl;
 
     //3. Arg direction
 
     directionMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE, 3*sizeof(float));
-    ret = clSetKernelArg(kernel,3,sizeof(direction), &directionMemObj, );
+    ret = clSetKernelArg(kernel,3,sizeof(direction), &directionMemObj, &direction.data());
     std::cout<<ret<<" code"<<std::endl;
 
     //4. Arg model_voxelized
@@ -132,11 +131,8 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     std::cout<<ret<<" code"<<std::endl;
 
     //6.Arg rotation
-    rotationMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(rotation), );
+    rotationMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(rotation.data()),&rotation.data());
     ret = clSetKernelArg(kernel,6, sizeof(rotation), &rotationMemObj);
-
-
-
 
 
     ret = clEnqueueReadBuffer(command_queue, memobj, CL_TRUE, 0, 10 * sizeof(int),&input[0], 0, NULL, NULL);
