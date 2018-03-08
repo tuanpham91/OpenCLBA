@@ -26,7 +26,7 @@ using namespace std;
 cl_device_id device_id = NULL;
 cl_context context = NULL;
 cl_command_queue command_queue = NULL;
-cl_mem memobj , resobj, argsMemObj, countMemobj, initialTranslationMemObj =NULL;
+cl_mem memobj , resobj, argsMemObj, countMemobj, initialTranslationMemObj, directionMemObj, modelVoxelizedMembObj, pointCloudPtrMemObj, rotationMemObj=NULL;
 
 cl_program program = NULL;
 cl_kernel kernel = NULL;
@@ -40,7 +40,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
                                       std::vector<std::tuple<float, float, float>>& count,
                                       Eigen::Matrix3f rotation, Eigen::Vector3f initialTranslation, Eigen::Vector3f direction,
                                       pcl::PointCloud<pcl::PointXYZ>::Ptr model_voxelized, pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud_ptr,
-                                      pcl::PointCloud<pcl::PointXYZ>::Ptr& modelTransformed) {
+                                      ) {
 
     FILE *fp;
     char fileName[] = "/home/tuan/Desktop/OpenCLBA-Local/OpenCLBA-Prod/hello.cl";
@@ -80,7 +80,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
 
     //Check Concept of memory
-    float args[6] ={angle_min, angle_max, angle_step, shift_min, shift_max, shift_step }:
+    float args[6] ={angle_min, angle_max, angle_step, shift_min, shift_max, shift_step};
 
     argsMemObj = clCreateBuffer(context,CL_MEM_READ_WRITE,6*sizeof(float),NULL,&ret);
 
@@ -96,29 +96,47 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     ret = clBuildProgram(program, 1, &device_id, NULL, NULL, NULL);
     std::cout<<ret<<" code"<<std::endl;
 
-    // TODO : Adjust kernel here. 2. Args
+    // TODO : Adjust kernel here, 4 //  err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &buffer_one); 4.ARG!
     kernel = clCreateKernel(program, "hello", &ret);
     std::cout<<ret<<" code"<<std::endl;
 
 
     //0. Arg
-    ret = clSetKernelArg(kernel,0, sizeof(argsMemObj),(void *)&argsMemObj);
+    ret = clSetKernelArg(kernel,0, sizeof(argsMemObj),(void *)&argsMemObj, );
     std::cout<<ret<<" code"<<std::endl;
 
     //1. Arg count
-    countMemobj = clCreateBuffer(context,CL_MEM_READ_WRITE,prod*sizeof(float));
-    ret = clSetKernelArg(kernel,1 , sizeof(countMemobj), (void *)&countMemobj);
+    countMemobj = clCreateBuffer(context,CL_MEM_READ_WRITE,prod*sizeof(float), count);
+    ret = clSetKernelArg(kernel,1 , sizeof(countMemobj), (void *)&countMemobj,);
     std::cout<<ret<<" code"<<std::endl;
 
     //2. Arg initialTranslation
-    initialTranslationMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE,3*sizeof(float))
-
-
-
-    ret = clEnqueueTask(command_queue, kernel, 0, NULL,NULL);
+    initialTranslationMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE,3*sizeof(float));
+    ret = clSetKernelArg(kernel,2,sizeof(initialTranslation), (void *)&initialTranslationMemObj,);
     std::cout<<ret<<" code"<<std::endl;
 
-    //3. Arg initialTranslation
+    //3. Arg direction
+
+    directionMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE, 3*sizeof(float));
+    ret = clSetKernelArg(kernel,3,sizeof(direction), &directionMemObj, );
+    std::cout<<ret<<" code"<<std::endl;
+
+    //4. Arg model_voxelized
+    modelVoxelizedMembObj = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(model_voxelized));
+    ret = clSetKernelArg(kernel,4,sizeof(model_voxelized), &modelVoxelizedMembObj, );
+    std::cout<<ret<<" code"<<std::endl;
+
+    //5.Arg point_cloud_ptr
+    pointCloudPtrMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(point_cloud_ptr), );
+    ret = clSetKernelArg(kernel,5,sizeof(point_cloud_ptr), &pointCloudPtrMemObj);
+    std::cout<<ret<<" code"<<std::endl;
+
+    //6.Arg rotation
+    rotationMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(rotation), );
+    ret = clSetKernelArg(kernel,6, sizeof(rotation), &rotationMemObj);
+
+
+
 
 
     ret = clEnqueueReadBuffer(command_queue, memobj, CL_TRUE, 0, 10 * sizeof(int),&input[0], 0, NULL, NULL);

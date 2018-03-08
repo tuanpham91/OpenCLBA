@@ -247,7 +247,7 @@ __kernel void shift_and_roll_without_sum_loop(__global float* initialTranslation
 
 
 __kernel void shift_and_roll_without_sum_loop(__global float* floatArgs, __global float* count, __global float* initialTranslation, __global float* direction,
-                                              __global float** model_voxelized, __global float** point_cloud_ptr, __global float **modelTransformed) {}
+                                              __global float** model_voxelized, __global float** point_cloud_ptr, __global float **rotation) {}
   int angle = get_global_id(0);
   int shift = get_global_id(1);
 
