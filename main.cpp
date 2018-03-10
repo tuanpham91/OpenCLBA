@@ -82,13 +82,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     //Check Concept of memory
     float args[6] ={angle_min, angle_max, angle_step, shift_min, shift_max, shift_step};
 
-    argsMemObj = clCreateBuffer(context,CL_MEM_READ_WRITE,6*sizeof(float),NULL,&ret);
 
-    memobj = clCreateBuffer(context, CL_MEM_READ_WRITE,3*prod*sizeof(float), NULL, &ret);
-    std::cout<<ret<<" code"<<std::endl;
-
-    resobj = clCreateBuffer(context, CL_MEM_WRITE_ONLY, 3*prod*sizeof(float), NULL, &ret);
-    std::cout<<ret<<" code"<<std::endl;
 
     program = clCreateProgramWithSource(context,1,(const char**)&source_str, (const size_t*)&source_size, &ret);
     std::cout<<ret<<" code"<<std::endl;
@@ -101,33 +95,36 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     std::cout<<ret<<" code"<<std::endl;
 
     //0. Arg
-    ret = clSetKernelArg(kernel,0, sizeof(argsMemObj),(void *)&argsMemObj, &args);
+    argsMemObj = clCreateBuffer(context,CL_MEM_READ_WRITE,6*sizeof(float),args,&ret);
+    ret = clSetKernelArg(kernel,0, sizeof(argsMemObj),(void *)&argsMemObj);
     std::cout<<ret<<" code"<<std::endl;
 
     //1. Arg count
-    countMemobj = clCreateBuffer(context,CL_MEM_READ_WRITE,prod*sizeof(float));
-    ret = clSetKernelArg(kernel,1 , sizeof(countMemobj), (void *)&countMemobj, &count[0]);
+    countMemobj = clCreateBuffer(context,CL_MEM_READ_WRITE,prod*sizeof(float),&count,&ret);
+    ret = clSetKernelArg(kernel,1 , sizeof(countMemobj), (void *)&countMemobj);
     std::cout<<ret<<" code"<<std::endl;
 
     //2. Arg initialTranslation
-    initialTranslationMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE,3*sizeof(float));
-    ret = clSetKernelArg(kernel,2,sizeof(initialTranslation), (void *)&initialTranslationMemObj, &initialTranslation.data());
+    initialTranslationMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE,3*sizeof(float),initialTranslation.data(),&ret);
+    ret = clSetKernelArg(kernel,2,sizeof(initialTranslation), &initialTranslationMemObj);
     std::cout<<ret<<" code"<<std::endl;
 
     //3. Arg direction
 
-    directionMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE, 3*sizeof(float));
-    ret = clSetKernelArg(kernel,3,sizeof(direction), &directionMemObj, &direction.data());
+    directionMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE, 3*sizeof(float),direction.data(),&ret);
+    ret = clSetKernelArg(kernel,3,sizeof(direction), &directionMemObj);
     std::cout<<ret<<" code"<<std::endl;
 
     //4. Arg model_voxelized
     float** model_voxelized_as_array = new float[model_voxelized.size()][3];
     convertPointCloudToCL(model_voxelized,model_voxelized_as_array);
-    modelVoxelizedMembObj = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(model_voxelized));
-    ret = clSetKernelArg(kernel,4,sizeof(model_voxelized), &modelVoxelizedMembObj, );
+    modelVoxelizedMembObj = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(model_voxelized_as_array),model_voxelized_as_array,&ret);
+    ret = clSetKernelArg(kernel,4,sizeof(model_voxelized), &modelVoxelizedMembObj);
     std::cout<<ret<<" code"<<std::endl;
 
     //5.Arg point_cloud_ptr
+    float** point_cloud_ptr_as_array = new float[point_cloud_ptr.size()][3];
+    convertPointCloudToCL(model_voxelized,model_voxelized_as_array);
     pointCloudPtrMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(point_cloud_ptr),);
     ret = clSetKernelArg(kernel,5,sizeof(point_cloud_ptr), &pointCloudPtrMemObj);
     std::cout<<ret<<" code"<<std::endl;
