@@ -268,9 +268,10 @@ std::vector<std::vector<float>> convertMatrix4fToCL(Eigen::Matrix4f matrix4f) {
 }
 */
 //https://stackoverflow.com/questions/12426061/how-to-pass-and-access-c-vectors-to-opencl-kernel
-std::vector<float> convertPointXYZtoCL(pcl::PointXYZ point) {
-    std::vector<float> result{point.x, point.y,point.z};
-    return result;
+void convertPointXYZtoCL(pcl::PointXYZ point, float* result) {
+    result[0]= point.x;
+    result[1]= point.y;
+    result[2]= point.z;
 }
 
 std::vector<float> convertMatrix3fToCL(Eigen::Matrix3f matrix3f) {
@@ -278,12 +279,13 @@ std::vector<float> convertMatrix3fToCL(Eigen::Matrix3f matrix3f) {
   return vector;
 }
 
-std::vector<std::vector<float>> convertPointCloudToCL(pcl::PointCloud<pcl::PointXYZ> pointCloud) {
-  std::vector<std::vector<float>> pointCloudVec;
+void convertPointCloudToCL(pcl::PointCloud<pcl::PointXYZ> pointCloud, float** res) {
   int size = pointCloud.size();
   for (int i = 0 ; i <size ; i++) {
-    pointCloudVec.push_back(convertPointXYZtoCL(pointCloud.at(i)));
-  }
-  return pointCloudVec;
-}
+    res[i][0]= pointCloud.at(i).x;
+    res[i][1]= pointCloud.at(i).y;
+    res[i][2]= pointCloud.at(i).z;
 
+  }
+
+}

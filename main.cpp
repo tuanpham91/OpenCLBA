@@ -39,7 +39,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
                                       float shift_min, float shift_max, float shift_step,
                                       std::vector<std::tuple<float, float, float>>& count,
                                       Eigen::Matrix3f rotation, Eigen::Vector3f initialTranslation, Eigen::Vector3f direction,
-                                      pcl::PointCloud<pcl::PointXYZ>::Ptr model_voxelized, pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud_ptr,
+                                      pcl::PointCloud<pcl::PointXYZ> model_voxelized, pcl::PointCloud<pcl::PointXYZ> point_cloud_ptr
                                       ) {
 
     FILE *fp;
@@ -121,12 +121,14 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     std::cout<<ret<<" code"<<std::endl;
 
     //4. Arg model_voxelized
+    float** model_voxelized_as_array = new float[model_voxelized.size()][3];
+    convertPointCloudToCL(model_voxelized,model_voxelized_as_array);
     modelVoxelizedMembObj = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(model_voxelized));
     ret = clSetKernelArg(kernel,4,sizeof(model_voxelized), &modelVoxelizedMembObj, );
     std::cout<<ret<<" code"<<std::endl;
 
     //5.Arg point_cloud_ptr
-    pointCloudPtrMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(point_cloud_ptr), );
+    pointCloudPtrMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(point_cloud_ptr),);
     ret = clSetKernelArg(kernel,5,sizeof(point_cloud_ptr), &pointCloudPtrMemObj);
     std::cout<<ret<<" code"<<std::endl;
 
