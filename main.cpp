@@ -9,7 +9,6 @@
 #include <pcl/visualization/cloud_viewer.h>
 #include <pcl/cloud_iterator.h>
 #include <util.h>
-#include <transformations.h>
 #include <graphUtils/GraphUtils.h>
 #include <CL/cl2.hpp>
 #include <pcl/common/intersections.h>
@@ -39,11 +38,11 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
                                       float shift_min, float shift_max, float shift_step,
                                       std::vector<std::tuple<float, float, float>>& count,
                                       Eigen::Matrix3f rotation, Eigen::Vector3f initialTranslation, Eigen::Vector3f direction,
-                                      pcl::PointCloud<pcl::PointXYZ> model_voxelized, pcl::PointCloud<pcl::PointXYZ> point_cloud_ptr
+                                      pcl::PointCloud<pcl::PointXYZ>::Ptr model_voxelized, pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud_ptr
                                       ) {
 
     FILE *fp;
-    char fileName[] = "/home/tuan/Desktop/OpenCLBA-Local/OpenCLBA-Prod/hello.cl";
+    char fileName[] = "/home/tuan/Desktop/OpenCLBA-Local/OpenCLBA-Prod/kernel.cl";
     char *source_str;
     size_t source_size;
     cl_int ret;
@@ -82,8 +81,6 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     //Check Concept of memory
     float args[6] ={angle_min, angle_max, angle_step, shift_min, shift_max, shift_step};
 
-
-
     program = clCreateProgramWithSource(context,1,(const char**)&source_str, (const size_t*)&source_size, &ret);
     std::cout<<ret<<" code"<<std::endl;
 
@@ -91,50 +88,50 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     std::cout<<ret<<" code"<<std::endl;
 
     // TODO : Adjust kernel here, 4 //  err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &buffer_one); 4.ARG!
-    kernel = clCreateKernel(program, "hello", &ret);
-    std::cout<<ret<<" code"<<std::endl;
+    kernel = clCreateKernel(program,"shift_and_roll_without_sum_loop", &ret);
+    std::cout<<ret<<" Arg code 0: "<<std::endl;
 
     //0. Arg
     argsMemObj = clCreateBuffer(context,CL_MEM_READ_WRITE,6*sizeof(float),args,&ret);
     ret = clSetKernelArg(kernel,0, sizeof(argsMemObj),(void *)&argsMemObj);
-    std::cout<<ret<<" code"<<std::endl;
+    std::cout<<ret<<" Arg code 1 :"<<std::endl;
 
     //1. Arg count
     countMemobj = clCreateBuffer(context,CL_MEM_READ_WRITE,prod*sizeof(float),&count,&ret);
     ret = clSetKernelArg(kernel,1 , sizeof(countMemobj), (void *)&countMemobj);
-    std::cout<<ret<<" code"<<std::endl;
+    std::cout<<ret<<" Arg code 2 :"<<std::endl;
 
     //2. Arg initialTranslation
     initialTranslationMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE,3*sizeof(float),initialTranslation.data(),&ret);
     ret = clSetKernelArg(kernel,2,sizeof(initialTranslation), &initialTranslationMemObj);
-    std::cout<<ret<<" code"<<std::endl;
+    std::cout<<ret<<" Arg code 3 :"<<std::endl;
 
     //3. Arg direction
 
     directionMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE, 3*sizeof(float),direction.data(),&ret);
     ret = clSetKernelArg(kernel,3,sizeof(direction), &directionMemObj);
-    std::cout<<ret<<" code"<<std::endl;
+    std::cout<<ret<<" Arg code 4 :"<<std::endl;
 
     //4. Arg model_voxelized
-    float** model_voxelized_as_array = new float[model_voxelized.size()][3];
+    float* model_voxelized_as_array = new float[model_voxelized.get()->size()*3];
     convertPointCloudToCL(model_voxelized,model_voxelized_as_array);
     modelVoxelizedMembObj = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(model_voxelized_as_array),model_voxelized_as_array,&ret);
     ret = clSetKernelArg(kernel,4,sizeof(model_voxelized), &modelVoxelizedMembObj);
-    std::cout<<ret<<" code"<<std::endl;
+    std::cout<<ret<<" Arg code 5 :"<<std::endl;
 
     //5.Arg point_cloud_ptr
-    float** point_cloud_ptr_as_array = new float[point_cloud_ptr.size()][3];
+    float* point_cloud_ptr_as_array = new float[point_cloud_ptr.get()->size()*3];
     convertPointCloudToCL(model_voxelized,model_voxelized_as_array);
-    pointCloudPtrMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(point_cloud_ptr),);
+    pointCloudPtrMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(point_cloud_ptr),point_cloud_ptr_as_array,&ret);
     ret = clSetKernelArg(kernel,5,sizeof(point_cloud_ptr), &pointCloudPtrMemObj);
-    std::cout<<ret<<" code"<<std::endl;
+    std::cout<<ret<<" Arg code 6 :"<<std::endl;
 
     //6.Arg rotation
-    rotationMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(rotation.data()),&rotation.data());
+    rotationMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(rotation.data()),rotation.data(),&ret);
     ret = clSetKernelArg(kernel,6, sizeof(rotation), &rotationMemObj);
+    std::cout<<ret<<"Arg code 7 :"<<std::endl;
 
 
-    ret = clEnqueueReadBuffer(command_queue, memobj, CL_TRUE, 0, 10 * sizeof(int),&input[0], 0, NULL, NULL);
 
 }
 
@@ -151,7 +148,6 @@ int main()
     pcl::PointCloud<pcl::PointXYZ>::Ptr peak_points(new pcl::PointCloud<pcl::PointXYZ>);
 
     boost::shared_ptr<std::vector<std::tuple<int, int, cv::Mat, cv::Mat>>> needle_width = recognizeOTC(point_cloud_not_cut, peak_points, "oct_dir", true);
-    pcl::visualization::CloudViewer viewer("Simple Cloud Viewer");
     /*
     viewer.showCloud(point_cloud_not_cut);
     while (!viewer.wasStopped ())   {
@@ -159,7 +155,7 @@ int main()
     */
     //Copied Code
 
-    pcl::PointCloud<pcl::PointXYZ>::Ptr modelCloud(new pcl::PointCloud<pcl::PointXYZ>);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr modelCloud(new pcl::PointCloud<pcl::PointXYZ>());
     pcl::PointCloud<pcl::PointXYZ>::Ptr model_voxelized(new pcl::PointCloud<pcl::PointXYZ>());
 
     generatePointCloudFromModel(modelCloud, model_voxelized, path);
@@ -169,7 +165,6 @@ int main()
     std::cout << "origin: " << std::endl << std::get<0>(direction) << std::endl << "direction: " << std::endl << std::get<1>(direction) << std::endl;
 
     Eigen::Matrix3f rotation = computeNeedleRotation(direction);
-
     //WTF is this shit
     Eigen::Vector3f euler = rotation.eulerAngles(0, 1, 2) * 180 / M_PI;
     rotation = rotateByAngle(180 - euler.z(), rotation);
@@ -186,10 +181,12 @@ int main()
     pcl::PointCloud<pcl::PointXYZ>::Ptr modelTransformed(new pcl::PointCloud<pcl::PointXYZ>);
 
     pcl::transformPointCloud(*model_voxelized, *modelTransformed, transformation);
-
+    std::cout<<"DEBUG"<<std::endl;
+    //PROBLEM HERE
     transformation = tipApproximation(point_cloud_ptr, modelTransformed, model_voxelized, direction, transformation);
 
     float end_angle = getAngleFromMatrix(transformation);
+    std::cout<<"DEBUG"<<std::endl;
 
     std::vector<std::tuple<float, float, float>> correspondence_count;
     //angle and count
@@ -216,6 +213,8 @@ int main()
     std::vector<std::pair<float, float>> shift_count4;
     //initialize interval values -90,90
 
+
+    std::cout<<"DEBUG"<<std::endl;
     float angleStart = end_angle - 5.0f;
     float angleEnd = end_angle + 5.0f;
     float angleStep = 1.0f;
@@ -315,11 +314,11 @@ int main()
     shift_and_roll_without_sum_in_cl(angleStart,angleEnd, angleStep,shiftStart, shiftEnd, shiftStep,
                                      correspondence_count, rotation,
                                      initialTranslation, std::get<1>(direction), model_voxelized,
-                                     point_cloud_ptr, modelTransformed);
+                                     point_cloud_ptr);
 
 
 
-
+    
 
 
 

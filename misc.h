@@ -3,7 +3,7 @@
 
 #include <string>
 #include <algorithm>
-//#include <Windows.h>
+#include <transformations.h>
 #include <pcl/common/transforms.h>
 #include "vtk_model_sampling.h"
 #define NUM_FRAMES 128
@@ -64,7 +64,6 @@ Eigen::Matrix4f tipApproximation(pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud
             first = x_in_direction;
             second = x_middle_model;
         }
-        //Tuan TODO : Here could be much better
         while (r < 360.0f && first < second) {
             transform = buildTransformationMatrix(rotateByAngle(sign * angle_to_rotate, transform.block(0, 0, 3, 3)), transform.block(0, 3, 3, 0));
             pcl::transformPointCloud(*model_voxelized, *modelTransformed, transform);
@@ -279,13 +278,11 @@ std::vector<float> convertMatrix3fToCL(Eigen::Matrix3f matrix3f) {
   return vector;
 }
 
-void convertPointCloudToCL(pcl::PointCloud<pcl::PointXYZ> pointCloud, float** res) {
-  int size = pointCloud.size();
-  for (int i = 0 ; i <size ; i++) {
-    res[i][0]= pointCloud.at(i).x;
-    res[i][1]= pointCloud.at(i).y;
-    res[i][2]= pointCloud.at(i).z;
-
-  }
-
+void convertPointCloudToCL(pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud, float* res) {
+    int size = pointCloud.get()->size();
+    for (int i = 0 ; i <size ; i++) {
+    res[i*3]= pointCloud.get()->at(i).x;
+    res[i*3+1]= pointCloud.get()->at(i).y;
+    res[i*3+2]= pointCloud.get()->at(i).z;
+    }
 }

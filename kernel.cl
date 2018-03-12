@@ -1,7 +1,5 @@
-M_PI = 3.141592;
-//The idea is to represent row or columns of
 kernel void rotateWithCL(float angleInDegrees, float** res) {
-  float angle = angleInDegrees * M_PI/180.0f;
+  float angle = angleInDegrees * 3.141592/180.0f;
   res[0][0] = cos(angle);
   res[0][1] = -sin(angle);
   res[0][2] = 0;
@@ -15,25 +13,16 @@ kernel void rotateWithCL(float angleInDegrees, float** res) {
 
 //  shift_and_roll_without_sum
 __kernel float3 shiftByValueCL(__global float shift, __global float *currentTranslation, __global float* direction ) {
-  //TODO : Pass size of currentTranslation
-
-
   float v1 = currentTranslation[0]*shift/direction[2];
   float v2 = currentTranslation[1]*shift/direction[2];
   float v3 = currentTranslation[2]*shift/direction[2];
   return (float4)(v1,v2,v3);
 }
-/*
-__kernel void buildTransformationMatrixCL(__global float *rotationDim1, __global float *rotationDim2, __global float *rotationDim3, __global float *translation ) {
-  //TODO :
 
-}
-*/
 //https://stackoverflow.com/questions/36410745/how-to-pass-c-vector-of-vectors-to-opencl-kernel
 
 //  shift_and_roll_without_sum
 __kernel void buildTransformationMatrixCL(float **rotation, float3 *translation, float **transformation ) {
-//TODO : Is this fast ? Access global memory ?
   transformation[0][0] = rotation[0][0];
   transformation[0][1] = rotation[0][1];
   transformation[0][2] = rotation[0][2];
@@ -97,10 +86,7 @@ __kernel void rigidTransformation (__global int size, __global float **input, __
   }
 }
 //  shift_and_roll_without_sum
-// NOTE : This might not be useful :
-__kernel void compute
-
-
+/*
 __kernel void computeDifferencesForCorrespondence(__global float **correspondence_count, __global int size, __global int **angle_count,) {
     int i  = get_global_id(0);
     float angle_temp = correspondence_count[i][0];
@@ -153,10 +139,10 @@ __kernel void computeDifferencesForCorrespondence(__global float **correspondenc
     shiftStart = checkMinBoundsForValueCL(max_shift,shiftStart,shiftStep);
     shiftEnd = checkMaxBoundsForValueCL(max_shift,shiftEnd,shiftStep);
     angleStep /= 5.0f;
-		shiftStep /= 5.0f
+    shiftStep /= 5.0f
     //TODO :
 }
-
+*/
 //https://stackoverflow.com/questions/7627098/what-is-a-lambda-expression-in-c11
 __kernel void findMaxIndexOfVectorOfPairsCL(__global float **angle_count, __global int *size, global int *res) {
   int max_index =0;
@@ -192,6 +178,7 @@ float checkMinBoundsForValueCL(float value, float start, float step) {
 	}
 	return start;
 }
+
 float checkMaxBoundsForValueCL(float value, float end, float step) {
 	float val = value + step;
 	if (val < end) {
@@ -246,8 +233,7 @@ __kernel void shift_and_roll_without_sum_loop(__global float* initialTranslation
 */
 
 
-__kernel void shift_and_roll_without_sum_loop(__global float* floatArgs, __global float* count, __global float* initialTranslation, __global float* direction,
-                                              __global float** model_voxelized, __global float** point_cloud_ptr, __global float **rotation) {}
+__kernel void shift_and_roll_without_sum_loop(__global float* floatArgs, __global float* count, __global float* initialTranslation, __global float* direction,__global float** model_voxelized, __global float** point_cloud_ptr, __global float **rotation) {
   int angle = get_global_id(0);
   int shift = get_global_id(1);
 
@@ -270,5 +256,4 @@ __kernel void shift_and_roll_without_sum_loop(__global float* floatArgs, __globa
 
   //TODO : Assert this
   count = computeCorrespondencesCL(transform,model_voxelized,point_cloud_ptr );
-
 }
