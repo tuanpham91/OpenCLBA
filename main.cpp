@@ -1,17 +1,25 @@
-#include <QCoreApplication>
-#include <iostream>
-#include <opencv/cv.hpp>
-#include <regression.h>
+#include <opencv2/opencv.hpp>
+
+#include <pcl/pcl_macros.h>
+#include <pcl/visualization/pcl_visualizer.h>
+#include <pcl/console/parse.h>
+#include <pcl/registration/correspondence_estimation.h>
+#include <pcl/registration/correspondence_rejection.h>
+#include <pcl/registration/correspondence_rejection_median_distance.h>
 #include <pcl/common/time.h>
-#include <pcl/filters/voxel_grid.h>
-#include <pcl/sample_consensus/sac_model_line.h>
-#include <pcl/sample_consensus/ransac.h>
-#include <pcl/visualization/cloud_viewer.h>
-#include <pcl/cloud_iterator.h>
-#include <util.h>
-#include <graphUtils/GraphUtils.h>
-#include <CL/cl2.hpp>
 #include <pcl/common/intersections.h>
+#include <pcl/filters/voxel_grid.h>
+
+
+#include <tuple>
+
+#include "util.h"
+#include "regression.h"
+#include "graphUtils/GraphUtils.h"
+
+
+
+#include <CL/cl2.hpp>
 #include "misc.h"
 /* Programm to replicate OPENCV part, without shifting algorithmus */
 using namespace std;
@@ -331,7 +339,7 @@ int main()
 
 
 
-    
+
 
 
 
