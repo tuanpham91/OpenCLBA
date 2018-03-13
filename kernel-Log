@@ -1,34 +1,33 @@
-input.cl:2:32: warning: double precision constant requires cl_khr_fp64, casting to single precision
-input.cl:62:23: error: subscripted value is not an array, pointer, or vector
-input.cl:68:22: error: subscripted value is not an array, pointer, or vector
-input.cl:70:16: error: expected ';' after break statement
+input.cl:2:40: warning: double precision constant requires cl_khr_fp64, casting to single precision
 input.cl:79:27: warning: incompatible pointer to integer conversion passing '__global float *' to parameter of type 'int'
 input.cl:44:33: note: passing argument to parameter 'size' here
 input.cl:79:35: error: passing '__global float *' to parameter of type 'float *' changes address space of pointer
 input.cl:44:45: note: passing argument to parameter 'input' here
 input.cl:82:23: error: assigning '__global float *' to 'float *' changes address space of pointer
-input.cl:151:22: warning: ordered comparison between pointer and integer ('int' and '__global int *')
-input.cl:157:7: warning: incompatible integer to pointer conversion assigning to '__global int *' from 'int'
-input.cl:160:83: error: parameter may not be qualified with an address space
-input.cl:160:87: error: expected ')'
-input.cl:160:45: note: to match this '('
-input.cl:164:9: error: use of undeclared identifier 'angle_count'
-input.cl:165:13: error: use of undeclared identifier 'angle_count'
-input.cl:169:3: error: use of undeclared identifier 'res'
-input.cl:200:3: error: use of type 'double' requires cl_khr_fp64 extension to be enabled
-input.cl:201:3: error: use of undeclared identifier 'found'
+input.cl:112:103: error: parameter may not be qualified with an address space
+input.cl:112:136: error: expected parameter declarator
+input.cl:112:68: error: kernel parameter cannot be declared as a pointer to a pointer
+input.cl:112:124: error: kernel parameter cannot be declared as a pointer to a pointer
+input.cl:121:22: warning: double precision constant requires cl_khr_fp64, casting to single precision
+input.cl:135:18: error: member reference base type '__global int **' is not a structure or union
+input.cl:139:11: error: use of undeclared identifier 'shift_count'
+input.cl:146:7: error: use of undeclared identifier 'shift_count'
+input.cl:148:18: error: member reference base type '__global int **' is not a structure or union
+input.cl:151:28: error: implicit declaration of function 'findMaxIndexOfVectorOfPairsCL' is invalid in OpenCL
+input.cl:152:57: error: use of undeclared identifier 'shift_count'
+input.cl:153:30: error: invalid '==' at end of declaration; did you mean '='?
+input.cl:153:33: error: implicit declaration of function 'findMaxIndexOfVectorOfTuplesCL' is invalid in OpenCL
+input.cl:153:33: note: did you mean 'findMaxIndexOfVectorOfPairsCL'?
+input.cl:151:28: note: 'findMaxIndexOfVectorOfPairsCL' declared here
+input.cl:164:22: error: expected ';' after expression
+input.cl:169:15: error: conflicting types for 'findMaxIndexOfVectorOfPairsCL'
+input.cl:151:28: note: previous implicit declaration is here
+input.cl:181:83: error: parameter may not be qualified with an address space
 input.cl:205:11: error: implicit declaration of function 'calculate_distance' is invalid in OpenCL
-input.cl:210:14: error: use of undeclared identifier 'found'
-input.cl:211:7: error: use of undeclared identifier 'found'
-input.cl:211:15: error: use of undeclared identifier 'found'
-input.cl:219:1: error: use of type 'double' requires cl_khr_fp64 extension to be enabled
-input.cl:220:3: error: use of type 'double' requires cl_khr_fp64 extension to be enabled
-input.cl:221:3: error: use of type 'double' requires cl_khr_fp64 extension to be enabled
-input.cl:222:3: error: use of type 'double' requires cl_khr_fp64 extension to be enabled
-input.cl:237:176: error: kernel parameter cannot be declared as a pointer to a pointer
-input.cl:237:210: error: kernel parameter cannot be declared as a pointer to a pointer
-input.cl:237:244: error: kernel parameter cannot be declared as a pointer to a pointer
-input.cl:254:45: error: use of undeclared identifier 'rot'
+input.cl:218:7: error: conflicting types for 'calculate_distance'
+input.cl:205:11: note: previous implicit declaration is here
+input.cl:254:55: error: too many arguments to function call, expected 2, have 3
+input.cl:1:1: note: 'rotateWithCL' declared here
 input.cl:255:62: error: passing '__global float *' to parameter of type 'float *' changes address space of pointer
 input.cl:15:42: note: passing argument to parameter 'currentTranslation' here
 input.cl:255:82: error: passing '__global float *' to parameter of type 'float *' changes address space of pointer
@@ -39,8 +38,4 @@ input.cl:256:39: error: passing 'float3 *' to parameter of incompatible type 'fl
 input.cl:25:58: note: passing argument to parameter 'translation' here
 input.cl:259:36: warning: incompatible pointer types passing 'float **' to parameter of type '__global float *'
 input.cl:54:56: note: passing argument to parameter 'guess4f' here
-input.cl:259:46: warning: incompatible pointer types passing '__global float **' to parameter of type '__global float *'; dereference with *
-input.cl:54:81: note: passing argument to parameter 'input' here
-input.cl:259:62: warning: incompatible pointer types passing '__global float **' to parameter of type '__global float *'; dereference with *
-input.cl:54:104: note: passing argument to parameter 'target' here
 input.cl:259:9: error: assigning to '__global float *' from incompatible type 'void'

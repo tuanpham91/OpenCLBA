@@ -1,5 +1,5 @@
 void rotateWithCL(float angleInDegrees, float* res) {
-  float angle = (float) (angleInDegrees*0.01745328888);
+  float angle = angleInDegrees*(float)(0.01745328888);
   res[0] = cos(angle);
   res[1] = -sin(angle);
   res[2] = 0;
@@ -86,6 +86,27 @@ __kernel void computeCorrespondencesCL(__global float *guess4f, __global float *
 }
 
 
+float checkMinBoundsForValueCL(float value, float start, float step) {
+	float val = value - step;
+	if (val > start) {
+		if (val - step >= start) {
+			return val - step;
+		}
+		return val;
+	}
+	return start;
+}
+
+float checkMaxBoundsForValueCL(float value, float end, float step) {
+	float val = value + step;
+	if (val < end) {
+		if (val + step <= end) {
+			return val + step;
+		}
+		return val;
+	}
+	return end;
+}
 
 //  shift_and_roll_without_sum
 __kernel void computeDifferencesForCorrespondence(__global float **correspondence_count, __global int size, __global int **angle_count,) {
@@ -170,27 +191,6 @@ __kernel void findMaxIndexOfVectorOfTuplesCL(__global float *tuples, __global in
   *res = max_index;
 }
 
-float checkMinBoundsForValueCL(float value, float start, float step) {
-	float val = value - step;
-	if (val > start) {
-		if (val - step >= start) {
-			return val - step;
-		}
-		return val;
-	}
-	return start;
-}
-
-float checkMaxBoundsForValueCL(float value, float end, float step) {
-	float val = value + step;
-	if (val < end) {
-		if (val + step <= end) {
-			return val + step;
-		}
-		return val;
-	}
-	return end;
-}
 
 //http://docs.pointclouds.org/1.7.0/classpcl_1_1registration_1_1_correspondence_estimation.html
 
@@ -215,7 +215,7 @@ void estimate_correspondence(float *input, float *output, float max_distance, fl
 }
 
 
-float calculate_distance(float pointA, float pointB)  {
+float calculate_distance(float *pointA, float *pointB)  {
   float a = (pointA[0] - pointB[0])*(pointA[0] - pointB[0]);
   float b = (pointA[1] - pointB[1])*(pointA[1] - pointB[1]);
   float c = (pointA[2] - pointB[2])*(pointA[2] - pointB[2]);
@@ -250,8 +250,9 @@ __kernel void shift_and_roll_without_sum_loop(__global float* floatArgs, __globa
 
   float **rotated;
   float **transform;
-
+  //TODO
   rotateWithCL(angle_min+ angle*angle_step, rotation, rotated);
+//TODO
   float3 trans = shiftByValueCL(shift_min+ shift*shift_step, initialTranslation, direction );
   buildTransformationMatrixCL(rotated,&trans,transform);
 
