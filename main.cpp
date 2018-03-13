@@ -21,7 +21,7 @@ using namespace std;
 #define SCALE_Z 3.0
 
 
-//
+
 cl_device_id device_id = NULL;
 cl_context context = NULL;
 cl_command_queue command_queue = NULL;
@@ -42,7 +42,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
                                       ) {
 
     FILE *fp;
-    char fileName[] = "/home/tuan/Desktop/OpenCLBA-Local/OpenCLBA-Prod/kernel.cl";
+    char fileName[] = "/home/tuan/Desktop/OpenCLBA-Local/OpenCLBA-Prod/kernel-original.cl";
     char *source_str;
     size_t source_size;
     cl_int ret;
@@ -86,7 +86,20 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
     ret = clBuildProgram(program, 1, &device_id, NULL, NULL, NULL);
     std::cout<<ret<<" code"<<std::endl;
+    if (ret == CL_BUILD_PROGRAM_FAILURE) {
+        // Determine the size of the log
+        size_t log_size;
+        clGetProgramBuildInfo(program, device_id, CL_PROGRAM_BUILD_LOG, 0, NULL, &log_size);
 
+        // Allocate memory for the log
+        char *log = (char *) malloc(log_size);
+
+        // Get the log
+        clGetProgramBuildInfo(program, device_id, CL_PROGRAM_BUILD_LOG, log_size, log, NULL);
+
+        // Print the log
+        printf("%s\n", log);
+    }
     // TODO : Adjust kernel here, 4 //  err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &buffer_one); 4.ARG!
     kernel = clCreateKernel(program,"shift_and_roll_without_sum_loop", &ret);
     std::cout<<ret<<" Arg code 0: "<<std::endl;
@@ -242,7 +255,7 @@ int main()
 
 
     FILE *fp;
-    char fileName[] = "/home/tuan/Desktop/OpenCLBA-Local/OpenCLBA-Prod/hello.cl";
+    char fileName[] = "/home/tuan/Desktop/OpenCLBA-Local/OpenCLBA-Prod/kernel.cl";
     char *source_str;
     size_t source_size;
 

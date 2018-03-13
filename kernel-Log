@@ -1,0 +1,46 @@
+input.cl:2:32: warning: double precision constant requires cl_khr_fp64, casting to single precision
+input.cl:62:23: error: subscripted value is not an array, pointer, or vector
+input.cl:68:22: error: subscripted value is not an array, pointer, or vector
+input.cl:70:16: error: expected ';' after break statement
+input.cl:79:27: warning: incompatible pointer to integer conversion passing '__global float *' to parameter of type 'int'
+input.cl:44:33: note: passing argument to parameter 'size' here
+input.cl:79:35: error: passing '__global float *' to parameter of type 'float *' changes address space of pointer
+input.cl:44:45: note: passing argument to parameter 'input' here
+input.cl:82:23: error: assigning '__global float *' to 'float *' changes address space of pointer
+input.cl:151:22: warning: ordered comparison between pointer and integer ('int' and '__global int *')
+input.cl:157:7: warning: incompatible integer to pointer conversion assigning to '__global int *' from 'int'
+input.cl:160:83: error: parameter may not be qualified with an address space
+input.cl:160:87: error: expected ')'
+input.cl:160:45: note: to match this '('
+input.cl:164:9: error: use of undeclared identifier 'angle_count'
+input.cl:165:13: error: use of undeclared identifier 'angle_count'
+input.cl:169:3: error: use of undeclared identifier 'res'
+input.cl:200:3: error: use of type 'double' requires cl_khr_fp64 extension to be enabled
+input.cl:201:3: error: use of undeclared identifier 'found'
+input.cl:205:11: error: implicit declaration of function 'calculate_distance' is invalid in OpenCL
+input.cl:210:14: error: use of undeclared identifier 'found'
+input.cl:211:7: error: use of undeclared identifier 'found'
+input.cl:211:15: error: use of undeclared identifier 'found'
+input.cl:219:1: error: use of type 'double' requires cl_khr_fp64 extension to be enabled
+input.cl:220:3: error: use of type 'double' requires cl_khr_fp64 extension to be enabled
+input.cl:221:3: error: use of type 'double' requires cl_khr_fp64 extension to be enabled
+input.cl:222:3: error: use of type 'double' requires cl_khr_fp64 extension to be enabled
+input.cl:237:176: error: kernel parameter cannot be declared as a pointer to a pointer
+input.cl:237:210: error: kernel parameter cannot be declared as a pointer to a pointer
+input.cl:237:244: error: kernel parameter cannot be declared as a pointer to a pointer
+input.cl:254:45: error: use of undeclared identifier 'rot'
+input.cl:255:62: error: passing '__global float *' to parameter of type 'float *' changes address space of pointer
+input.cl:15:42: note: passing argument to parameter 'currentTranslation' here
+input.cl:255:82: error: passing '__global float *' to parameter of type 'float *' changes address space of pointer
+input.cl:15:68: note: passing argument to parameter 'direction' here
+input.cl:256:31: warning: incompatible pointer types passing 'float **' to parameter of type 'float *'; dereference with *
+input.cl:25:41: note: passing argument to parameter 'rotation' here
+input.cl:256:39: error: passing 'float3 *' to parameter of incompatible type 'float3' (vector of 3 'float' values); remove &
+input.cl:25:58: note: passing argument to parameter 'translation' here
+input.cl:259:36: warning: incompatible pointer types passing 'float **' to parameter of type '__global float *'
+input.cl:54:56: note: passing argument to parameter 'guess4f' here
+input.cl:259:46: warning: incompatible pointer types passing '__global float **' to parameter of type '__global float *'; dereference with *
+input.cl:54:81: note: passing argument to parameter 'input' here
+input.cl:259:62: warning: incompatible pointer types passing '__global float **' to parameter of type '__global float *'; dereference with *
+input.cl:54:104: note: passing argument to parameter 'target' here
+input.cl:259:9: error: assigning to '__global float *' from incompatible type 'void'

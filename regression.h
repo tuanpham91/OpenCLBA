@@ -7,7 +7,7 @@
 double LinearRegression(std::vector<std::tuple<int, int>>& input)
 {
 
-	
+
 	long i;
 	double a = 0.0;
 	double b = 0.0;
@@ -51,7 +51,7 @@ double LinearRegression(std::vector<std::tuple<int, int>>& input)
 	}
 	return stdError;
 }
-// TUan :: 
+// TUan ::
 std::pair<Eigen::Vector3f, Eigen::Vector3f> fitLine(std::vector<Eigen::Vector3f>& points) {
 	// copy coordinates to  matrix in Eigen format
 	size_t num_atoms = points.size();
@@ -67,14 +67,14 @@ std::pair<Eigen::Vector3f, Eigen::Vector3f> fitLine(std::vector<Eigen::Vector3f>
 	return std::make_pair(origin, axis * -1.0f);
 }
 
-//Tuan :: what does this do ?  
+//Tuan :: what does this do ?
 std::vector<int> getInliers(pcl::PointCloud<pcl::PointXYZ>::Ptr& peak_points) {
 	std::vector<int> inliers;
-	//Tuan :: SampleConsensusModelLine defines a model for 3D line segmentation. (Ok like cutting and taking a part of lines, just in 3D) 
+	//Tuan :: SampleConsensusModelLine defines a model for 3D line segmentation. (Ok like cutting and taking a part of lines, just in 3D)
 	// Tuan :: line segmentation http://users.iit.demokritos.gr/~bgat/cr1115.pdf
 	pcl::SampleConsensusModelLine<pcl::PointXYZ>::Ptr
 		model(new pcl::SampleConsensusModelLine<pcl::PointXYZ>(peak_points));
-	
+
 	//Tuan :: ransac declared here
 	// Tuan :: about Ransac : https://en.wikipedia.org/wiki/Random_sample_consensus
 	// Tuan :: Random sample consensus (RANSAC) is an iterative method to estimate parameters of a mathematical model from a set of observed data that contains outliers,
@@ -83,7 +83,7 @@ std::vector<int> getInliers(pcl::PointCloud<pcl::PointXYZ>::Ptr& peak_points) {
 	pcl::RandomSampleConsensus<pcl::PointXYZ> ransac(model);
 	ransac.setDistanceThreshold(.1f);
 	ransac.computeModel();
-	// Tuan :: Return the best set of inliers found so far for this model. 
+	// Tuan :: Return the best set of inliers found so far for this model.
 	ransac.getInliers(inliers);
 	//Tuan :: Return a like here, looks like linear Regression.
 
@@ -119,7 +119,7 @@ double regress_split_at(std::vector<std::tuple<int, int>> part_a, std::vector<st
 	double error_b = regress_t_with_fixed_m(part_b, 0.0);
 	return error_a + error_b;
 }
-// What does it do ? 
+// What does it do ?
 
 int regression(boost::shared_ptr<std::vector<std::tuple<int, int, cv::Mat, cv::Mat>>>& needle_width) {
 	std::vector<std::tuple<int, int>> widths;
