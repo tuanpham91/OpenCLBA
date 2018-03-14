@@ -109,11 +109,11 @@ float checkMaxBoundsForValueCL(float value, float end, float step) {
 }
 
 //  shift_and_roll_without_sum
-__kernel void computeDifferencesForCorrespondence(__global float **correspondence_count, __global int size, __global int **angle_count,) {
+__kernel void computeDifferencesForCorrespondence(__global float *correspondence_count, __global int *size, __global int *angle_count,) {
     int i  = get_global_id(0);
-    float angle_temp = correspondence_count[i][0];
-    float shift_temp = correspondence_count[i][1];
-    float count_temp = correspondence_count[i][2];
+    float angle_temp = correspondence_count[i];
+    float shift_temp = correspondence_count[i+1];
+    float count_temp = correspondence_count[i+2];
     float angleStart;
     float angleStep;
     float angleEnd;
@@ -123,20 +123,20 @@ __kernel void computeDifferencesForCorrespondence(__global float **correspondenc
     float **iterator;
     int iter_help;
     for (int  i = 0; i < size ; i++) {
-      if (angle_count[i][0]==angle_temp) {
+      if (angle_count[i]==angle_temp) {
         iter_help = i;
         break;
       }
     }
 
     if (iter_help != size) {
-      angle_count[iter_help][1] += count_temp;
+      angle_count[iter_help+1] += count_temp;
     } else {
       angle_count.push_back //TODO :
     }
 
     for (int  i = 0; i < size ; i++) {
-      if (shift_count[i][0]==shift_temp) {
+      if (shift_count[i]==shift_temp) {
         iter_help = i;
         break;
       }
@@ -150,23 +150,23 @@ __kernel void computeDifferencesForCorrespondence(__global float **correspondenc
 
     int max_index_angles = findMaxIndexOfVectorOfPairsCL(angle_count);
     int max_index_shift = findMaxIndexOfVectorOfPairsCL(shift_count);
-    int correspondence_index == findMaxIndexOfVectorOfTuplesCL(correspondence_count);
+    int correspondence_index = findMaxIndexOfVectorOfTuplesCL(correspondence_count);
 
     ;
-    float max_angle = angle_count[max_index_angles][0];
-    float max_shift = angle_count[max_index_angles][0];
+    float max_angle = angle_count[max_index_angles];
+    float max_shift = angle_count[max_index_angles];
 
     angleStart = checkMinBoundsForValueCL(max_angle,angleStart,angleStep);
     angleEnd = checkMaxBoundsForValueCL(max_angle,angleEnd, angleStep);
     shiftStart = checkMinBoundsForValueCL(max_shift,shiftStart,shiftStep);
     shiftEnd = checkMaxBoundsForValueCL(max_shift,shiftEnd,shiftStep);
-    angleStep /= 5.0f;
-    shiftStep /= 5.0f
+    angleStep= angleStep/5.0f;
+    shiftStep= shiftStep/5.0f;
     //TODO :
 }
 
 //https://stackoverflow.com/questions/7627098/what-is-a-lambda-expression-in-c11
-__kernel void findMaxIndexOfVectorOfPairsCL(__global float *angle_count, __global int *size,__global int *res) {
+void findMaxIndexOfVectorOfPairsCL(float *angle_count, int *size,int *res) {
   int max_index =0;
   float max= 0.0f;
   for (int i = 0 ; i < *size ; i++) {
@@ -178,7 +178,7 @@ __kernel void findMaxIndexOfVectorOfPairsCL(__global float *angle_count, __globa
   *res = max_index;
 }
 
-__kernel void findMaxIndexOfVectorOfTuplesCL(__global float *tuples, __global int size,__global int *res) {
+void findMaxIndexOfVectorOfTuplesCL(float *tuples,int *size,int *res) {
   int max_index =0;
   float max= 0.0f;
   //TODO : Review this
