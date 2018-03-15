@@ -50,7 +50,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
                                       ) {
 
     FILE *fp;
-    char fileName[] = "/home/tuan/Desktop/OpenCLBA-Local/OpenCLBA-Prod/kernel-original.cl";
+    char fileName[] = "/home/tuan/Desktop/OpenCLBA-Local/OpenCLBA/kernel-original.cl";
     char *source_str;
     size_t source_size;
     cl_int ret;
@@ -263,7 +263,7 @@ int main()
 
 
     FILE *fp;
-    char fileName[] = "/home/tuan/Desktop/OpenCLBA-Local/OpenCLBA-Prod/kernel.cl";
+    char fileName[] = "/home/tuan/Desktop/OpenCLBA-Local/OpenCLBA/kernel.cl";
     char *source_str;
     size_t source_size;
 

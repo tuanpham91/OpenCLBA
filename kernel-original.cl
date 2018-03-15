@@ -1,5 +1,5 @@
 void rotateWithCL(float angleInDegrees, float* res) {
-  float angle = angleInDegrees*(float)(0.01745328888);
+  float angle = (float)(angleInDegrees*(0.01745328888));
   res[0] = cos(angle);
   res[1] = -sin(angle);
   res[2] = 0;
@@ -81,7 +81,19 @@ __kernel void computeCorrespondencesCL(__global float *guess4f, __global float *
   else {
     input_transformed = input;
   }
-  //TODO
+
+
+
+
+
+  //TODO: , called it
+  /*
+    Methode : determine_correspondence (target, source,)
+    Called in : global_classification, line 74
+    Source : correspondence_estimation.hpp - 113
+
+  */
+
   //Correspondence Estimation ?
 }
 
@@ -197,18 +209,28 @@ void findMaxIndexOfVectorOfTuplesCL(float *tuples,int *size,int *res) {
 //https://github.com/PointCloudLibrary/pcl/blob/master/registration/include/pcl/registration/impl/correspondence_estimation.hpp
 
 //TODO : this one here should be parralized too
-void estimate_correspondence(float *input, float *output, float max_distance, float size_source, float size_target, float *result) {
+void determine_correspondence(float *input, float *output, float max_distance, float size_source, float size_target, float *result) {
   float max_distance_sqr = (float)max_distance*max_distance;
   int found = 0;
+
+  //TODO : KDSearch
   for (int i = 0 ; i!= size_source; i++) {
     for (int k = 0; k!= size_target; k++  ) {
-      if (calculate_distance(input[i],output[k])>max_distance) {
+      float dis;
+
+      //TODO : implement this       tree_->nearestKSearch (input_->points[*idx], 1, index, distance);
+
+      if (dis = calculate_distance(&input[i*3],&output[k*3])>max_distance) {
         continue;
       }
       //What if it finds more than 1 ?
-      result[found]= output[k];
+
+      //Save correspondence like this : Index of source point - Index-of found Point - distance
+
+      result[3*found]= (float)i;
+      result[3*found+1] =(float)k;
+      result[3*found+2] = dis;
       found = found+1;
-      break;
       //ADD TO Correspondence cloud.
     }
   }
