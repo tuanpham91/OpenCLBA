@@ -82,9 +82,10 @@ void determine_correspondence(__global float *input, __global float *output,__gl
   }
 }
 //  shift_and_roll_without_sum
-void computeCorrespondencesCL(__global float *input_transformed,__global float *guess4f, __global float *input, __global float *target, __global int *size_input, __global int *size_output, __global float *correspondence_result ) {
+void computeCorrespondencesCL(__private float *guess4f,__global float *input, __global float *target,__global float *correspondence_result,__global int *size_input, __global int *size_output) {
   bool ident = true;
   int s_input_local = size_input[0];
+  float input_transformed[s_input_local];
   //check for identity
   for (int i = 0 ; i < 4 ; i++) {
     for (int k = 0; i < 4 ; k++) {
@@ -262,7 +263,7 @@ __kernel void shift_and_roll_without_sum_loop(__global float* initialTranslation
 
 
 
-__kernel void shift_and_roll_without_sum_loop(__global float* floatArgs, __global float* count, __global float* initialTranslation, __global float* direction,__global float* model_voxelized, __global float* point_cloud_ptr, __global float *rotation) {
+__kernel void shift_and_roll_without_sum_loop(__global float* floatArgs, __global float* count, __global float* initialTranslation, __global float* direction,__global float* model_voxelized, __global float* point_cloud_ptr, __global float *rotation, __global int *model_voxelized_size, __global int *point_cloud_ptr_size, __global float *correspondence_result) {
   int angle = get_global_id(0);
   int shift = get_global_id(1);
 
@@ -280,10 +281,12 @@ __kernel void shift_and_roll_without_sum_loop(__global float* floatArgs, __globa
   float trans[3];
   float transform[16];
 
+
   rotateByAngleCL(angle_min+ angle*angle_step, rot);
   shiftByValueCL(shift_min+ shift*shift_step, initialTranslation, direction, trans);
   buildTransformationMatrixCL(rot,trans,transform);
 
-  //TODO : Assert this
-  count = computeCorrespondencesCL(transform,model_voxelized,point_cloud_ptr);
+  //TODO :
+  //TODO : Need variable for correspondences
+  computeCorrespondencesCL(transform,model_voxelized,point_cloud_ptr, correspondence_result, model_voxelized_size, point_cloud_ptr_size);
 }
