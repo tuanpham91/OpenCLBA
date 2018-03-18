@@ -1,28 +1,27 @@
-void rotateWithCL(float angleInDegrees, float* res) {
+void rotateByAngleCL(float angleInDegrees, float* res) {
   float angle = (float)(angleInDegrees*(0.01745328888));
   res[0] = cos(angle);
   res[1] = -sin(angle);
-  res[2] = 0;
+  res[2] = 0.0f;
   res[3] = sin(angle);
   res[4] = cos(angle);
-  res[5] = 0;
-  res[6] = 0;
-  res[7] = 0;
-  res[6] = 1;
+  res[5] = 0.0f;
+  res[6] = 0.0f;
+  res[7] = 0.0f;
+  res[6] = 1.0f;
 }
 
 //  shift_and_roll_without_sum
-float3 shiftByValueCL(float shift,float *currentTranslation,float *direction ) {
-  float v1 = currentTranslation[0]*shift/direction[2];
-  float v2 = currentTranslation[1]*shift/direction[2];
-  float v3 = currentTranslation[2]*shift/direction[2];
-  return (float3)(v1,v2,v3);
+void shiftByValueCL(float shift,__global float *currentTranslation,__global float *direction, __private float *trans) {
+  trans[0] = currentTranslation[0]*shift/direction[2];
+  trans[1] = currentTranslation[1]*shift/direction[2];
+  trans[2] = currentTranslation[2]*shift/direction[2];
 }
 
 //https://stackoverflow.com/questions/36410745/how-to-pass-c-vector-of-vectors-to-opencl-kernel
 
 //  shift_and_roll_without_sum
-void buildTransformationMatrixCL(float *rotation, float3 translation, float *transformation ) {
+void buildTransformationMatrixCL(float *rotation, float *translation, float *transformation ) {
   transformation[0] = rotation[0];
   transformation[1] = rotation[1];
   transformation[2] = rotation[2];
@@ -40,21 +39,52 @@ void buildTransformationMatrixCL(float *rotation, float3 translation, float *tra
   transformation[14] = 0;
   transformation[15] = 1;
 }
-
-void rigidTransformationCL (int size,float *input,float *transformation_matrix) {
+float calculate_distance(__global float *pointA, __global float *pointB)  {
+  float a = (pointA[0] - pointB[0])*(pointA[0] - pointB[0]);
+  float b = (pointA[1] - pointB[1])*(pointA[1] - pointB[1]);
+  float c = (pointA[2] - pointB[2])*(pointA[2] - pointB[2]);
+  return sqrt(a+b+c);
+}
+void rigidTransformationCL (int size,__global float *input, __global float *transformation_matrix, __global float *input_transformed) {
   for (int i = 0; i< size ; i++) {
       float temp = input[4*i];
-      input[4*i] = temp*transformation_matrix[0] + input[4*i+1]*transformation_matrix[1] + input[4*i+2]*transformation_matrix[2]+ input[4*i+3]*transformation_matrix[3];
-      input[4*i+1] = temp*transformation_matrix[4] + input[4*i+1]*transformation_matrix[5] + input[4*i+2]*transformation_matrix[6]+ input[4*i+3]*transformation_matrix[7];
-      input[4*i+2] = temp*transformation_matrix[8] + input[4*i+1]*transformation_matrix[9] + input[4*i+2]*transformation_matrix[10]+ input[4*i+3]*transformation_matrix[11];
-      input[4*i+3] = temp*transformation_matrix[12] + input[4*i+1]*transformation_matrix[13] + input[4*i+2]*transformation_matrix[14]+ input[4*i+3]*transformation_matrix[15];
+      input_transformed[4*i] = temp*transformation_matrix[0] + input[4*i+1]*transformation_matrix[1] + input[4*i+2]*transformation_matrix[2]+ input[4*i+3]*transformation_matrix[3];
+      input_transformed[4*i+1] = temp*transformation_matrix[4] + input[4*i+1]*transformation_matrix[5] + input[4*i+2]*transformation_matrix[6]+ input[4*i+3]*transformation_matrix[7];
+      input_transformed[4*i+2] = temp*transformation_matrix[8] + input[4*i+1]*transformation_matrix[9] + input[4*i+2]*transformation_matrix[10]+ input[4*i+3]*transformation_matrix[11];
+      input_transformed[4*i+3] = temp*transformation_matrix[12] + input[4*i+1]*transformation_matrix[13] + input[4*i+2]*transformation_matrix[14]+ input[4*i+3]*transformation_matrix[15];
+  }
+}
+
+void determine_correspondence(__global float *input, __global float *output,__global int *size_source, __global int *size_target, __global float *result) {
+  float max_distance_sqr = (float) 0.0004f;
+  int found = 0;
+
+  //TODO : KDSearch
+  for (int i = 0 ; i!= *size_source; i++) {
+    for (int k = 0; k!= *size_target; k++  ) {
+      float dis;
+
+      //TODO : implement this       tree_->nearestKSearch (input_->points[*idx], 1, index, distance);
+      //TODO : Review the 0.02f
+      if ((dis == calculate_distance(&input[i*3],&output[k*3]))>0.02f) {
+        continue;
+      }
+      //What if it finds more than 1 ?
+
+      //Save correspondence like this : Index of source point - Index-of found Point - distance
+      //Add Correspondence to Result
+      result[3*found]= (float)i;
+      result[3*found+1] =(float)k;
+      result[3*found+2] = dis;
+      found = found+1;
+      //ADD TO Correspondence cloud.
+    }
   }
 }
 //  shift_and_roll_without_sum
-__kernel void computeCorrespondencesCL(__global float *guess4f, __global float *input, __global float *target ) {
-  //TODO : Best way to send a matrix
-  float *input_transformed;
+void computeCorrespondencesCL(__global float *input_transformed,__global float *guess4f, __global float *input, __global float *target, __global int *size_input, __global int *size_output, __global float *correspondence_result ) {
   bool ident = true;
+  int s_input_local = size_input[0];
   //check for identity
   for (int i = 0 ; i < 4 ; i++) {
     for (int k = 0; i < 4 ; k++) {
@@ -76,15 +106,11 @@ __kernel void computeCorrespondencesCL(__global float *guess4f, __global float *
   //RIGID transformation Definition at line 190 of file transforms.h.
   //https://libpointmatcher.readthedocs.io/en/latest/Transformations/
   if (ident) {
-    rigidTransformationCL(guess4f,input,input_transformed);
+    rigidTransformationCL(s_input_local,input,guess4f, input_transformed);
   }
   else {
     input_transformed = input;
   }
-
-
-
-
 
   //TODO: , called it
   /*
@@ -93,7 +119,8 @@ __kernel void computeCorrespondencesCL(__global float *guess4f, __global float *
     Source : correspondence_estimation.hpp - 113
 
   */
-
+  float *res;
+  determine_correspondence(input_transformed,target, size_input, size_output, correspondence_result);
   //Correspondence Estimation ?
 }
 
@@ -120,8 +147,37 @@ float checkMaxBoundsForValueCL(float value, float end, float step) {
 	return end;
 }
 
+
+
+int findMaxIndexOfVectorOfTuplesCL(__global float *tuples,__global int *size) {
+  int max_index =0;
+  float max= 0.0f;
+  //TODO : Review this
+  for (int i = 0 ; i < size[0] ; i++) {
+    if (tuples[i*3+2]>max) {
+      max = tuples[i*3+2];
+      max_index = i;
+    }
+  }
+  return max_index;
+}
+
+int findMaxIndexOfVectorOfPairsCL(__global float *angle_count,__global int *size) {
+  int max_index =0;
+  float max= 0.0f;
+  for (int i = 0 ; i < size[0] ; i++) {
+    if (angle_count[3*i+1]>max) {
+      max = angle_count[i*3+1];
+      max_index = i;
+    }
+  }
+  return max_index;
+}
+
+
+//TODO : 18.03 What is actually be done here ?
 //  shift_and_roll_without_sum
-__kernel void computeDifferencesForCorrespondence(__global float *correspondence_count, __global int *size, __global int *angle_count,) {
+__kernel void computeDifferencesForCorrespondence(__global float *correspondence_count, __global int *size_correspondence_count, __global int *size_angle_count, __global float *angle_count, __global float *shift_count, __global int *size_shift_count) {
     int i  = get_global_id(0);
     float angle_temp = correspondence_count[i];
     float shift_temp = correspondence_count[i+1];
@@ -130,39 +186,41 @@ __kernel void computeDifferencesForCorrespondence(__global float *correspondence
     float angleStep;
     float angleEnd;
     float shiftStart = 0.0f;
-    float shiftEnd = 0.5;
+    float shiftEnd = 0.5f;
     float shiftStep = 0.05f;
     float **iterator;
     int iter_help;
-    for (int  i = 0; i < size ; i++) {
+    for (int  i = 0; i < size_angle_count[0] ; i++) {
       if (angle_count[i]==angle_temp) {
         iter_help = i;
         break;
       }
     }
 
-    if (iter_help != size) {
+    if (iter_help != size_angle_count[0]) {
       angle_count[iter_help+1] += count_temp;
     } else {
       angle_count.push_back //TODO :
     }
 
-    for (int  i = 0; i < size ; i++) {
+    for (int  i = 0; i < size_shift_count[0] ; i++) {
       if (shift_count[i]==shift_temp) {
         iter_help = i;
         break;
       }
     }
 
-    if (iter_help != size) {
-      shift_count[iter_help][1] += shift_temp;
+    if (iter_help != size_shift_count[0]) {
+      shift_count[iter_help+1] += shift_temp;
     } else {
       angle_count.push_back //TODO :
     }
+    //TODO : Which size here
+    int max_index_angles= findMaxIndexOfVectorOfPairsCL(angle_count,size_angle_count);
+    //TODO : Which size here
+    int max_index_shift = findMaxIndexOfVectorOfPairsCL(shift_count,size_shift_count);
 
-    int max_index_angles = findMaxIndexOfVectorOfPairsCL(angle_count);
-    int max_index_shift = findMaxIndexOfVectorOfPairsCL(shift_count);
-    int correspondence_index = findMaxIndexOfVectorOfTuplesCL(correspondence_count);
+    int correspondence_index = findMaxIndexOfVectorOfTuplesCL(correspondence_count, size_correspondence_count);
 
     ;
     float max_angle = angle_count[max_index_angles];
@@ -178,30 +236,8 @@ __kernel void computeDifferencesForCorrespondence(__global float *correspondence
 }
 
 //https://stackoverflow.com/questions/7627098/what-is-a-lambda-expression-in-c11
-void findMaxIndexOfVectorOfPairsCL(float *angle_count, int *size,int *res) {
-  int max_index =0;
-  float max= 0.0f;
-  for (int i = 0 ; i < *size ; i++) {
-    if (angle_count[3*i+1]>max) {
-      max = angle_count[i*3+1];
-      max_index = i;
-    }
-  }
-  *res = max_index;
-}
 
-void findMaxIndexOfVectorOfTuplesCL(float *tuples,int *size,int *res) {
-  int max_index =0;
-  float max= 0.0f;
-  //TODO : Review this
-  for (int i = 0 ; i < size ; i++) {
-    if (tuples[i*3+2]>max) {
-      max = tuples[i*3+2];
-      max_index = i;
-    }
-  }
-  *res = max_index;
-}
+
 
 
 //http://docs.pointclouds.org/1.7.0/classpcl_1_1registration_1_1_correspondence_estimation.html
@@ -209,40 +245,10 @@ void findMaxIndexOfVectorOfTuplesCL(float *tuples,int *size,int *res) {
 //https://github.com/PointCloudLibrary/pcl/blob/master/registration/include/pcl/registration/impl/correspondence_estimation.hpp
 
 //TODO : this one here should be parralized too
-void determine_correspondence(float *input, float *output, float max_distance, float size_source, float size_target, float *result) {
-  float max_distance_sqr = (float)max_distance*max_distance;
-  int found = 0;
-
-  //TODO : KDSearch
-  for (int i = 0 ; i!= size_source; i++) {
-    for (int k = 0; k!= size_target; k++  ) {
-      float dis;
-
-      //TODO : implement this       tree_->nearestKSearch (input_->points[*idx], 1, index, distance);
-
-      if (dis = calculate_distance(&input[i*3],&output[k*3])>max_distance) {
-        continue;
-      }
-      //What if it finds more than 1 ?
-
-      //Save correspondence like this : Index of source point - Index-of found Point - distance
-
-      result[3*found]= (float)i;
-      result[3*found+1] =(float)k;
-      result[3*found+2] = dis;
-      found = found+1;
-      //ADD TO Correspondence cloud.
-    }
-  }
-}
 
 
-float calculate_distance(float *pointA, float *pointB)  {
-  float a = (pointA[0] - pointB[0])*(pointA[0] - pointB[0]);
-  float b = (pointA[1] - pointB[1])*(pointA[1] - pointB[1]);
-  float c = (pointA[2] - pointB[2])*(pointA[2] - pointB[2]);
-  return sqrt(a+b+c);
-}
+
+
 
 /*
 
@@ -269,15 +275,15 @@ __kernel void shift_and_roll_without_sum_loop(__global float* floatArgs, __globa
   float shift_max = floatArgs[4];
   float shift_step = floatArgs[5];
 
+  //TODO : DO memory reservation here
+  float rot[9];
+  float trans[3];
+  float transform[16];
 
-  float **rotated;
-  float **transform;
-  //TODO
-  rotateWithCL(angle_min+ angle*angle_step, rotation, rotated);
-//TODO
-  float3 trans = shiftByValueCL(shift_min+ shift*shift_step, initialTranslation, direction );
-  buildTransformationMatrixCL(rotated,&trans,transform);
+  rotateByAngleCL(angle_min+ angle*angle_step, rot);
+  shiftByValueCL(shift_min+ shift*shift_step, initialTranslation, direction, trans);
+  buildTransformationMatrixCL(rot,trans,transform);
 
   //TODO : Assert this
-  count = computeCorrespondencesCL(transform,model_voxelized,point_cloud_ptr );
+  count = computeCorrespondencesCL(transform,model_voxelized,point_cloud_ptr);
 }

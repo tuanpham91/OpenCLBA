@@ -328,7 +328,7 @@ int main()
 
 
 
-    //http://do wnloads.ti.com/mctools/esd/docs/opencl/execution/kernels-workgroups-workitems.html
+    //http://downloads.ti.com/mctools/esd/docs/opencl/execution/kernels-workgroups-workitems.html
 
     //Test with one iteration
 

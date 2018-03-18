@@ -1,42 +1,9 @@
-input.cl:2:40: warning: double precision constant requires cl_khr_fp64, casting to single precision
-input.cl:79:27: warning: incompatible pointer to integer conversion passing '__global float *' to parameter of type 'int'
-input.cl:44:33: note: passing argument to parameter 'size' here
-input.cl:79:35: error: passing '__global float *' to parameter of type 'float *' changes address space of pointer
-input.cl:44:45: note: passing argument to parameter 'input' here
-input.cl:82:23: error: assigning '__global float *' to 'float *' changes address space of pointer
-input.cl:112:135: error: expected parameter declarator
-input.cl:121:22: warning: double precision constant requires cl_khr_fp64, casting to single precision
-input.cl:125:24: warning: ordered comparison between pointer and integer ('int' and '__global int *')
-input.cl:132:19: warning: comparison between pointer and integer ('int' and '__global int *')
-input.cl:135:18: error: member reference base type '__global int *' is not a structure or union
-input.cl:138:24: warning: ordered comparison between pointer and integer ('int' and '__global int *')
-input.cl:139:11: error: use of undeclared identifier 'shift_count'
-input.cl:145:19: warning: comparison between pointer and integer ('int' and '__global int *')
-input.cl:146:7: error: use of undeclared identifier 'shift_count'
-input.cl:148:18: error: member reference base type '__global int *' is not a structure or union
-input.cl:151:28: error: implicit declaration of function 'findMaxIndexOfVectorOfPairsCL' is invalid in OpenCL
-input.cl:152:57: error: use of undeclared identifier 'shift_count'
-input.cl:153:32: error: implicit declaration of function 'findMaxIndexOfVectorOfTuplesCL' is invalid in OpenCL
-input.cl:153:32: note: did you mean 'findMaxIndexOfVectorOfPairsCL'?
-input.cl:151:28: note: 'findMaxIndexOfVectorOfPairsCL' declared here
-input.cl:169:6: error: conflicting types for 'findMaxIndexOfVectorOfPairsCL'
-input.cl:151:28: note: previous implicit declaration is here
-input.cl:181:6: error: conflicting types for 'findMaxIndexOfVectorOfTuplesCL'
-input.cl:153:32: note: previous implicit declaration is here
-input.cl:185:22: warning: ordered comparison between pointer and integer ('int' and 'int *')
-input.cl:205:11: error: implicit declaration of function 'calculate_distance' is invalid in OpenCL
-input.cl:218:7: error: conflicting types for 'calculate_distance'
-input.cl:205:11: note: previous implicit declaration is here
-input.cl:254:55: error: too many arguments to function call, expected 2, have 3
-input.cl:1:1: note: 'rotateWithCL' declared here
-input.cl:256:62: error: passing '__global float *' to parameter of type 'float *' changes address space of pointer
-input.cl:15:42: note: passing argument to parameter 'currentTranslation' here
-input.cl:256:82: error: passing '__global float *' to parameter of type 'float *' changes address space of pointer
-input.cl:15:68: note: passing argument to parameter 'direction' here
-input.cl:257:31: warning: incompatible pointer types passing 'float **' to parameter of type 'float *'; dereference with *
+input.cl:2:41: warning: double precision constant requires cl_khr_fp64, casting to single precision
+input.cl:205:18: error: member reference base type '__global float *' is not a structure or union
+input.cl:218:18: error: member reference base type '__global float *' is not a structure or union
+input.cl:287:31: warning: incompatible pointer types passing 'float **' to parameter of type 'float *'; dereference with *
 input.cl:25:41: note: passing argument to parameter 'rotation' here
-input.cl:257:39: error: passing 'float3 *' to parameter of incompatible type 'float3' (vector of 3 'float' values); remove &
+input.cl:287:39: error: passing 'float3 *' to parameter of incompatible type 'float3' (vector of 3 'float' values); remove &
 input.cl:25:58: note: passing argument to parameter 'translation' here
-input.cl:260:36: warning: incompatible pointer types passing 'float **' to parameter of type '__global float *'
-input.cl:54:56: note: passing argument to parameter 'guess4f' here
-input.cl:260:9: error: assigning to '__global float *' from incompatible type 'void'
+input.cl:290:77: error: too few arguments to function call, expected 7, have 3
+input.cl:86:1: note: 'computeCorrespondencesCL' declared here
