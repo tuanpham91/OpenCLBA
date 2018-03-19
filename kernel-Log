@@ -1,9 +1,4 @@
 input.cl:2:41: warning: double precision constant requires cl_khr_fp64, casting to single precision
-input.cl:205:18: error: member reference base type '__global float *' is not a structure or union
-input.cl:218:18: error: member reference base type '__global float *' is not a structure or union
-input.cl:287:31: warning: incompatible pointer types passing 'float **' to parameter of type 'float *'; dereference with *
-input.cl:25:41: note: passing argument to parameter 'rotation' here
-input.cl:287:39: error: passing 'float3 *' to parameter of incompatible type 'float3' (vector of 3 'float' values); remove &
-input.cl:25:58: note: passing argument to parameter 'translation' here
-input.cl:290:77: error: too few arguments to function call, expected 7, have 3
-input.cl:86:1: note: 'computeCorrespondencesCL' declared here
+input.cl:88:26: error: variable length arrays are not supported in OpenCL
+input.cl:204:18: error: member reference base type '__global float *' is not a structure or union
+input.cl:217:18: error: member reference base type '__global float *' is not a structure or union

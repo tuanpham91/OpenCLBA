@@ -45,7 +45,7 @@ float calculate_distance(__global float *pointA, __global float *pointB)  {
   float c = (pointA[2] - pointB[2])*(pointA[2] - pointB[2]);
   return sqrt(a+b+c);
 }
-void rigidTransformationCL (int size,__global float *input, __global float *transformation_matrix, __global float *input_transformed) {
+void rigidTransformationCL (int size,__global float *input, __private float *transformation_matrix, __global float *input_transformed) {
   for (int i = 0; i< size ; i++) {
       float temp = input[4*i];
       input_transformed[4*i] = temp*transformation_matrix[0] + input[4*i+1]*transformation_matrix[1] + input[4*i+2]*transformation_matrix[2]+ input[4*i+3]*transformation_matrix[3];
@@ -82,10 +82,10 @@ void determine_correspondence(__global float *input, __global float *output,__gl
   }
 }
 //  shift_and_roll_without_sum
-void computeCorrespondencesCL(__private float *guess4f,__global float *input, __global float *target,__global float *correspondence_result,__global int *size_input, __global int *size_output) {
+void computeCorrespondencesCL(__private float *guess4f,__global float *input, __global float *target,__global float *correspondence_result,__global int *size_input, __global int *size_output, __global float *input_transformed ) {
   bool ident = true;
   int s_input_local = size_input[0];
-  float input_transformed[s_input_local];
+
   //check for identity
   for (int i = 0 ; i < 4 ; i++) {
     for (int k = 0; i < 4 ; k++) {
@@ -178,6 +178,8 @@ int findMaxIndexOfVectorOfPairsCL(__global float *angle_count,__global int *size
 
 //TODO : 18.03 What is actually be done here ?
 //  shift_and_roll_without_sum
+
+// TUAN : Line 374 global_classification
 __kernel void computeDifferencesForCorrespondence(__global float *correspondence_count, __global int *size_correspondence_count, __global int *size_angle_count, __global float *angle_count, __global float *shift_count, __global int *size_shift_count) {
     int i  = get_global_id(0);
     float angle_temp = correspondence_count[i];
@@ -201,7 +203,9 @@ __kernel void computeDifferencesForCorrespondence(__global float *correspondence
     if (iter_help != size_angle_count[0]) {
       angle_count[iter_help+1] += count_temp;
     } else {
-      angle_count.push_back //TODO :
+      //Add more into angle_count
+      //TODO : Size angle count here is not defined
+      //angle_count. //TODO :
     }
 
     for (int  i = 0; i < size_shift_count[0] ; i++) {
@@ -214,7 +218,7 @@ __kernel void computeDifferencesForCorrespondence(__global float *correspondence
     if (iter_help != size_shift_count[0]) {
       shift_count[iter_help+1] += shift_temp;
     } else {
-      angle_count.push_back //TODO :
+      //angle_count.push_back //TODO :
     }
     //TODO : Which size here
     int max_index_angles= findMaxIndexOfVectorOfPairsCL(angle_count,size_angle_count);
@@ -263,7 +267,7 @@ __kernel void shift_and_roll_without_sum_loop(__global float* initialTranslation
 
 
 
-__kernel void shift_and_roll_without_sum_loop(__global float* floatArgs, __global float* count, __global float* initialTranslation, __global float* direction,__global float* model_voxelized, __global float* point_cloud_ptr, __global float *rotation, __global int *model_voxelized_size, __global int *point_cloud_ptr_size, __global float *correspondence_result) {
+__kernel void shift_and_roll_without_sum_loop(__global float* floatArgs, __global float* count, __global float* initialTranslation, __global float* direction,__global float* model_voxelized, __global float* point_cloud_ptr, __global float *rotation, __global int *model_voxelized_size, __global int *point_cloud_ptr_size, __global float *correspondence_result, __global float *input_transformed) {
   int angle = get_global_id(0);
   int shift = get_global_id(1);
 
@@ -288,5 +292,5 @@ __kernel void shift_and_roll_without_sum_loop(__global float* floatArgs, __globa
 
   //TODO :
   //TODO : Need variable for correspondences
-  computeCorrespondencesCL(transform,model_voxelized,point_cloud_ptr, correspondence_result, model_voxelized_size, point_cloud_ptr_size);
+  computeCorrespondencesCL(transform,model_voxelized,point_cloud_ptr, correspondence_result, model_voxelized_size, point_cloud_ptr_size,input_transformed);
 }
