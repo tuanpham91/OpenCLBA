@@ -1,5 +1,6 @@
 
 Auxiliarry function :
 https://stackoverflow.com/questions/7196552/opencl-is-it-possible-to-invoke-another-function-from-within-a-kernel
-
-Using Primitive Datatypes like cl_char .. 
+https://stackoverflow.com/questions/2924619/opencl-user-defined-inline-functions
+https://stackoverflow.com/questions/17895366/opencl-auxiliary-function-call-not-working
+Using Primitive Datatypes like cl_char ..
