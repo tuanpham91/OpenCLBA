@@ -1,4 +1,5 @@
-void rotateByAngleCL(float angleInDegrees, float8 res) {
+#pragma OPENCL EXTENSION cl_khr_fp64 : enable
+void rotateByAngleCL(float angleInDegrees, float *res) {
   float angle = (float)(angleInDegrees*(0.01745328888));
   res[0] = cos(angle);
   res[1] = -sin(angle);
@@ -12,7 +13,7 @@ void rotateByAngleCL(float angleInDegrees, float8 res) {
 }
 
 //  shift_and_roll_without_sum
-void shiftByValueCL(float shift,float3 currentTranslation,float3 direction,float3 trans) {
+void shiftByValueCL(float shift,__global float *currentTranslation,__global float *direction,float *trans) {
   trans[0] = currentTranslation[0]*shift/direction[2];
   trans[1] = currentTranslation[1]*shift/direction[2];
   trans[2] = currentTranslation[2]*shift/direction[2];
@@ -21,7 +22,7 @@ void shiftByValueCL(float shift,float3 currentTranslation,float3 direction,float
 //https://stackoverflow.com/questions/36410745/how-to-pass-c-vector-of-vectors-to-opencl-kernel
 
 //  shift_and_roll_without_sum
-void buildTransformationMatrixCL(float9 rotation, float3 translation, float16 transformation ) {
+void buildTransformationMatrixCL(float *rotation, float *translation, float *transformation ) {
   transformation[0] = rotation[0];
   transformation[1] = rotation[1];
   transformation[2] = rotation[2];
@@ -45,7 +46,7 @@ float calculate_distance(__global float *pointA, __global float *pointB)  {
   float c = (pointA[2] - pointB[2])*(pointA[2] - pointB[2]);
   return sqrt(a+b+c);
 }
-void rigidTransformationCL (int size,__global float *input, __private float *transformation_matrix, __global float *input_transformed) {
+void rigidTransformationCL (int size,__global float *input, float4  transformation_matrix, __global float *input_transformed) {
   for (int i = 0; i< size ; i++) {
       float temp = input[4*i];
       input_transformed[4*i] = temp*transformation_matrix[0] + input[4*i+1]*transformation_matrix[1] + input[4*i+2]*transformation_matrix[2]+ input[4*i+3]*transformation_matrix[3];
@@ -203,14 +204,13 @@ __kernel void shiftAndRollWithoutSumLoop(__global float* floatArgs, __global flo
 
   //CHECKED
   rotateByAngleCL(angle_min+ angle*angle_step, rot);
-
   shiftByValueCL(shift_min+ shift*shift_step, initialTranslation, direction, trans);
   buildTransformationMatrixCL(rot,trans,transform);
 
   //computeCorrespondencesCL(transform,model_voxelized,point_cloud_ptr, correspondence_result, model_voxelized_size, point_cloud_ptr_size,input_transformed);
 
   bool ident = true;
-  int s_input_local = size_input[0];
+  int s_input_local = model_voxelized_size[0];
 
   //check for identity
   for (int i = 0 ; i < 4 ; i++) {
@@ -222,7 +222,7 @@ __kernel void shiftAndRollWithoutSumLoop(__global float* floatArgs, __global flo
         }
       }
       else {
-        if(guess4f[i*4+k]!= 0.0f) {
+        if(transform[i*4+k]!= 0.0f) {
           ident = false;
           break;
         }
@@ -234,17 +234,17 @@ __kernel void shiftAndRollWithoutSumLoop(__global float* floatArgs, __global flo
   //https://libpointmatcher.readthedocs.io/en/latest/Transformations/
   if (ident) {
     //This methode is replaced with following lines
-    //rigidTransformationCL(s_input_local,input,transform, input_transformed);
+    //rigidTransformationCL(s_input_local,model_voxelized,transform, input_transformed);
     for (int i = 0; i< s_input_local ; i++) {
-        float temp = input[4*i];
-        input_transformed[4*i] = temp*transform[0] + input[4*i+1]*transform[1] + input[4*i+2]*transformation_matrix[2]+ input[4*i+3]*transform[3];
-        input_transformed[4*i+1] = temp*transform[4] + input[4*i+1]*transform[5] + input[4*i+2]*transformation_matrix[6]+ input[4*i+3]*transform[7];
-        input_transformed[4*i+2] = temp*transform[8] + input[4*i+1]*transform[9] + input[4*i+2]*transformation_matrix[10]+ input[4*i+3]*transform[11];
-        input_transformed[4*i+3] = temp*transformn[12] + input[4*i+1]*transform[13] + input[4*i+2]*transformation_matrix[14]+ input[4*i+3]*transform[15];
+        float temp = model_voxelized[4*i];
+        input_transformed[4*i] = temp*transform[0] + model_voxelized[4*i+1]*transform[1] + model_voxelized[4*i+2]*transform[2]+ model_voxelized[4*i+3]*transform[3];
+        input_transformed[4*i+1] = temp*transform[4] + model_voxelized[4*i+1]*transform[5] + model_voxelized[4*i+2]*transform[6]+ model_voxelized[4*i+3]*transform[7];
+        input_transformed[4*i+2] = temp*transform[8] + model_voxelized[4*i+1]*transform[9] + model_voxelized[4*i+2]*transform[10]+ model_voxelized[4*i+3]*transform[11];
+        input_transformed[4*i+3] = temp*transform[12] + model_voxelized[4*i+1]*transform[13] + model_voxelized[4*i+2]*transform[14]+ model_voxelized[4*i+3]*transform[15];
     }
   }
   else {
-    input_transformed = input;
+    input_transformed = model_voxelized;
   }
 
 
@@ -258,20 +258,20 @@ __kernel void shiftAndRollWithoutSumLoop(__global float* floatArgs, __global flo
 
   float *res;
   //This methode is replaced with following lines
-  determine_correspondence(input_transformed,target, size_input, size_output, correspondence_result);
+  //determine_correspondence(input_transformed,target, size_input, size_output, correspondence_result);
   //TODO : Tuan : 21.03.2018 : This line caused error, reread about calling internal kernel code, or merge these two methods into one
 
   float max_distance_sqr = (float) 0.0004f;
   int found = 0;
 
   //TODO : KDSearch
-  for (int i = 0 ; i!= size_input; i++) {
-    for (int k = 0; k!= size_output; k++  ) {
+    for (int i = 0 ; i!= *model_voxelized_size; i++) {
+    for (int k = 0; k!= *point_cloud_ptr_size; k++  ) {
       float dis;
 
       //TODO : implement this       tree_->nearestKSearch (input_->points[*idx], 1, index, distance);
       //TODO : Review the 0.02f
-      if ((dis == calculate_distance(input_transformed[i*3],target[k*3]))>0.02f) {
+      if ((dis == calculate_distance(&input_transformed[i*3],&point_cloud_ptr[k*3]))>0.02f) {
         continue;
       }
       //What if it finds more than 1 ?

@@ -16,7 +16,7 @@ __kernel float3 shiftByValueCL(__global float shift,__global float *currentTrans
   float v3 = currentTranslation[2]*shift/direction[2];
   return (float4)(v1,v2,v3);
 }
-__kernel void buildTransformationMatrixCL(float **rotation, float3 *translation, float **transformation ) {
+__kernel void buildTransformationMatrixCL(float **rotation, float3 translation, float **transformation ) {
   transformation[0][0] = rotation[0][0];
   transformation[0][1] = rotation[0][1];
   transformation[0][2] = rotation[0][2];
