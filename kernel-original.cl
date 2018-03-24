@@ -180,6 +180,37 @@ int findMaxIndexOfVectorOfPairsCL(__global float *angle_count,__global int *size
 //  shift_and_roll_without_sum
 
 // TUAN : Line 374 global_classification
+
+__kernel void shiftAndRollWithoutSumLoop(__global float* floatArgs, __global float* count, __global float* initialTranslation, __global float* direction,__global float* model_voxelized, __global float* point_cloud_ptr, __global float *rotation, __global int *model_voxelized_size, __global int *point_cloud_ptr_size, __global float *correspondence_result, __global float *input_transformed) {
+
+  int angle = get_global_id(0);
+  int shift = get_global_id(1);
+
+  float angle_min = floatArgs[0];
+  float angle_max = floatArgs[1];
+
+  float angle_step = floatArgs[2];
+  float shift_min  = floatArgs[3];
+
+  float shift_max = floatArgs[4];
+  float shift_step = floatArgs[5];
+
+  //TODO : DO memory reservation here
+  float rot[9];
+  float trans[3];
+  float transform[16];
+
+
+  rotateByAngleCL(angle_min+ angle*angle_step, rot);
+  shiftByValueCL(shift_min+ shift*shift_step, initialTranslation, direction, trans);
+  buildTransformationMatrixCL(rot,trans,transform);
+
+  //TODO :
+  //TODO : Need variable for correspondences
+  //computeCorrespondencesCL(transform,model_voxelized,point_cloud_ptr, correspondence_result, model_voxelized_size, point_cloud_ptr_size,input_transformed);
+
+}
+
 __kernel void computeDifferencesForCorrespondence(__global float *correspondence_count, __global int *size_correspondence_count, __global int *size_angle_count, __global float *angle_count, __global float *shift_count, __global int *size_shift_count) {
     int i  = get_global_id(0);
     float angle_temp = correspondence_count[i];
@@ -266,31 +297,6 @@ __kernel void shift_and_roll_without_sum_loop(__global float* initialTranslation
 */
 
 
+/*
 
-__kernel void shift_and_roll_without_sum_loop(__global float* floatArgs, __global float* count, __global float* initialTranslation, __global float* direction,__global float* model_voxelized, __global float* point_cloud_ptr, __global float *rotation, __global int *model_voxelized_size, __global int *point_cloud_ptr_size, __global float *correspondence_result, __global float *input_transformed) {
-  int angle = get_global_id(0);
-  int shift = get_global_id(1);
-
-  float angle_min = floatArgs[0];
-  float angle_max = floatArgs[1];
-
-  float angle_step = floatArgs[2];
-  float shift_min  = floatArgs[3];
-
-  float shift_max = floatArgs[4];
-  float shift_step = floatArgs[5];
-
-  //TODO : DO memory reservation here
-  float rot[9];
-  float trans[3];
-  float transform[16];
-
-
-  rotateByAngleCL(angle_min+ angle*angle_step, rot);
-  shiftByValueCL(shift_min+ shift*shift_step, initialTranslation, direction, trans);
-  buildTransformationMatrixCL(rot,trans,transform);
-
-  //TODO :
-  //TODO : Need variable for correspondences
-  computeCorrespondencesCL(transform,model_voxelized,point_cloud_ptr, correspondence_result, model_voxelized_size, point_cloud_ptr_size,input_transformed);
-}
+*/

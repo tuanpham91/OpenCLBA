@@ -75,13 +75,13 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     float count_cl [prod][3];
 
     ret = clGetPlatformIDs(1, &platform_id, &ret_num_platforms);
-    std::cout<<ret<<" code"<<std::endl;
+    std::cout<<ret<<" 1.  code"<<std::endl;
 
     ret = clGetDeviceIDs(platform_id, CL_DEVICE_TYPE_DEFAULT, 1, &device_id, &ret_num_devices);
-    std::cout<<ret<<" code"<<std::endl;
+    std::cout<<ret<<" 2.  code"<<std::endl;
 
     context = clCreateContext(NULL, 1, &device_id, NULL, NULL, &ret);
-    std::cout<<ret<<" code"<<std::endl;
+    std::cout<<ret<<" 3.  code"<<std::endl;
 
     command_queue = clCreateCommandQueue(context, device_id, 0, &ret);
 
@@ -90,10 +90,10 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     float args[6] ={angle_min, angle_max, angle_step, shift_min, shift_max, shift_step};
 
     program = clCreateProgramWithSource(context,1,(const char**)&source_str, (const size_t*)&source_size, &ret);
-    std::cout<<ret<<" code"<<std::endl;
+    std::cout<<ret<<" 4.  code"<<std::endl;
 
     ret = clBuildProgram(program, 1, &device_id, NULL, NULL, NULL);
-    std::cout<<ret<<" code"<<std::endl;
+    std::cout<<ret<<" 5. code"<<std::endl;
     if (ret == CL_BUILD_PROGRAM_FAILURE) {
         // Determine the size of the log
         size_t log_size;
@@ -109,7 +109,10 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
         printf("%s\n", log);
     }
     // TODO : Adjust kernel here, 4 //  err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &buffer_one); 4.ARG!
-    kernel = clCreateKernel(program,"shift_and_roll_without_sum_loop", &ret);
+
+
+    std::cout<<"START KERNEL"<<std::endl;
+    kernel = clCreateKernel(program,"shiftAndRollWithoutSumLoop", &ret);
     std::cout<<ret<<" Arg code 0: "<<std::endl;
 
     //0. Arg
@@ -202,12 +205,10 @@ int main()
     pcl::PointCloud<pcl::PointXYZ>::Ptr modelTransformed(new pcl::PointCloud<pcl::PointXYZ>);
 
     pcl::transformPointCloud(*model_voxelized, *modelTransformed, transformation);
-    std::cout<<"DEBUG"<<std::endl;
-    //PROBLEM HERE
+
     transformation = tipApproximation(point_cloud_ptr, modelTransformed, model_voxelized, direction, transformation);
 
     float end_angle = getAngleFromMatrix(transformation);
-    std::cout<<"DEBUG"<<std::endl;
 
     std::vector<std::tuple<float, float, float>> correspondence_count;
     //angle and count
@@ -256,71 +257,7 @@ int main()
 
     //https://streamhpc.com/blog/2013-04-28/opencl-error-codes/
 
-    cl_int ret;
-    std::vector<int> input {1,2,3,4,5,6,7,8,9,10};
 
-    int length = 10 ;
-
-
-    FILE *fp;
-    char fileName[] = "/home/tuan/Desktop/OpenCLBA-Local/OpenCLBA/kernel.cl";
-    char *source_str;
-    size_t source_size;
-
-    /* Load the source code containing the kernel*/
-    fp = fopen(fileName, "r");
-    if (!fp) {
-    fprintf(stderr, "Failed to load kernel.\n");
-    exit(1);
-    }
-    source_str = (char*)malloc(0x100000);
-    source_size = fread(source_str,1,0x100000, fp);
-    fclose(fp);
-
-    ret = clGetPlatformIDs(1, &platform_id, &ret_num_platforms);
-    std::cout<<ret<<" code"<<std::endl;
-
-    ret = clGetDeviceIDs(platform_id, CL_DEVICE_TYPE_DEFAULT, 1, &device_id, &ret_num_devices);
-    std::cout<<ret<<" code"<<std::endl;
-
-    context = clCreateContext(NULL, 1, &device_id, NULL, NULL, &ret);
-    std::cout<<ret<<" code"<<std::endl;
-
-    command_queue = clCreateCommandQueue(context, device_id, 0, &ret);
-    //Check Concept of memory
-    memobj = clCreateBuffer(context, CL_MEM_READ_WRITE,length * sizeof(int), NULL, &ret);
-    std::cout<<ret<<" code"<<std::endl;
-
-
-    resobj = clCreateBuffer(context, CL_MEM_WRITE_ONLY, length * sizeof(int), NULL, &ret);
-    std::cout<<ret<<" code"<<std::endl;
-
-
-    program = clCreateProgramWithSource(context,1,(const char**)&source_str, (const size_t*)&source_size, &ret);
-    std::cout<<ret<<" code"<<std::endl;
-
-    ret = clBuildProgram(program, 1, &device_id, NULL, NULL, NULL);
-    std::cout<<ret<<" code"<<std::endl;
-
-    kernel = clCreateKernel(program, "hello", &ret);
-    std::cout<<ret<<" code"<<std::endl;
-
-    ret = clSetKernelArg(kernel,0, sizeof(memobj),(void *)&memobj);
-    std::cout<<ret<<" code"<<std::endl;
-
-    ret = clEnqueueTask(command_queue, kernel, 0, NULL,NULL);
-    std::cout<<ret<<" code"<<std::endl;
-
-    ret = clEnqueueReadBuffer(command_queue, memobj, CL_TRUE, 0, 10 * sizeof(int),&input[0], 0, NULL, NULL);
-
-
-    //TODO :
-
-    cl_mem correspondence_count_mem = clCreateBuffer(context,CL_MEM_READ_WRITE, 1000, NULL, &ret);
-
-    cl_mem angle_count_mem = clCreateBuffer(context,CL_MEM_READ_WRITE, 1000, NULL, &ret);
-
-    cl_mem shift_count_mem = clCreateBuffer(context,CL_MEM_READ_WRITE, 1000, NULL, &ret);
 
     //TODO : 4 big work Group
 
@@ -336,23 +273,6 @@ int main()
                                      correspondence_count, rotation,
                                      initialTranslation, std::get<1>(direction), model_voxelized,
                                      point_cloud_ptr);
-
-
-
-
-
-
-
-
-
-    ret = clFlush(command_queue);
-    ret = clFinish(command_queue);
-    ret = clReleaseKernel(kernel);
-    ret = clReleaseProgram(program);
-    ret = clReleaseMemObject(memobj);
-    ret = clReleaseCommandQueue(command_queue);
-    ret = clReleaseContext(context);
-
 
 
 

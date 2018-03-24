@@ -154,7 +154,6 @@ Eigen::Matrix4f tipApproximation(pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud
         }
         while (r < 360.0f && first < second) {
             transform = buildTransformationMatrix(rotateByAngle(sign * angle_to_rotate, transform.block(0, 0, 3, 3)), transform.block(0, 3, 3, 0));
-            std::cout<<"Transform doesnt work"<<std::endl;
             pcl::transformPointCloud(*model_voxelized, *modelTransformed, transform);
             if (sign < 0) {
                 first = computeMiddle(modelTransformed, getMinZValue(modelTransformed));
