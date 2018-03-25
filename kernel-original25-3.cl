@@ -176,7 +176,6 @@ int findMaxIndexOfVectorOfPairsCL(__global float *angle_count,__global int *size
   }
   return max_index;
 }
-*/
 
 
 //TODO : 18.03 What is actually be done here ?
@@ -204,52 +203,16 @@ __kernel void shiftAndRollWithoutSumLoop(__global float* floatArgs, __global flo
   float transform[16];
 
   //CHECKED
-
-  //This methode is replaced by following lines :
-  //rotateByAngleCL(angle_min+ angle*angle_step, rot);
-
-  float angle_temp =(angle_min+angle*angle_step)*(0.01745328888);
-  rot[0] = cos(angle_temp);
-  rot[1] = -sin(angle_temp);
-  rot[2] = 0.0f;
-  rot[3] = sin(angle_temp);
-  rot[4] = cos(angle_temp);
-  rot[5] = 0.0f;
-  rot[6] = 0.0f;
-  rot[7] = 0.0f;
-  rot[8] = 1.0f;
-
-  //This methode is replaced by following lines :
-  //shiftByValueCL(shift_min+ shift*shift_step, initialTranslation, direction, trans);
-  float shift_temp = shift_min + shift*shift_step;
-  trans[0] = initialTranslation[0]*shift_temp/direction[2];
-  trans[1] = initialTranslation[1]*shift_temp/direction[2];
-  trans[2] = initialTranslation[2]*shift_temp/direction[2];
-
-  //This methode is replaced by following lines :
-  //buildTransformationMatrixCL(rot,trans,transform);
-  transform[0] = rot[0];
-  transform[1] = rot[1];
-  transform[2] = rot[2];
-  transform[3] = rot[3];
-  transform[4] = rot[4];
-  transform[5] = rot[5];
-  transform[6] = rot[6];
-  transform[7] = rot[7];
-  transform[8] = rot[8];
-  transform[9] = trans[0];
-  transform[10] = trans[1];
-  transform[11] = trans[2];
-  transform[12] = 0;
-  transform[13] = 0;
-  transform[14] = 0;
-  transform[15] = 1;
+  rotateByAngleCL(angle_min+ angle*angle_step, rot);
+  shiftByValueCL(shift_min+ shift*shift_step, initialTranslation, direction, trans);
+  buildTransformationMatrixCL(rot,trans,transform);
 
   //computeCorrespondencesCL(transform,model_voxelized,point_cloud_ptr, correspondence_result, model_voxelized_size, point_cloud_ptr_size,input_transformed);
 
   bool ident = true;
   int s_input_local = model_voxelized_size[0];
 
+  //check for identity
   for (int i = 0 ; i < 4 ; i++) {
     for (int k = 0; i < 4 ; k++) {
       if (i == k ) {
@@ -304,12 +267,11 @@ __kernel void shiftAndRollWithoutSumLoop(__global float* floatArgs, __global flo
   //TODO : KDSearch
     for (int i = 0 ; i!= *model_voxelized_size; i++) {
     for (int k = 0; k!= *point_cloud_ptr_size; k++  ) {
-      float dis= 0.01f;
+      float dis;
 
       //TODO : implement this       tree_->nearestKSearch (input_->points[*idx], 1, index, distance);
       //TODO : Review the 0.02f
-      //if ((dis == calculate_distance(&input_transformed[i*3],&point_cloud_ptr[k*3]))>0.02f) {
-      if (dis == 0.02f) {
+      if ((dis == calculate_distance(&input_transformed[i*3],&point_cloud_ptr[k*3]))>0.02f) {
         continue;
       }
       //What if it finds more than 1 ?
