@@ -322,11 +322,10 @@ void showModifiedPictures() {
 }
 
 
-std::vector<float> convertVector3fToCl(Eigen::Vector3f vector3f) {
-  std::vector<float> result;
-  result.push_back(vector3f[0]);
-  result.push_back(vector3f[1]);
-  result.push_back(vector3f[2]);
+void convertVector3fToCl(Eigen::Vector3f vector3f, float *res) {
+  res[0]=vector3f[0];
+  res[1]=vector3f[1];
+  res[2]=vector3f[2];
 }
 
 std::vector<float> convertVector4fToCl(Eigen::Vector4f vector4f) {

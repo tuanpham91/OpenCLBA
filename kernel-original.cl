@@ -1,4 +1,6 @@
 #pragma OPENCL EXTENSION cl_khr_fp64 : enable
+
+/*
 void rotateByAngleCL(float angleInDegrees, float *res) {
   float angle = (float)(angleInDegrees*(0.01745328888));
   res[0] = cos(angle);
@@ -116,12 +118,12 @@ void computeCorrespondencesCL( float4 guess4f,__global float *input, __global fl
   }
 
   //TODO: , called it
-  /*
+
     Methode : determine_correspondence (target, source,)
     Called in : global_classification, line 74
     Source : correspondence_estimation.hpp - 113
 
-  */
+
   float *res;
   determine_correspondence(input_transformed,target, size_input, size_output, correspondence_result);
   //Correspondence Estimation ?
@@ -184,31 +186,31 @@ int findMaxIndexOfVectorOfPairsCL(__global float *angle_count,__global int *size
 
 // TUAN : Line 374 global_classification
 
-__kernel void shiftAndRollWithoutSumLoop(__global float* floatArgs, __global float* count, __global float* initialTranslation, __global float* direction,__global float* model_voxelized, __global float* point_cloud_ptr, __global float *rotation, __global int *model_voxelized_size, __global int *point_cloud_ptr_size, __global float *correspondence_result, __global float *input_transformed) {
+__kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global float *count, __global float *initialTranslation, __global float *direction,__global float *model_voxelized, __global float *point_cloud_ptr, __global float *rotation, __global int *model_voxelized_size, __global int *point_cloud_ptr_size, __global float *correspondence_result, __global float *input_transformed) {
 
-  int angle = get_global_id(0);
-  int shift = get_global_id(1);
+  __private int angle = get_global_id(0);
+  __private int shift = get_global_id(1);
 
-  float angle_min = floatArgs[0];
-  float angle_max = floatArgs[1];
+  __private float angle_min = floatArgs[0];
+  __private float angle_max = floatArgs[1];
 
-  float angle_step = floatArgs[2];
-  float shift_min  = floatArgs[3];
+  __private float angle_step = floatArgs[2];
+  __private float shift_min  = floatArgs[3];
 
-  float shift_max = floatArgs[4];
-  float shift_step = floatArgs[5];
+  __private float shift_max = floatArgs[4];
+  __private float shift_step = floatArgs[5];
 
   //TODO : DO memory reservation here
-  float rot[9];
-  float trans[3];
-  float transform[16];
+  __private float rot[9];
+  __private float trans[3];
+  __private float transform[16];
 
   //CHECKED
 
   //This methode is replaced by following lines :
   //rotateByAngleCL(angle_min+ angle*angle_step, rot);
 
-  float angle_temp =(angle_min+angle*angle_step)*(0.01745328888);
+  __private float angle_temp =(angle_min+angle*angle_step)*(0.01745328888);
   rot[0] = cos(angle_temp);
   rot[1] = -sin(angle_temp);
   rot[2] = 0.0f;
@@ -221,7 +223,7 @@ __kernel void shiftAndRollWithoutSumLoop(__global float* floatArgs, __global flo
 
   //This methode is replaced by following lines :
   //shiftByValueCL(shift_min+ shift*shift_step, initialTranslation, direction, trans);
-  float shift_temp = shift_min + shift*shift_step;
+  __private float shift_temp = shift_min + shift*shift_step;
   trans[0] = initialTranslation[0]*shift_temp/direction[2];
   trans[1] = initialTranslation[1]*shift_temp/direction[2];
   trans[2] = initialTranslation[2]*shift_temp/direction[2];
@@ -247,25 +249,30 @@ __kernel void shiftAndRollWithoutSumLoop(__global float* floatArgs, __global flo
 
   //computeCorrespondencesCL(transform,model_voxelized,point_cloud_ptr, correspondence_result, model_voxelized_size, point_cloud_ptr_size,input_transformed);
 
-  bool ident = true;
-  int s_input_local = model_voxelized_size[0];
+  __private bool ident = true;
+  __private int s_input_local = model_voxelized_size[0];
+  __private int i = 0;
+  __private int k = 0;
 
-  for (int i = 0 ; i < 4 ; i++) {
-    for (int k = 0; i < 4 ; k++) {
+
+  for (i = 0 ; i < 4 ; i++) {
+    for (k = 0; i < 4 ; k++) {
       if (i == k ) {
         if (transform[i*4+k]!= 1.0f) {
           ident = false;
-          break;
+        //  break;
         }
       }
       else {
         if(transform[i*4+k]!= 0.0f) {
           ident = false;
-          break;
+        //  break;
         }
       }
     }
   }
+
+
   //TODO Affine transformations https://en.wikipedia.org/wiki/Transformation_matrix
   //RIGID transformation Definition at line 190 of file transforms.h.
   //https://libpointmatcher.readthedocs.io/en/latest/Transformations/
@@ -285,26 +292,27 @@ __kernel void shiftAndRollWithoutSumLoop(__global float* floatArgs, __global flo
   }
 
 
-  /*
+
   //TODO: , called it
+  /*
     Methode : determine_correspondence (target, source,)
     Called in : global_classification, line 74
     Source : correspondence_estimation.hpp - 113
 
-  */
+    */
 
-  float *res;
+  __private float res[10];
   //This methode is replaced with following lines
   //determine_correspondence(input_transformed,target, size_input, size_output, correspondence_result);
   //TODO : Tuan : 21.03.2018 : This line caused error, reread about calling internal kernel code, or merge these two methods into one
 
-  float max_distance_sqr = (float) 0.0004f;
-  int found = 0;
+  __private float max_distance_sqr = (float) 0.0004f;
+  __private int found = 0;
 
   //TODO : KDSearch
-    for (int i = 0 ; i!= *model_voxelized_size; i++) {
-    for (int k = 0; k!= *point_cloud_ptr_size; k++  ) {
-      float dis= 0.01f;
+  for (i = 0 ; i!= *model_voxelized_size; i++) {
+    for (k = 0; k!= *point_cloud_ptr_size; k++  ) {
+      __private float dis= 0.01f;
 
       //TODO : implement this       tree_->nearestKSearch (input_->points[*idx], 1, index, distance);
       //TODO : Review the 0.02f
@@ -323,8 +331,9 @@ __kernel void shiftAndRollWithoutSumLoop(__global float* floatArgs, __global flo
       //ADD TO Correspondence cloud.
     }
   }
-}
 
+}
+/*
 __kernel void computeDifferencesForCorrespondence(__global float *correspondence_count, __global int *size_correspondence_count, __global int *size_angle_count, __global float *angle_count, __global float *shift_count, __global int *size_shift_count) {
     int i  = get_global_id(0);
     float angle_temp = correspondence_count[i];
@@ -400,7 +409,7 @@ __kernel void computeDifferencesForCorrespondence(__global float *correspondence
 
 
 
-/*
+
 
 __kernel void shift_and_roll_without_sum_loop(__global float* initialTranslation, __global float* shift, __global float* angle_min,
                                               __global float* angle, __global float** rotation, __global float* trans,

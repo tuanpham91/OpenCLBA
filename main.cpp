@@ -126,11 +126,18 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     std::cout<<ret<<" Arg code 2 :"<<std::endl;
 
     //2. Arg initialTranslation
-    initialTranslationMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE,3*sizeof(float),initialTranslation.data(),&ret);
-    ret = clSetKernelArg(kernel,2,sizeof(initialTranslation), &initialTranslationMemObj);
+    float initialTranslationData[3];
+    convertVector3fToCl(initialTranslation,initialTranslationData);
+    std::cout<<initialTranslationData<<std::endl;
+    initialTranslationMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE,3*sizeof(float),initialTranslationData,&ret);
+    ret = clSetKernelArg(kernel,2,3*sizeof(initialTranslationMemObj), &initialTranslationMemObj);
     std::cout<<ret<<" Arg code 3 :"<<std::endl;
 
     //3. Arg direction
+    //25.03.2016 : TODO : Convert direction to normal float;
+
+    float directionData[3];
+    convertVector3fToCl(initialTranslation,initialTranslationData);
 
     directionMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE, 3*sizeof(float),direction.data(),&ret);
     ret = clSetKernelArg(kernel,3,sizeof(direction), &directionMemObj);
@@ -145,8 +152,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
     //5.Arg point_cloud_ptr
     float* point_cloud_ptr_as_array = new float[point_cloud_ptr.get()->size()*3];
-    convertPointCloudToCL(model_voxelized,model_voxelized_as_array);
-    pointCloudPtrMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(point_cloud_ptr),point_cloud_ptr_as_array,&ret);
+    convertPointCloudToCL(model_voxelized,model_voxelized_as_array);    pointCloudPtrMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(point_cloud_ptr),point_cloud_ptr_as_array,&ret);
     ret = clSetKernelArg(kernel,5,sizeof(point_cloud_ptr), &pointCloudPtrMemObj);
     std::cout<<ret<<" Arg code 6 :"<<std::endl;
 
