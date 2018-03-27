@@ -128,9 +128,9 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     //2. Arg initialTranslation
     float initialTranslationData[3];
     convertVector3fToCl(initialTranslation,initialTranslationData);
-    std::cout<<initialTranslationData<<std::endl;
+
     initialTranslationMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE,3*sizeof(float),initialTranslationData,&ret);
-    ret = clSetKernelArg(kernel,2,3*sizeof(initialTranslationMemObj), &initialTranslationMemObj);
+    ret = clSetKernelArg(kernel,2,sizeof(initialTranslationMemObj), &initialTranslationMemObj);
     std::cout<<ret<<" Arg code 3 :"<<std::endl;
 
     //3. Arg direction
@@ -138,27 +138,29 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
     float directionData[3];
     convertVector3fToCl(initialTranslation,initialTranslationData);
-
     directionMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE, 3*sizeof(float),direction.data(),&ret);
-    ret = clSetKernelArg(kernel,3,sizeof(direction), &directionMemObj);
+    ret = clSetKernelArg(kernel,3,sizeof(directionMemObj), &directionMemObj);
     std::cout<<ret<<" Arg code 4 :"<<std::endl;
 
     //4. Arg model_voxelized
     float* model_voxelized_as_array = new float[model_voxelized.get()->size()*3];
     convertPointCloudToCL(model_voxelized,model_voxelized_as_array);
     modelVoxelizedMembObj = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(model_voxelized_as_array),model_voxelized_as_array,&ret);
-    ret = clSetKernelArg(kernel,4,sizeof(model_voxelized), &modelVoxelizedMembObj);
+    ret = clSetKernelArg(kernel,4,sizeof(modelVoxelizedMembObj), &modelVoxelizedMembObj);
     std::cout<<ret<<" Arg code 5 :"<<std::endl;
 
     //5.Arg point_cloud_ptr
     float* point_cloud_ptr_as_array = new float[point_cloud_ptr.get()->size()*3];
-    convertPointCloudToCL(model_voxelized,model_voxelized_as_array);    pointCloudPtrMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(point_cloud_ptr),point_cloud_ptr_as_array,&ret);
-    ret = clSetKernelArg(kernel,5,sizeof(point_cloud_ptr), &pointCloudPtrMemObj);
+    convertPointCloudToCL(model_voxelized,model_voxelized_as_array);
+    pointCloudPtrMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(point_cloud_ptr_as_array),point_cloud_ptr_as_array,&ret);
+    ret = clSetKernelArg(kernel,5,sizeof(pointCloudPtrMemObj), &pointCloudPtrMemObj);
     std::cout<<ret<<" Arg code 6 :"<<std::endl;
 
     //6.Arg rotation
-    rotationMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(rotation.data()),rotation.data(),&ret);
-    ret = clSetKernelArg(kernel,6, sizeof(rotation), &rotationMemObj);
+    float* rotation_as_array = new float[9];
+    convertMatrix3fToCL(rotation,rotation_as_array);
+    rotationMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(rotation_as_array),rotation_as_array,&ret);
+    ret = clSetKernelArg(kernel,6, sizeof(rotationMemObj), &rotationMemObj);
     std::cout<<ret<<"Arg code 7 :"<<std::endl;
 
 

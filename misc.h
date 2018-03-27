@@ -360,9 +360,13 @@ void convertPointXYZtoCL(pcl::PointXYZ point, float* result) {
     result[2]= point.z;
 }
 
-std::vector<float> convertMatrix3fToCL(Eigen::Matrix3f matrix3f) {
-  std::vector<float> vector(matrix3f.data(),matrix3f.data()+ matrix3f.cols()*matrix3f.rows());
-  return vector;
+void convertMatrix3fToCL(Eigen::Matrix3f matrix3f, float* result) {
+		for (int i = 0; i<3; i++) {//row
+			for (int k = 0; k<3; k++) { // colm
+                                result[i*3+k]=matrix3f(i,k);
+			}
+		}
+
 }
 
 void convertPointCloudToCL(pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud, float* res) {
