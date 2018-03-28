@@ -10,7 +10,7 @@
 #include <pcl/common/intersections.h>
 #include <pcl/filters/voxel_grid.h>
 
-
+#include <ctime>
 #include <tuple>
 
 #include "util.h"
@@ -48,6 +48,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
                                       Eigen::Matrix3f rotation, Eigen::Vector3f initialTranslation, Eigen::Vector3f direction,
                                       pcl::PointCloud<pcl::PointXYZ>::Ptr model_voxelized, pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud_ptr
                                       ) {
+    clock_t begin = clock();
 
     FILE *fp;
     char fileName[] = "/home/tuan/Desktop/OpenCLBA-Local/OpenCLBA/kernel-original.cl";
@@ -164,6 +165,57 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     std::cout<<ret<<"Arg code 7 :"<<std::endl;
 
 
+    clEnqueueReadBuffer(command_queue,pointCloudPtrMemObj,CL_TRUE,0,sizeof(point_cloud_ptr_as_array), point_cloud_ptr_as_array,0,NULL,NULL);
+    clock_t end = clock();
+    std::cout<< (double)(end-begin)/CLOCKS_PER_SEC <<std::endl;
+    //TODO : Recheck Kernel and Args
+
+    //point_cloud_ptr_as_array is a vector of tupel <float, float, float> actually
+    //free memory
+
+    clReleaseMemObject(argsMemObj);
+    clReleaseMemObject(resObj);
+    clReleaseMemObject(memobj);
+    clReleaseMemObject(countMemobj);
+    clReleaseMemObject(initialTranslationMemObj);
+    clReleaseMemObject(directionMemObj);
+    clReleaseMemObject(modelVoxelizedMembObj);
+    clReleaseMemObject(pointCloudPtrMemObj);
+    clReleaseMemObject(rotationMemObj);
+
+    clReleaseKernel(kernel);
+
+    kernel = clCreateKernel(program,"computeDifferencesForCorrespondence", &ret);
+
+    cl_mem args2;
+    int args2[5];
+    args2
+    /*
+     *
+        for (int i = 0; i < correspondence_count.size(); i++) {
+                        std::tuple<float, float, float> current = correspondence_count.at(i);
+                        float angle_tmp = std::get<0>(current);
+                        float shift_tmp = std::get<1>(current);
+                        float count_tmp = std::get<2>(current);
+                        std::vector<std::pair<float, float>>::iterator it;
+                        it = std::find_if(angle_count.begin(), angle_count.end(), [angle_tmp](const std::pair<float, float>& p1) {
+                            return p1.first == angle_tmp; });
+                        if (it != angle_count.end()) {
+                            angle_count.at(std::distance(angle_count.begin(), it)).second += count_tmp;
+                        }
+                        else {
+                            angle_count.push_back(std::pair<float, float>(angle_tmp, count_tmp));
+                        }
+                        it = std::find_if(shift_count.begin(), shift_count.end(), [shift_tmp](const std::pair<float, float>& p1) {
+                            return p1.first == shift_tmp; });
+                        if (it != shift_count.end()) {
+                            shift_count.at(std::distance(shift_count.begin(), it)).second += count_tmp;
+                        }
+                        else {
+                            shift_count.push_back(std::pair<float, float>(shift_tmp, count_tmp));
+                        }
+                    }
+    */
 
 }
 

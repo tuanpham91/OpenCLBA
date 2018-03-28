@@ -1,6 +1,6 @@
 #pragma OPENCL EXTENSION cl_khr_fp64 : enable
 
-/*
+
 void rotateByAngleCL(float angleInDegrees, float *res) {
   float angle = (float)(angleInDegrees*(0.01745328888));
   res[0] = cos(angle);
@@ -42,13 +42,13 @@ void buildTransformationMatrixCL(float *rotation, float *translation, float *tra
   transformation[14] = 0;
   transformation[15] = 1;
 }
-float calculate_distance(__global float *pointA, __global float *pointB)  {
+float calculate_distance(float *pointA,float *pointB)  {
   float a = (pointA[0] - pointB[0])*(pointA[0] - pointB[0]);
   float b = (pointA[1] - pointB[1])*(pointA[1] - pointB[1]);
   float c = (pointA[2] - pointB[2])*(pointA[2] - pointB[2]);
   return sqrt(a+b+c);
 }
-void rigidTransformationCL (int size,__global float *input, float4  transformation_matrix, __global float *input_transformed) {
+void rigidTransformationCL (int size,float *input, float4 transformation_matrix, float *input_transformed) {
   for (int i = 0; i< size ; i++) {
       float temp = input[4*i];
       input_transformed[4*i] = temp*transformation_matrix[0] + input[4*i+1]*transformation_matrix[1] + input[4*i+2]*transformation_matrix[2]+ input[4*i+3]*transformation_matrix[3];
@@ -58,7 +58,7 @@ void rigidTransformationCL (int size,__global float *input, float4  transformati
   }
 }
 
-void determine_correspondence(__global float *input, __global float *output,__global int *size_source, __global int *size_target, __global float *result) {
+void determine_correspondence(float *input, float *output,int *size_source, int *size_target, float *result) {
   float max_distance_sqr = (float) 0.0004f;
   int found = 0;
 
@@ -86,7 +86,7 @@ void determine_correspondence(__global float *input, __global float *output,__gl
 }
 //  shift_and_roll_without_sum
 //TODO : cannot pass pointer to auxiliary functions
-void computeCorrespondencesCL( float4 guess4f,__global float *input, __global float *target,__global float *correspondence_result,__global int *size_input, __global int *size_output, __global float *input_transformed ) {
+void computeCorrespondencesCL( float4 guess4f, float *input,float *target,float *correspondence_result,int *size_input,int *size_output,float *input_transformed ) {
   bool ident = true;
   int s_input_local = size_input[0];
 
@@ -118,11 +118,11 @@ void computeCorrespondencesCL( float4 guess4f,__global float *input, __global fl
   }
 
   //TODO: , called it
-
+  /*
     Methode : determine_correspondence (target, source,)
     Called in : global_classification, line 74
     Source : correspondence_estimation.hpp - 113
-
+    */
 
   float *res;
   determine_correspondence(input_transformed,target, size_input, size_output, correspondence_result);
@@ -178,7 +178,7 @@ int findMaxIndexOfVectorOfPairsCL(__global float *angle_count,__global int *size
   }
   return max_index;
 }
-*/
+
 
 
 //TODO : 18.03 What is actually be done here ?
@@ -333,7 +333,7 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
   }
 
 }
-/*
+
 __kernel void computeDifferencesForCorrespondence(__global float *correspondence_count, __global int *size_correspondence_count, __global int *size_angle_count, __global float *angle_count, __global float *shift_count, __global int *size_shift_count) {
     int i  = get_global_id(0);
     float angle_temp = correspondence_count[i];
@@ -404,22 +404,3 @@ __kernel void computeDifferencesForCorrespondence(__global float *correspondence
 //https://github.com/PointCloudLibrary/pcl/blob/master/registration/include/pcl/registration/impl/correspondence_estimation.hpp
 
 //TODO : this one here should be parralized too
-
-
-
-
-
-
-
-__kernel void shift_and_roll_without_sum_loop(__global float* initialTranslation, __global float* shift, __global float* angle_min,
-                                              __global float* angle, __global float** rotation, __global float* trans,
-                                              __global float** transform, __global float* correspondence_count,
-                                              __global float* direction, __global float* angle_max, __global float* shift_min,
-                                              __global float* shift_max, __global float** model_voxelized, __global float** point_cloud_ptr
-                                              __global float** model_transformed) {
-*/
-
-
-/*
-
-*/
