@@ -223,37 +223,8 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     std::cout<<ret<<"Part 2.4.2 : "<<std::endl;
 
 
-    //__kernel void computeDifferencesForCorrespondence(__global float *correspondence_count, __global int *size_correspondence_count, __global int *size_angle_count, __global float *angle_count, __global float *shift_count, __global int *size_shift_count) {
-    //last 5 args of method
 
-
-    /*
-     *
-        for (int i = 0; i < correspondence_count.size(); i++) {
-                        std::tuple<float, float, float> current = correspondence_count.at(i);
-                        float angle_tmp = std::get<0>(current);
-                        float shift_tmp = std::get<1>(current);
-                        float count_tmp = std::get<2>(current);
-                        std::vector<std::pair<float, float>>::iterator it;
-                        it = std::find_if(angle_count.begin(), angle_count.end(), [angle_tmp](const std::pair<float, float>& p1) {
-                            return p1.first == angle_tmp; });
-                        if (it != angle_count.end()) {
-                            angle_count.at(std::distance(angle_count.begin(), it)).second += count_tmp;
-                        }
-                        else {
-                            angle_count.push_back(std::pair<float, float>(angle_tmp, count_tmp));
-                        }
-                        it = std::find_if(shift_count.begin(), shift_count.end(), [shift_tmp](const std::pair<float, float>& p1) {
-                            return p1.first == shift_tmp; });
-                        if (it != shift_count.end()) {
-                            shift_count.at(std::distance(shift_count.begin(), it)).second += count_tmp;
-                        }
-                        else {
-                            shift_count.push_back(std::pair<float, float>(shift_tmp, count_tmp));
-                        }
-                    }
-    */
-
+  
 }
 
 

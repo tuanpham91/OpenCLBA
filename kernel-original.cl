@@ -186,7 +186,7 @@ int findMaxIndexOfVectorOfPairsCL(__global float *angle_count,__global int *size
 
 // TUAN : Line 374 global_classification
 
-__kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global float *count, __global float *initialTranslation, __global float *direction,__global float *model_voxelized, __global float *point_cloud_ptr, __global float *rotation, __global int *model_voxelized_size, __global int *point_cloud_ptr_size, __global float *correspondence_result, __global float *input_transformed) {
+__kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global float *initialTranslation, __global float *direction,__global float *model_voxelized, __global float *point_cloud_ptr, __global float *rotation, __global int *model_voxelized_size, __global int *point_cloud_ptr_size, __global float *correspondence_result, __global float *input_transformed) {
 
   __private int angle = get_global_id(0);
   __private int shift = get_global_id(1);
@@ -334,7 +334,7 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
 
 }
 
-__kernel void computeDifferencesForCorrespondence(__global float *correspondence_count, __global int *size_correspondence_count, __global int *size_angle_count, __global float *angle_count, __global float *shift_count, __global int *size_shift_count) {
+__kernel void computeDifferencesForCorrespondence(__global float *correspondence_count, __global int *size_correspondence_count,  __global float *angle_count, __global float *shift_count) {
     int i  = get_global_id(0);
     float angle_temp = correspondence_count[i];
     float shift_temp = correspondence_count[i+1];
