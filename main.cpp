@@ -40,7 +40,7 @@ cl_kernel kernel = NULL;
 cl_platform_id platform_id = NULL;
 cl_uint ret_num_devices;
 cl_uint ret_num_platforms;
-
+size_t work_units =4;
 
 void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float angle_step,
                                       float shift_min, float shift_max, float shift_step,
@@ -164,6 +164,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     ret = clSetKernelArg(kernel,5, sizeof(rotationMemObj), &rotationMemObj);
     std::cout<<ret<<" Arg code 7 :"<<std::endl;
 
+    clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL,&work_units, NULL, 0, NULL, NULL);
 
     clEnqueueReadBuffer(command_queue,pointCloudPtrMemObj,CL_TRUE,0,sizeof(correspondence_count), correspondence_count,0,NULL,NULL);
     clock_t end = clock();
@@ -173,86 +174,48 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     //point_cloud_ptr_as_array is a vector of tupel <float, float, float> actually
     //free memory
 
-    clReleaseMemObject(argsMemObj);
-    clReleaseMemObject(memobj);
-    clReleaseMemObject(countMemobj);
-    clReleaseMemObject(initialTranslationMemObj);
-    clReleaseMemObject(directionMemObj);
-    clReleaseMemObject(modelVoxelizedMembObj);
-    clReleaseMemObject(pointCloudPtrMemObj);
-    clReleaseMemObject(rotationMemObj);
 
-    clReleaseKernel(kernel);
 
 
 
     kernel = clCreateKernel(program,"computeDifferencesForCorrespondence", &ret);
+    std::cout<<ret<<" Part 2.: "<<std::endl;
+
     //TODO : Figure out size of correspondence Count
-    cl_mem args_size_mem_obj;
-    int correspondence_count_real_size = point_cloud_ptr->size();
+    cl_mem args_size_mem_obj = NULL;
+    int *correspondence_count_real_size = new int( point_cloud_ptr->size());
 
 
 
     //TODO : Size of angle_count, shift_count is right the size of correspondent_count -> Must find size of correspondence_count
-    float angle_count[point_cloud_ptr->size()*2];
-    float shift_count[point_cloud_ptr->size()*2];
+    float *angle_count = new float[point_cloud_ptr->size()*2];
+    float *shift_count = new float[point_cloud_ptr->size()*2];
 
-    args_size_mem_obj = clCreateBuffer(context,CL_MEM_READ_WRITE,sizeof(int),correspondence_count_real_size,&ret);
-    std::cout<<ret<<"Part 2.1.1 : "<<std::endl;
+    args_size_mem_obj = clCreateBuffer(context,CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR,sizeof(int),correspondence_count_real_size,&ret);
+    std::cout<<ret<<" Part 2.1.1 : "<<std::endl;
     ret = clSetKernelArg(kernel,1,sizeof(args_size_mem_obj), &args_size_mem_obj);
-    std::cout<<ret<<"Part 2.1.2 : "<<std::endl;
+    std::cout<<ret<<" Part 2.1.2 : "<<std::endl;
 
-
-    pointCloudPtrMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(correspondence_count),correspondence_count,&ret);
-    std::cout<<ret<<"Part 2.2.1 : "<<std::endl;
+    pointCloudPtrMemObj = NULL ;
+    pointCloudPtrMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(correspondence_count),correspondence_count,&ret);
+    std::cout<<ret<<" Part 2.2.1 : "<<std::endl;
     ret = clSetKernelArg(kernel,0,sizeof(pointCloudPtrMemObj), &pointCloudPtrMemObj);
-    std::cout<<ret<<"Part 2.2.2 : "<<std::endl;
+    std::cout<<ret<<" Part 2.2.2 : "<<std::endl;
 
 
-    cl_mem shift_count_mem_obj;
-    shift_count_mem_obj = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(shift_count),shift_count,&ret);
-    std::cout<<ret<<"Part 2.3.1 : "<<std::endl;
+    cl_mem shift_count_mem_obj = NULL;
+    shift_count_mem_obj = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(shift_count),shift_count,&ret);
+    std::cout<<ret<<" Part 2.3.1 : "<<std::endl;
     ret = clSetKernelArg(kernel,3,sizeof(shift_count_mem_obj), &shift_count_mem_obj);
-    std::cout<<ret<<"Part 2.3.2 : "<<std::endl;
+    std::cout<<ret<<" Part 2.3.2 : "<<std::endl;
 
 
-    cl_mem angle_count_mem_obj;
-    angle_count_mem_obj = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(angle_count),angle_count,&ret);
-    std::cout<<ret<<"Part 2.4.1 : "<<std::endl;
+    cl_mem angle_count_mem_obj = NULL;
+    angle_count_mem_obj = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(angle_count),angle_count,&ret);
+    std::cout<<ret<<" Part 2.4.1 : "<<std::endl;
     ret = clSetKernelArg(kernel,0,sizeof(angle_count_mem_obj), &angle_count_mem_obj);
-    std::cout<<ret<<"Part 2.4.2 : "<<std::endl;
+    std::cout<<ret<<" Part 2.4.2 : "<<std::endl;
 
-
-    //__kernel void computeDifferencesForCorrespondence(__global float *correspondence_count, __global int *size_correspondence_count, __global int *size_angle_count, __global float *angle_count, __global float *shift_count, __global int *size_shift_count) {
-    //last 5 args of method
-
-
-    /*
-     *
-        for (int i = 0; i < correspondence_count.size(); i++) {
-                        std::tuple<float, float, float> current = correspondence_count.at(i);
-                        float angle_tmp = std::get<0>(current);
-                        float shift_tmp = std::get<1>(current);
-                        float count_tmp = std::get<2>(current);
-                        std::vector<std::pair<float, float>>::iterator it;
-                        it = std::find_if(angle_count.begin(), angle_count.end(), [angle_tmp](const std::pair<float, float>& p1) {
-                            return p1.first == angle_tmp; });
-                        if (it != angle_count.end()) {
-                            angle_count.at(std::distance(angle_count.begin(), it)).second += count_tmp;
-                        }
-                        else {
-                            angle_count.push_back(std::pair<float, float>(angle_tmp, count_tmp));
-                        }
-                        it = std::find_if(shift_count.begin(), shift_count.end(), [shift_tmp](const std::pair<float, float>& p1) {
-                            return p1.first == shift_tmp; });
-                        if (it != shift_count.end()) {
-                            shift_count.at(std::distance(shift_count.begin(), it)).second += count_tmp;
-                        }
-                        else {
-                            shift_count.push_back(std::pair<float, float>(shift_tmp, count_tmp));
-                        }
-                    }
-    */
 
 }
 

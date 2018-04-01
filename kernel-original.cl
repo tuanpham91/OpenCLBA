@@ -347,14 +347,14 @@ __kernel void computeDifferencesForCorrespondence(__global float *correspondence
     float shiftStep = 0.05f;
     float **iterator;
     int iter_help;
-    for (int  i = 0; i < size_angle_count[0] ; i++) {
+    for (int  i = 0; i < size_correspondence_count[0] ; i++) {
       if (angle_count[i]==angle_temp) {
         iter_help = i;
         break;
       }
     }
 
-    if (iter_help != size_angle_count[0]) {
+    if (iter_help != size_correspondence_count[0]) {
       angle_count[iter_help+1] += count_temp;
     } else {
       //Add more into angle_count
@@ -362,22 +362,22 @@ __kernel void computeDifferencesForCorrespondence(__global float *correspondence
       //angle_count. //TODO :
     }
 
-    for (int  i = 0; i < size_shift_count[0] ; i++) {
+    for (int  i = 0; i < size_correspondence_count[0] ; i++) {
       if (shift_count[i]==shift_temp) {
         iter_help = i;
         break;
       }
     }
 
-    if (iter_help != size_shift_count[0]) {
+    if (iter_help != size_correspondence_count[0]) {
       shift_count[iter_help+1] += shift_temp;
     } else {
       //angle_count.push_back //TODO :
     }
     //TODO : Which size here
-    int max_index_angles= findMaxIndexOfVectorOfPairsCL(angle_count,size_angle_count);
+    int max_index_angles= findMaxIndexOfVectorOfPairsCL(angle_count,size_correspondence_count);
     //TODO : Which size here
-    int max_index_shift = findMaxIndexOfVectorOfPairsCL(shift_count,size_shift_count);
+    int max_index_shift = findMaxIndexOfVectorOfPairsCL(shift_count,size_correspondence_count);
 
     int correspondence_index = findMaxIndexOfVectorOfTuplesCL(correspondence_count, size_correspondence_count);
 
