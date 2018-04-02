@@ -40,7 +40,13 @@ cl_kernel kernel = NULL;
 cl_platform_id platform_id = NULL;
 cl_uint ret_num_devices;
 cl_uint ret_num_platforms;
-size_t work_units =4;
+
+void printDeviceInfoWorkSize(cl_device_id device) {
+    size_t size;
+    size_t worksizes[3];
+    clGetDeviceInfo(device,CL_DEVICE_MAX_WORK_ITEM_SIZES,sizeof(size_t)*3,worksizes,NULL);
+    std::cout<< " Work sizes are " <<worksizes[0]<<" ,"<<worksizes[1]<<" ,"<<worksizes[2]<<std::endl;
+}
 
 void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float angle_step,
                                       float shift_min, float shift_max, float shift_step,
@@ -56,6 +62,13 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     size_t source_size;
     cl_int ret;
 
+    int num_angle_steps_s = std::round((angle_max - angle_min) / angle_step) + 1;
+    int num_shift_steps_s = std::round((shift_max - shift_min) / shift_step) + 1;
+    size_t work_units[2] ={num_angle_steps_s,num_shift_steps_s};
+
+    std::cout << "Number of should be dimension size " << num_angle_steps_s<< " " <<num_shift_steps_s<< std::endl;
+
+
     /* Load the source code containing the kernel*/
     fp = fopen(fileName, "r");
     if (!fp) {
@@ -67,7 +80,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     source_size = fread(source_str,1,0x100000, fp);
     fclose(fp);
 
-    int num_angle_steps = std::round((angle_max - angle_min) / angle_step) + 1;
+    int num_angle_steps= std::round((angle_max - angle_min) / angle_step) + 1;
     int num_shift_steps = std::round((shift_max - shift_min) / shift_step) + 1;
     int prod = num_angle_steps*num_shift_steps;
 
@@ -110,7 +123,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     }
     // TODO : Adjust kernel here, 4 //  err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &buffer_one); 4.ARG!
 
-
+    printDeviceInfoWorkSize(device_id);
     std::cout<<"START KERNEL"<<std::endl;
     kernel = clCreateKernel(program,"shiftAndRollWithoutSumLoop", &ret);
     std::cout<<ret<<" Arg code 0: "<<std::endl;
@@ -164,11 +177,10 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     ret = clSetKernelArg(kernel,5, sizeof(rotationMemObj), &rotationMemObj);
     std::cout<<ret<<" Arg code 7 :"<<std::endl;
 
-    clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL,&work_units, NULL, 0, NULL, NULL);
+    clEnqueueNDRangeKernel(command_queue, kernel, 2 , NULL,work_units, NULL, 0, NULL, NULL);
 
     clEnqueueReadBuffer(command_queue,pointCloudPtrMemObj,CL_TRUE,0,sizeof(correspondence_count), correspondence_count,0,NULL,NULL);
-    clock_t end = clock();
-    std::cout<< (double)(end-begin)/CLOCKS_PER_SEC <<std::endl;
+
     //TODO : Recheck Kernel and Args
 
     //point_cloud_ptr_as_array is a vector of tupel <float, float, float> actually
@@ -216,7 +228,10 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     ret = clSetKernelArg(kernel,0,sizeof(angle_count_mem_obj), &angle_count_mem_obj);
     std::cout<<ret<<" Part 2.4.2 : "<<std::endl;
 
+    //clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL,work_units, NULL, 0, NULL, NULL);
 
+    clock_t end = clock();
+    std::cout<< (double)(end-begin)/CLOCKS_PER_SEC <<std::endl;
 }
 
 
@@ -278,39 +293,25 @@ int main()
 
     //initialize interval values -90,90
 
-
-    std::cout<<"DEBUG"<<std::endl;
     float angleStart = end_angle - 5.0f;
     float angleEnd = end_angle + 5.0f;
     float angleStep = 1.0f;
     float shiftStart = 0.0f;
     float shiftEnd = 0.5;
-    float shiftStep = 0.05f;
-    //more initialization
+    float shiftStep = 0.1f;
+
     int max_index_angles = 0;
     int max_index_shift = 0;
     int correspondence_index = 0;
     float max_angle = 0.0f;
     float max_shift = 0.0f;
-    //STAND :: FROM NOW ON OPENCL
 
-
-
-    //OPENCL PART:
 
     //https://streamhpc.com/blog/2013-04-28/opencl-error-codes/
 
-
-
-    //TODO : 4 big work Group
-
     //https://stackoverflow.com/questions/26804153/opencl-work-group-concept
 
-
-
     //http://downloads.ti.com/mctools/esd/docs/opencl/execution/kernels-workgroups-workitems.html
-
-    //Test with one iteration
 
     shift_and_roll_without_sum_in_cl(angleStart,angleEnd, angleStep,shiftStart, shiftEnd, shiftStep,
                                      correspondence_count, rotation,

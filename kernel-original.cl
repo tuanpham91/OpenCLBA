@@ -200,7 +200,7 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
   __private float shift_max = floatArgs[4];
   __private float shift_step = floatArgs[5];
 
-  //TODO : DO memory reservation here
+
   __private float rot[9];
   __private float trans[3];
   __private float transform[16];
