@@ -186,7 +186,7 @@ int findMaxIndexOfVectorOfPairsCL(__global float *angle_count,__global int *size
 
 // TUAN : Line 374 global_classification
 
-__kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global float *initialTranslation, __global float *direction,__global float *model_voxelized, __global float *point_cloud_ptr, __global float *rotation, __global int *model_voxelized_size, __global int *point_cloud_ptr_size, __global float *correspondence_result, __global float *input_transformed) {
+__kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global float *initialTranslation, __global float *direction,__global float *model_voxelized, __global float *point_cloud_ptr, __global float *rotation, __global int *model_voxelized_size, __global int *point_cloud_ptr_size, __global float *correspondence_result, __global float *input_transformed, __global int *correspondence_result_count) {
 
   __private int angle = get_global_id(0);
   __private int shift = get_global_id(1);
@@ -331,7 +331,7 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
       //ADD TO Correspondence cloud.
     }
   }
-
+  correspondence_result_count = found;
 }
 
 __kernel void computeDifferencesForCorrespondence(__global float *correspondence_count, __global int *size_correspondence_count,  __global float *angle_count, __global float *shift_count) {

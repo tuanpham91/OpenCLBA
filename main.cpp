@@ -178,10 +178,19 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     ret = clSetKernelArg(kernel,5, sizeof(rotationMemObj), &rotationMemObj);
     std::cout<<ret<<" Arg code 7 :"<<std::endl;
 
+    cl_mem correspondence_result_count_memObj = NULL;
+    int* correspondence_result_count = new int[1];
+    correspondence_result_count_memObj = clCreateBuffer(context,CL_MEM_READ_WRITE, sizeof(int),correspondence_result_count,&ret);
+    ret=clSetKernelArg(kernel,6,sizeof(correspondence_result_count_memObj),&correspondence_result_count_memObj);
+    std::cout<<ret<<" Arg code 7 :"<<std::endl;
+
     clEnqueueNDRangeKernel(command_queue, kernel, 2 , NULL,work_units, NULL, 0, NULL, NULL);
 
     clEnqueueReadBuffer(command_queue,pointCloudPtrMemObj,CL_TRUE,0,sizeof(correspondence_count), correspondence_count,0,NULL,NULL);
+    clEnqueueReadBuffer(command_queue,correspondence_result_count_memObj,CL_TRUE,0,sizeof(int), correspondence_result_count,0,NULL,NULL);
 
+
+    std::cout << "Number of correspondence found " << correspondence_result_count[0] << std::endl;
     //TODO : Recheck Kernel and Args
     //https://stackoverflow.com/questions/7212356/how-to-produce-a-nan-float-in-c -NAN problem
     //point_cloud_ptr_as_array is a vector of tupel <float, float, float> actually
