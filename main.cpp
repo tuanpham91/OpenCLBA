@@ -41,6 +41,7 @@ cl_platform_id platform_id = NULL;
 cl_uint ret_num_devices;
 cl_uint ret_num_platforms;
 
+
 void printDeviceInfoWorkSize(cl_device_id device) {
     size_t size;
     size_t worksizes[3];
@@ -182,7 +183,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     clEnqueueReadBuffer(command_queue,pointCloudPtrMemObj,CL_TRUE,0,sizeof(correspondence_count), correspondence_count,0,NULL,NULL);
 
     //TODO : Recheck Kernel and Args
-
+    //https://stackoverflow.com/questions/7212356/how-to-produce-a-nan-float-in-c -NAN problem
     //point_cloud_ptr_as_array is a vector of tupel <float, float, float> actually
     //free memory
 
@@ -197,6 +198,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     cl_mem args_size_mem_obj = NULL;
     int *correspondence_count_real_size = new int( point_cloud_ptr->size());
 
+    //TODO : WHY 4 times of this ?
 
 
     //TODO : Size of angle_count, shift_count is right the size of correspondent_count -> Must find size of correspondence_count
@@ -229,14 +231,19 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     std::cout<<ret<<" Part 2.4.2 : "<<std::endl;
 
     //clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL,work_units, NULL, 0, NULL, NULL);
+    clock_t end = clock() ;
 
-    clock_t end = clock();
-    std::cout<< (double)(end-begin)/CLOCKS_PER_SEC <<std::endl;
+
+    for ( int i = 0 ; i <size_correspondence_count; i++) {
+        std::cout << correspondence_count[i]<< " ";
+    }
 }
 
 
 int main()
 {
+
+
     //TODO : Parameterize this please
     std::string path= "/home/tuan/Desktop/Back up/BA/Source Code/Models";
     std::string oct_dir ="/home/tuan/Desktop/Back up/BA/Source Code/oct";
@@ -298,7 +305,7 @@ int main()
     float angleStep = 1.0f;
     float shiftStart = 0.0f;
     float shiftEnd = 0.5;
-    float shiftStep = 0.1f;
+    float shiftStep = 0.05f;
 
     int max_index_angles = 0;
     int max_index_shift = 0;
