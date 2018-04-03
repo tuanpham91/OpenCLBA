@@ -181,12 +181,23 @@ int findMaxIndexOfVectorOfPairsCL(__global float *angle_count,__global int *size
 
 
 
-//TODO : 18.03 What is actually be done here ?
 //  shift_and_roll_without_sum
 
 // TUAN : Line 374 global_classification
-
-__kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global float *initialTranslation, __global float *direction,__global float *model_voxelized, __global float *point_cloud_ptr, __global float *rotation, __global int *model_voxelized_size, __global int *point_cloud_ptr_size, __global float *correspondence_result, __global float *input_transformed, __global int *correspondence_result_count) {
+/*
+  1. floatArgs : Collections of arguments with float data type like : float angle_min, float angle_max, float angle_step, float shift_min, float shift_max, float shift_step,
+  2. initialTranslation :
+  3. direction:
+  4. model_voxelized: to be shifted PointCloud (correspondence)
+  5. point_cloud_ptr: original PointCloud (correspondence)
+  6. rotation
+  7. correspondence_result: result of all between point clouds
+  8. correspondence_count : count of correspondences
+  9. work_size_dimension :
+  10. model_voxelized_size:
+  11. point_cloud_ptr_size:
+*/
+__kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global float *initialTranslation, __global float *direction,__global float *model_voxelized, __global float *point_cloud_ptr, __global float *rotation, __global float *correspondence_result,__global int *correspondence_result_count, __global int *work_size_dimension, __global int *sources_size) {
 
   __private int angle = get_global_id(0);
   __private int shift = get_global_id(1);
@@ -200,11 +211,22 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
   __private float shift_max = floatArgs[4];
   __private float shift_step = floatArgs[5];
 
+  __private int number_angle_step = work_size_dimension[0];
+  __private int number_shift_step = work_size_dimension[1];
+
+  //Space holder for shifted point Cloud
+
 
   __private float rot[9];
   __private float trans[3];
   __private float transform[16];
 
+  __private int model_voxelized_size = sources_size[0];
+  __private int point_cloud_ptr_size = sources_size[1];
+
+  __private constant int model_voxelized_size_const= model_voxelized_size;
+  
+  __private float input_transformed[model_voxelized_size_const];
   //CHECKED
 
   //This methode is replaced by following lines :
@@ -250,7 +272,7 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
   //computeCorrespondencesCL(transform,model_voxelized,point_cloud_ptr, correspondence_result, model_voxelized_size, point_cloud_ptr_size,input_transformed);
 
   __private bool ident = true;
-  __private int s_input_local = model_voxelized_size[0];
+  __private int s_input_local = model_voxelized_size;
   __private int i = 0;
   __private int k = 0;
 
@@ -310,9 +332,9 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
   __private int found = 0;
 
   //TODO : KDSearch
-  for (i = 0 ; i!= *model_voxelized_size; i++) {
-    for (k = 0; k!= *point_cloud_ptr_size; k++  ) {
-      __private float dis= 0.01f;
+  for (i = 0 ; i!= model_voxelized_size; i++) {
+    for (k = 0; k!= point_cloud_ptr_size; k++  ) {
+      __private float dis;
 
       //TODO : implement this       tree_->nearestKSearch (input_->points[*idx], 1, index, distance);
       //TODO : Review the 0.02f
@@ -331,7 +353,7 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
       //ADD TO Correspondence cloud.
     }
   }
-  correspondence_result_count = found;
+  correspondence_result_count[angle*number_shift_step+shift] = found;
 }
 
 __kernel void computeDifferencesForCorrespondence(__global float *correspondence_count, __global int *size_correspondence_count,  __global float *angle_count, __global float *shift_count) {
