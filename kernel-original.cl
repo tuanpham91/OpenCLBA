@@ -197,7 +197,7 @@ int findMaxIndexOfVectorOfPairsCL(__global float *angle_count,__global int *size
   10. model_voxelized_size:
   11. point_cloud_ptr_size:
 */
-__kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global float *initialTranslation, __global float *direction,__global float *model_voxelized, __global float *point_cloud_ptr, __global float *rotation, __global float *correspondence_result,__global int *correspondence_result_count, __global int *work_size_dimension, __global int *sources_size) {
+__kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global float *initialTranslation, __global float *direction,__global float *model_voxelized, __global float *point_cloud_ptr, __global float *rotation, __global float *correspondence_result,__global int *correspondence_result_count, __global int *work_size_dimension, __global int *sources_size, __global float *input_transformed) {
 
   __private int angle = get_global_id(0);
   __private int shift = get_global_id(1);
@@ -224,9 +224,8 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
   __private int model_voxelized_size = sources_size[0];
   __private int point_cloud_ptr_size = sources_size[1];
 
-  __private constant int model_voxelized_size_const= model_voxelized_size;
-  
-  __private float input_transformed[model_voxelized_size_const];
+
+  __private int start_index = number_shift_step*angle+shift;
   //CHECKED
 
   //This methode is replaced by following lines :
@@ -303,14 +302,17 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
     //rigidTransformationCL(s_input_local,model_voxelized,transform, input_transformed);
     for (int i = 0; i< s_input_local ; i++) {
         float temp = model_voxelized[4*i];
-        input_transformed[4*i] = temp*transform[0] + model_voxelized[4*i+1]*transform[1] + model_voxelized[4*i+2]*transform[2]+ model_voxelized[4*i+3]*transform[3];
-        input_transformed[4*i+1] = temp*transform[4] + model_voxelized[4*i+1]*transform[5] + model_voxelized[4*i+2]*transform[6]+ model_voxelized[4*i+3]*transform[7];
-        input_transformed[4*i+2] = temp*transform[8] + model_voxelized[4*i+1]*transform[9] + model_voxelized[4*i+2]*transform[10]+ model_voxelized[4*i+3]*transform[11];
-        input_transformed[4*i+3] = temp*transform[12] + model_voxelized[4*i+1]*transform[13] + model_voxelized[4*i+2]*transform[14]+ model_voxelized[4*i+3]*transform[15];
+        input_transformed[start_index + 4*i] = temp*transform[0] + model_voxelized[4*i+1]*transform[1] + model_voxelized[4*i+2]*transform[2]+ model_voxelized[4*i+3]*transform[3];
+        input_transformed[start_index + 4*i+1] = temp*transform[4] + model_voxelized[4*i+1]*transform[5] + model_voxelized[4*i+2]*transform[6]+ model_voxelized[4*i+3]*transform[7];
+        input_transformed[start_index + 4*i+2] = temp*transform[8] + model_voxelized[4*i+1]*transform[9] + model_voxelized[4*i+2]*transform[10]+ model_voxelized[4*i+3]*transform[11];
+        input_transformed[start_index + 4*i+3] = temp*transform[12] + model_voxelized[4*i+1]*transform[13] + model_voxelized[4*i+2]*transform[14]+ model_voxelized[4*i+3]*transform[15];
     }
   }
   else {
-    input_transformed = model_voxelized;
+    for (int i = 0; i <s_input_local; i++) {
+        input_transformed[start_index+i]=model_voxelized[i];
+    }
+
   }
 
 

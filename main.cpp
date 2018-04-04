@@ -156,16 +156,19 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
     //4. Arg model_voxelized
     float* model_voxelized_as_array = new float[model_voxelized.get()->size()*3];
+    std::cout<< "Size of input " << static_cast<int>(model_voxelized.get()->size());
     convertPointCloudToCL(model_voxelized,model_voxelized_as_array);
     modelVoxelizedMembObj = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(model_voxelized_as_array),model_voxelized_as_array,&ret);
     ret = clSetKernelArg(kernel,3,sizeof(modelVoxelizedMembObj), &modelVoxelizedMembObj);
     std::cout<<ret<<" Arg code 4 :"<<std::endl;
 
     //5.Arg point_cloud_ptr
-    float* point_cloud_ptr_as_array = new float[point_cloud_ptr->size()];
+    float* point_cloud_ptr_as_array = new float[point_cloud_ptr.get()->size()*3];
+    std::cout<< "Size of pointCloud " << sizeof(point_cloud_ptr.get()->size())<<std::endl;
     convertPointCloudToCL(point_cloud_ptr,point_cloud_ptr_as_array);
-    pointCloudPtrMemObj = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(point_cloud_ptr_as_array), point_cloud_ptr_as_array,&ret);
+     pointCloudPtrMemObj = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(point_cloud_ptr_as_array), point_cloud_ptr_as_array,&ret);
     ret = clSetKernelArg(kernel,4,sizeof(pointCloudPtrMemObj),&pointCloudPtrMemObj);
+    std::cout<<ret<<" Arg code 5 :"<<std::endl;
 
      //6.Arg rotation
     float* rotation_as_array = new float[9];
@@ -175,7 +178,8 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     std::cout<<ret<<" Arg code 6 :"<<std::endl;
 
     //7. Arg correspondence_result
-    int size_correspondence_result = point_cloud_ptr.get()->size()*3*num_shift_steps*num_angle_steps;
+    int size_correspondence_result = point_cloud_ptr.get()->size()*3;
+    std::cout<<point_cloud_ptr.get()->size()<<" Points found"<<std::endl;
     float* correspondence_result = new float[size_correspondence_result];
     correspondenceResultMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(correspondence_result),correspondence_result,&ret);
     ret = clSetKernelArg(kernel,6,sizeof(pointCloudPtrMemObj), &pointCloudPtrMemObj);
@@ -194,7 +198,6 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     int* worksizes = new int[2];
     worksizes[0]= num_angle_steps;
     worksizes[1]= num_shift_steps;
-
     workSizeMemObj = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(int)*2,worksizes,&ret);
     ret=clSetKernelArg(kernel,8,sizeof(workSizeMemObj),&workSizeMemObj);
     std::cout<<ret<< " Arg code 9 :"<<std::endl;
@@ -209,6 +212,14 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     std::cout<<ret<< " Arg code 10 :"<<std::endl;
 
 
+    //TODO: upgrade this :
+    //12. input_transformed
+    cl_mem inputTransformedMemObj =NULL;
+    float* input_transformed_as_array = new float[model_voxelized->size()*3*num_angle_steps*num_shift_steps];
+    inputTransformedMemObj = clCreateBuffer(context,CL_MEM_READ_WRITE,sizeof(input_transformed_as_array),input_transformed_as_array,&ret);
+    ret= clSetKernelArg(kernel,10,sizeof(inputTransformedMemObj),&inputTransformedMemObj);
+
+
     clEnqueueNDRangeKernel(command_queue, kernel, 2 , NULL,work_units, NULL, 0, NULL, NULL);
 
     clEnqueueReadBuffer(command_queue,pointCloudPtrMemObj,CL_TRUE,0,sizeof(correspondence_result), correspondence_result,0,NULL,NULL);
@@ -220,10 +231,6 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     //https://stackoverflow.com/questions/7212356/how-to-produce-a-nan-float-in-c -NAN problem
     //point_cloud_ptr_as_array is a vector of tupel <float, float, float> actually
     //free memory
-
-
-
-
 
     kernel = clCreateKernel(program,"computeDifferencesForCorrespondence", &ret);
     std::cout<<ret<<" Part 2.: "<<std::endl;
@@ -266,6 +273,8 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
     //clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL,work_units, NULL, 0, NULL, NULL);
     clock_t end = clock() ;
+    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+    std::cout<<"Time passed " <<elapsed_secs<<std::endl;
 
     /*
     for ( int i = 0 ; i <size_correspondence_count; i++) {
