@@ -276,11 +276,11 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
     std::cout<<"Time passed " <<elapsed_secs<<std::endl;
 
-    /*
-    for ( int i = 0 ; i <size_correspondence_count; i++) {
-        std::cout << correspondence_count[i]<< " ";
+
+    for ( int i = 0 ; i <1000; i++) {
+        std::cout << correspondence_result[i]<< " ";
     }
-    */
+
 }
 
 

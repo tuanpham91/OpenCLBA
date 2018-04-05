@@ -1,4 +1,4 @@
-#pragma OPENCL EXTENSION cl_khr_fp64 : enable
+  #pragma OPENCL EXTENSION cl_khr_fp64 : enable
 
 
 void rotateByAngleCL(float angleInDegrees, float *res) {
@@ -300,7 +300,10 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
   if (ident) {
     //This methode is replaced with following lines
     //rigidTransformationCL(s_input_local,model_voxelized,transform, input_transformed);
-    for (int i = 0; i< s_input_local ; i++) {
+    //5.4.2018 : Look at this .
+    //Rotation https://en.wikipedia.org/wiki/Rotation_matrix
+    //translation : https://www.youtube.com/watch?v=9KeW7onbX1Q
+    for (int i = 0; i< model_voxelized_size ; i++) {
         float temp = model_voxelized[4*i];
         input_transformed[start_index + 4*i] = temp*transform[0] + model_voxelized[4*i+1]*transform[1] + model_voxelized[4*i+2]*transform[2]+ model_voxelized[4*i+3]*transform[3];
         input_transformed[start_index + 4*i+1] = temp*transform[4] + model_voxelized[4*i+1]*transform[5] + model_voxelized[4*i+2]*transform[6]+ model_voxelized[4*i+3]*transform[7];
@@ -309,7 +312,7 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
     }
   }
   else {
-    for (int i = 0; i <s_input_local; i++) {
+    for (int i = 0; i <model_voxelized_size; i++) {
         input_transformed[start_index+i]=model_voxelized[i];
     }
 
