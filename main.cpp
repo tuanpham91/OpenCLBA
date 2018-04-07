@@ -156,7 +156,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
     //4. Arg model_voxelized
     float* model_voxelized_as_array = new float[model_voxelized.get()->size()*3];
-    std::cout<< "Size of input " << static_cast<int>(model_voxelized.get()->size());
+    std::cout<< "Size of input " << static_cast<int>(model_voxelized.get()->size())<<std::endl;
     convertPointCloudToCL(model_voxelized,model_voxelized_as_array);
     modelVoxelizedMembObj = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(model_voxelized_as_array),model_voxelized_as_array,&ret);
     ret = clSetKernelArg(kernel,3,sizeof(modelVoxelizedMembObj), &modelVoxelizedMembObj);
@@ -164,7 +164,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
     //5.Arg point_cloud_ptr
     float* point_cloud_ptr_as_array = new float[point_cloud_ptr.get()->size()*3];
-    std::cout<< "Size of pointCloud " << sizeof(point_cloud_ptr.get()->size())<<std::endl;
+    std::cout<< "Size of pointCloud is " << static_cast<int>((point_cloud_ptr.get()->size()))<<std::endl;
     convertPointCloudToCL(point_cloud_ptr,point_cloud_ptr_as_array);
      pointCloudPtrMemObj = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(point_cloud_ptr_as_array), point_cloud_ptr_as_array,&ret);
     ret = clSetKernelArg(kernel,4,sizeof(pointCloudPtrMemObj),&pointCloudPtrMemObj);
@@ -178,8 +178,8 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     std::cout<<ret<<" Arg code 6 :"<<std::endl;
 
     //7. Arg correspondence_result
-    int size_correspondence_result = point_cloud_ptr.get()->size()*3;
-    std::cout<<point_cloud_ptr.get()->size()<<" Points found"<<std::endl;
+    int size_correspondence_result = model_voxelized->size()*3*num_angle_steps*num_shift_steps;
+    std::cout<<size_correspondence_result<<" Number of max correspondence found "<<std::endl;
     float* correspondence_result = new float[size_correspondence_result];
     correspondenceResultMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(correspondence_result),correspondence_result,&ret);
     ret = clSetKernelArg(kernel,6,sizeof(pointCloudPtrMemObj), &pointCloudPtrMemObj);
@@ -207,7 +207,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     int* sources_sizes= new int[2];
     sources_sizes[0]= static_cast<int>(model_voxelized->size());
     sources_sizes[1]= static_cast<int>(point_cloud_ptr->size());
-    sourceSizesMemObj = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(int)*2, sources_sizes, &ret);
+    sourceSizesMemObj = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(sources_sizes), sources_sizes, &ret);
     ret = clSetKernelArg(kernel,9,sizeof(sourceSizesMemObj),&sourceSizesMemObj);
     std::cout<<ret<< " Arg code 10 :"<<std::endl;
 
@@ -222,11 +222,11 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
     clEnqueueNDRangeKernel(command_queue, kernel, 2 , NULL,work_units, NULL, 0, NULL, NULL);
 
-    clEnqueueReadBuffer(command_queue,pointCloudPtrMemObj,CL_TRUE,0,sizeof(correspondence_result), correspondence_result,0,NULL,NULL);
-    clEnqueueReadBuffer(command_queue,correspondence_result_count_memObj,CL_TRUE,0,sizeof(int), correspondence_result_count,0,NULL,NULL);
+    clEnqueueReadBuffer(command_queue,correspondenceResultMemObj,CL_TRUE,0,sizeof(correspondence_result), correspondence_result,0,NULL,NULL);
+    clEnqueueReadBuffer(command_queue,correspondence_result_count_memObj,CL_TRUE,0,sizeof(correspondence_result_count), correspondence_result_count,0,NULL,NULL);
 
 
-    std::cout << "Number of correspondence found of an instance" << correspondence_result_count[0] << std::endl;
+    std::cout << "Number of correspondence found of an instance " << correspondence_result_count[0] << std::endl;
     //TODO : Recheck Kernel and Args
     //https://stackoverflow.com/questions/7212356/how-to-produce-a-nan-float-in-c -NAN problem
     //point_cloud_ptr_as_array is a vector of tupel <float, float, float> actually
@@ -235,7 +235,6 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     kernel = clCreateKernel(program,"computeDifferencesForCorrespondence", &ret);
     std::cout<<ret<<" Part 2.: "<<std::endl;
 
-    //TODO : Figure out size of correspondence Count
     cl_mem args_size_mem_obj = NULL;
     int *correspondence_count_real_size = new int( point_cloud_ptr->size());
 
@@ -267,9 +266,9 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
     cl_mem angle_count_mem_obj = NULL;
     angle_count_mem_obj = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, sizeof(angle_count),angle_count,&ret);
-    std::cout<<ret<<" Part 2.4.1 : "<<std::endl;
+    std::cout<<ret<<" Part 2.4.1  : "<<std::endl;
     ret = clSetKernelArg(kernel,0,sizeof(angle_count_mem_obj), &angle_count_mem_obj);
-    std::cout<<ret<<" Part 2.4.2 : "<<std::endl;
+    std::cout<<ret<<" Part 2.4.2   "<<std::endl;
 
     //clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL,work_units, NULL, 0, NULL, NULL);
     clock_t end = clock() ;
@@ -278,7 +277,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
 
     for ( int i = 0 ; i <1000; i++) {
-        std::cout << correspondence_result[i]<< " ";
+        std::cout << correspondence_result[i]<<  "  ";
     }
 
 }

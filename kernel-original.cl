@@ -304,16 +304,18 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
     //Rotation https://en.wikipedia.org/wiki/Rotation_matrix
     //translation : https://www.youtube.com/watch?v=9KeW7onbX1Q
     for (int i = 0; i< model_voxelized_size ; i++) {
-        float temp = model_voxelized[4*i];
-        input_transformed[start_index + 4*i] = temp*transform[0] + model_voxelized[4*i+1]*transform[1] + model_voxelized[4*i+2]*transform[2]+ model_voxelized[4*i+3]*transform[3];
-        input_transformed[start_index + 4*i+1] = temp*transform[4] + model_voxelized[4*i+1]*transform[5] + model_voxelized[4*i+2]*transform[6]+ model_voxelized[4*i+3]*transform[7];
-        input_transformed[start_index + 4*i+2] = temp*transform[8] + model_voxelized[4*i+1]*transform[9] + model_voxelized[4*i+2]*transform[10]+ model_voxelized[4*i+3]*transform[11];
-        input_transformed[start_index + 4*i+3] = temp*transform[12] + model_voxelized[4*i+1]*transform[13] + model_voxelized[4*i+2]*transform[14]+ model_voxelized[4*i+3]*transform[15];
+        //Rotation and Tranlation
+        input_transformed[start_index + 3*i] = model_voxelized[start_index+3*i]*transform[0] + model_voxelized[start_index+3*i+1]*transform[4] + model_voxelized[start_index + 3*i+2]*transform[8]+transform[3];
+        input_transformed[start_index + 3*i+1] = model_voxelized[start_index+3*i]*transform[1] + model_voxelized[start_index+3*i+1]*transform[5] + model_voxelized[start_index +3*i+2]*transform[9]+transform[7];
+        input_transformed[start_index + 3*i+2] = model_voxelized[start_index+3*i]*transform[2] + model_voxelized[start_index+3*i+1]*transform[6] + model_voxelized[start_index +3*i+2]*transform[10]+transform[11];
+
     }
   }
   else {
     for (int i = 0; i <model_voxelized_size; i++) {
-        input_transformed[start_index+i]=model_voxelized[i];
+        input_transformed[start_index+3*i]=model_voxelized[3*i];
+        input_transformed[start_index+3*i+1]=model_voxelized[3*i+1];
+        input_transformed[start_index+3*i+2]=model_voxelized[3*i+2];
     }
 
   }
@@ -337,14 +339,17 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
   __private int found = 0;
 
   //TODO : KDSearch
-  for (i = 0 ; i!= model_voxelized_size; i++) {
-    for (k = 0; k!= point_cloud_ptr_size; k++  ) {
+  for (i = 0 ; i< model_voxelized_size; i++) {
+    for (k = 0; k< point_cloud_ptr_size; k++  ) {
       __private float dis;
 
       //TODO : implement this       tree_->nearestKSearch (input_->points[*idx], 1, index, distance);
-      //TODO : Review the 0.02f
-      //if ((dis == calculate_distance(&input_transformed[i*3],&point_cloud_ptr[k*3]))>0.02f) {
-      if (dis == 0.02f) {
+
+
+      __private float a = (model_voxelized[3*i] - point_cloud_ptr[3*k])*(model_voxelized[3*i] - point_cloud_ptr[3*k]);
+      __private float b = (model_voxelized[3*i+1] - point_cloud_ptr[3*k+1])*(model_voxelized[3*i+1] - point_cloud_ptr[3*k+1]);
+      __private float c = (model_voxelized[3*i+2] - point_cloud_ptr[3*k+2])*(model_voxelized[3*i+2] - point_cloud_ptr[3*k+2]);
+      if (sqrt(a+b+c)>0.02f) {
         continue;
       }
       //What if it finds more than 1 ?
@@ -353,7 +358,7 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
       //Add Correspondence to Result
       correspondence_result[3*found]= (float)i;
       correspondence_result[3*found+1] =(float)k;
-      correspondence_result[3*found+2] = dis;
+      correspondence_result[3*found+2] = sqrt(a+b+c);
       found = found+1;
       //ADD TO Correspondence cloud.
     }
