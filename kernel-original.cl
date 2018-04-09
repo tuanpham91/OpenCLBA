@@ -342,10 +342,7 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
   for (i = 0 ; i< model_voxelized_size; i++) {
     for (k = 0; k< point_cloud_ptr_size; k++  ) {
       __private float dis;
-
       //TODO : implement this       tree_->nearestKSearch (input_->points[*idx], 1, index, distance);
-
-
       __private float a = (model_voxelized[3*i] - point_cloud_ptr[3*k])*(model_voxelized[3*i] - point_cloud_ptr[3*k]);
       __private float b = (model_voxelized[3*i+1] - point_cloud_ptr[3*k+1])*(model_voxelized[3*i+1] - point_cloud_ptr[3*k+1]);
       __private float c = (model_voxelized[3*i+2] - point_cloud_ptr[3*k+2])*(model_voxelized[3*i+2] - point_cloud_ptr[3*k+2]);
@@ -363,6 +360,7 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
       //ADD TO Correspondence cloud.
     }
   }
+//TESt
   correspondence_result_count[angle*number_shift_step+shift] = found;
 }
 
