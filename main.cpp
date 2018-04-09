@@ -129,10 +129,8 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
         // Print the log
         printf("%s\n", log);
     }
-    // TODO : Adjust kernel here, 4 //  err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &buffer_one); 4.ARG!
 
     printDeviceInfoWorkSize(device_id);
-    std::cout<<"START KERNEL"<<std::endl;
     kernel = clCreateKernel(program,"shiftAndRollWithoutSumLoop", &ret);
 
     //0. Arg
@@ -141,12 +139,6 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     ret = clSetKernelArg(kernel,0, sizeof(argsMemObj),(void *)&argsMemObj);
     std::cout<<ret<<" Arg code 1.2 :"<<std::endl;
 
-    /*
-    //1. Arg count
-    countMemobj = clCreateBuffer(context,CL_MEM_READ_WRITE,prod*sizeof(float),&count,&ret);
-    ret = clSetKernelArg(kernel,1 , sizeof(countMemobj), (void *)&countMemobj);
-    std::cout<<ret<<" Arg code 2 :"<<std::endl;
-    */
 
     //2. Arg initialTranslation
     float initialTranslationData[3];
@@ -202,19 +194,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     ret = clSetKernelArg(kernel,6,sizeof(pointCloudPtrMemObj), &pointCloudPtrMemObj);
     std::cout<<ret<<" Arg code 7.2 :"<<std::endl;
 
-    /*
-
-    cl_mem correspondence_result_count_memObj = NULL;
-    //int* correspondence_result_count = new int[num_angle_steps*num_shift_steps];
-    int* correspondence_result_count = new int[10];
-    //correspondence_result_count_memObj = clCreateBuffer(context,CL_MEM_READ_WRITE, num_angle_steps*num_shift_steps*sizeof(int),correspondence_result_count,&ret);
-    correspondence_result_count_memObj = clCreateBuffer(context,CL_MEM_READ_WRITE, 10*sizeof(int),correspondence_result_count,&ret);
-    std::cout<<ret<<" Arg code 8.1 :"<<std::endl;
-    ret=clSetKernelArg(kernel,7,sizeof(correspondence_result_count_memObj),&correspondence_result_count_memObj);
-    std::cout<<ret<<" Arg code 8.2 :"<<std::endl;
-    */
-
-    //8. Arg correspondence_result_count;
+     //8. Arg correspondence_result_count;
     cl_mem corr_result = NULL;
     int* corr_result_count = new int[prod];
     corr_result= clCreateBuffer(context, CL_MEM_READ_ONLY| CL_MEM_COPY_HOST_PTR, sizeof(corr_result_count),corr_result_count,&ret);
@@ -240,12 +220,9 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     sources_sizes[1]= static_cast<int>(point_cloud_ptr->size());
     sourceSizesMemObj = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(sources_sizes), sources_sizes, &ret);
     std::cout<<ret<< " Arg code 10.1 :"<<std::endl;
-
     ret = clSetKernelArg(kernel,9,sizeof(sourceSizesMemObj),&sourceSizesMemObj);
     std::cout<<ret<< " Arg code 10.2  :"<<std::endl;
 
-
-    //TODO: upgrade this :
     //12. input_transformed
     cl_mem inputTransformedMemObj =NULL;
     float* input_transformed_as_array = new float[model_voxelized->size()*3*num_angle_steps*num_shift_steps];
@@ -253,6 +230,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     std::cout<<ret<< " Arg code 11.1 :"<<std::endl;
     ret= clSetKernelArg(kernel,10,sizeof(inputTransformedMemObj),&inputTransformedMemObj);
     std::cout<<ret<< " Arg code 12.2 :"<<std::endl;
+
 
     ret =  clEnqueueNDRangeKernel(command_queue, kernel, 2 , NULL,work_units, NULL, 0, NULL, NULL);
     std::cout<<" Running Program, code : " << ret <<std::endl;
@@ -265,6 +243,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
         std::cout << correspondence_result[i]<<  "   ";
     }
     std::cout << "Number of correspondence found of an instance is :" << corr_result_count[0] << std::endl;
+
     //TODO : Recheck Kernel and Args
     //https://stackoverflow.com/questions/7212356/how-to-produce-a-nan-float-in-c -NAN problem
     //point_cloud_ptr_as_array is a vector of tupel <float, float, float> actually
@@ -277,8 +256,6 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     int *correspondence_count_real_size = new int( point_cloud_ptr->size());
 
     //TODO : WHY 4 times of this ?
-
-
     //TODO : Size of angle_count, shift_count is right the size of correspondent_count -> Must find size of correspondence_count
     float *angle_count = new float[point_cloud_ptr->size()*2];
     float *shift_count = new float[point_cloud_ptr->size()*2];
@@ -312,8 +289,6 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     clock_t end = clock() ;
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
     std::cout<<"Time passed " <<elapsed_secs<<std::endl;
-
-
 
 }
 
