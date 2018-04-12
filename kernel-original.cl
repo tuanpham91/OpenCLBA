@@ -1,3 +1,4 @@
+
   #pragma OPENCL EXTENSION cl_khr_fp64 : enable
 
 
@@ -223,8 +224,6 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
 
   __private int model_voxelized_size = sources_size[0];
   __private int point_cloud_ptr_size = sources_size[1];
-
-
   __private int start_index = number_shift_step*angle+shift;
   //CHECKED
 
@@ -268,16 +267,20 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
   transform[14] = 0;
   transform[15] = 1;
 
+  __private float res[10];
+  __private float max_distance_sqr = (float) 0.0004f;
+
   //computeCorrespondencesCL(transform,model_voxelized,point_cloud_ptr, correspondence_result, model_voxelized_size, point_cloud_ptr_size,input_transformed);
 
   __private bool ident = true;
   __private int s_input_local = model_voxelized_size;
   __private int i = 0;
   __private int k = 0;
+  __private int found = 0;
 
 
   for (i = 0 ; i < 4 ; i++) {
-    for (k = 0; i < 4 ; k++) {
+    for (k = 0; k < 4 ; k++) {
       if (i == k ) {
         if (transform[i*4+k]!= 1.0f) {
           ident = false;
@@ -287,11 +290,13 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
       else {
         if(transform[i*4+k]!= 0.0f) {
           ident = false;
-        //  break;
+        //  break;correspondence_result_count[angle*number_shift_step+shift] = found;
         }
       }
     }
   }
+
+
 
 
   //TODO Affine transformations https://en.wikipedia.org/wiki/Transformation_matrix
@@ -322,23 +327,19 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
 
 
 
-  //TODO: , called it
   /*
     Methode : determine_correspondence (target, source,)
     Called in : global_classification, line 74
     Source : correspondence_estimation.hpp - 113
-
     */
 
-  __private float res[10];
+
+
   //This methode is replaced with following lines
   //determine_correspondence(input_transformed,target, size_input, size_output, correspondence_result);
-  //TODO : Tuan : 21.03.2018 : This line caused error, reread about calling internal kernel code, or merge these two methods into one
-
-  __private float max_distance_sqr = (float) 0.0004f;
-  __private int found = 0;
-
+  /*
   //TODO : KDSearch
+  //TODO : 12-04 this is taking too long. https://github.com/PointCloudLibrary/pcl/blob/master/registration/include/pcl/registration/impl/correspondence_estimation.hpp
   for (i = 0 ; i< model_voxelized_size; i++) {
     for (k = 0; k< point_cloud_ptr_size; k++  ) {
       __private float dis;
@@ -360,8 +361,11 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
       //ADD TO Correspondence cloud.
     }
   }
-//TESt
-  correspondence_result_count[angle*number_shift_step+shift] = found;
+  */
+
+
+  //correspondence_result_count[angle*number_shift_step+shift] = found;
+    correspondence_result_count[0] = 1;
 }
 
 __kernel void computeDifferencesForCorrespondence(__global float *correspondence_count, __global int *size_correspondence_count,  __global float *angle_count, __global float *shift_count) {

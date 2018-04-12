@@ -203,10 +203,11 @@ __kernel void shiftAndRollWithoutSumLoop(__global float* floatArgs, __global flo
   float transform[16];
 
   //CHECKED
+  /*
   rotateByAngleCL(angle_min+ angle*angle_step, rot);
   shiftByValueCL(shift_min+ shift*shift_step, initialTranslation, direction, trans);
   buildTransformationMatrixCL(rot,trans,transform);
-
+  /*
   //computeCorrespondencesCL(transform,model_voxelized,point_cloud_ptr, correspondence_result, model_voxelized_size, point_cloud_ptr_size,input_transformed);
 
   bool ident = true;
@@ -263,7 +264,7 @@ __kernel void shiftAndRollWithoutSumLoop(__global float* floatArgs, __global flo
 
   float max_distance_sqr = (float) 0.0004f;
   int found = 0;
-
+  /*
   //TODO : KDSearch
     for (int i = 0 ; i!= *model_voxelized_size; i++) {
     for (int k = 0; k!= *point_cloud_ptr_size; k++  ) {
@@ -285,6 +286,7 @@ __kernel void shiftAndRollWithoutSumLoop(__global float* floatArgs, __global flo
       //ADD TO Correspondence cloud.
     }
   }
+  */
 }
 
 __kernel void computeDifferencesForCorrespondence(__global float *correspondence_count, __global int *size_correspondence_count, __global int *size_angle_count, __global float *angle_count, __global float *shift_count, __global int *size_shift_count) {
