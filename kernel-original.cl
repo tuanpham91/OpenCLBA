@@ -339,7 +339,8 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
   //determine_correspondence(input_transformed,target, size_input, size_output, correspondence_result);
   /*
   //TODO : KDSearch
-  //TODO : 12-04 this is taking too long. https://github.com/PointCloudLibrary/pcl/blob/master/registration/include/pcl/registration/impl/correspondence_estimation.hpp
+  //TODO : 12-04 this is taking too long.https://github.com/PointCloudLibrary/pcl/blob/master/registration/include/pcl/registration/impl/correspondence_estimation.hpp
+  //TODO https://en.wikipedia.org/wiki/Iterative_closest_point
   for (i = 0 ; i< model_voxelized_size; i++) {
     for (k = 0; k< point_cloud_ptr_size; k++  ) {
       __private float dis;
