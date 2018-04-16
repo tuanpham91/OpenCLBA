@@ -325,7 +325,15 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
 
   }
 
+  correspondence_result[0] = 123;
 
+  //TEST :
+  for (i = 0 ; i< model_voxelized_size; i++) {
+    for (k = 0; k< point_cloud_ptr_size; k++  ) {
+      __private float dis = 1;
+      correspondence_result[0] = 456.0;
+    }
+  }
 
   /*
     Methode : determine_correspondence (target, source,)
@@ -340,6 +348,7 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
   /*
   //TODO : KDSearch
   //TODO : 12-04 this is taking too long.https://github.com/PointCloudLibrary/pcl/blob/master/registration/include/pcl/registration/impl/correspondence_estimation.hpp
+  https://github.com/PointCloudLibrary/pcl/blob/master/registration/include/pcl/registration/correspondence_estimation.h#L298
   //TODO https://en.wikipedia.org/wiki/Iterative_closest_point
   for (i = 0 ; i< model_voxelized_size; i++) {
     for (k = 0; k< point_cloud_ptr_size; k++  ) {
@@ -366,7 +375,9 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
 
 
   //correspondence_result_count[angle*number_shift_step+shift] = found;
-    correspondence_result_count[0] = 1;
+    correspondence_result_count[0] = 456;
+    correspondence_result[1] = 456.0f;
+
 }
 
 __kernel void computeDifferencesForCorrespondence(__global float *correspondence_count, __global int *size_correspondence_count,  __global float *angle_count, __global float *shift_count) {
@@ -430,9 +441,35 @@ __kernel void computeDifferencesForCorrespondence(__global float *correspondence
 }
 
 //https://stackoverflow.com/questions/7627098/what-is-a-lambda-expression-in-c11
+/*
+  Files to do this :
+  1. https://github.com/PointCloudLibrary/pcl/blob/master/registration/include/pcl/registration/impl/correspondence_estimation.hpp#L113
+  2. https://github.com/PointCloudLibrary/pcl/blob/master/registration/include/pcl/registration/correspondence_estimation.h#L63
+  3. https://github.com/PointCloudLibrary/pcl/blob/master/common/include/pcl/pcl_base.h
 
 
 
+
+
+__kernel void compute_correspondence_fast(__global float *source, __global int *size_source, __global float *target, __global int *target_size, _global float *max_distance ) {
+
+  __private float max_distance_sqr = max_distance*max_distance;
+
+  //initCompute ()
+  //Read this shit https://isocpp.org/wiki/faq/templates#templates-defn-vs-decl
+  //TODO : Class fine is here :  https://github.com/PointCloudLibrary/pcl/blob/master/registration/include/pcl/registration/correspondence_estimation.h#L298
+
+
+  //Iterate over the input set of source indices.
+  for (int i = 0; i != size_source; i++) {
+    //Search with KD Tree  tree_->nearestKSearch (input_->points[*idx], 1, index, distance);
+    // idx = position of point, index = a variable defined to store index, distance : a variable to define distance .
+    // What does this tree have ?
+    //TODO 16.04 : findout about this tree, what it does and so onn, setInputTarget : https://github.com/PointCloudLibrary/pcl/blob/master/registration/include/pcl/registration/impl/correspondence_estimation.hpp#L48
+  }
+
+}
+*/
 
 //http://docs.pointclouds.org/1.7.0/classpcl_1_1registration_1_1_correspondence_estimation.html
 
