@@ -326,13 +326,6 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
   }
 
 
-  //TEST :
-  for (i = 0 ; i< model_voxelized_size; i++) {
-    for (k = 0; k< point_cloud_ptr_size; k++  ) {
-      __private float dis = 1;
-      correspondence_result[0] = 456.0;
-    }
-  }
 
   /*
     Methode : determine_correspondence (target, source,)
@@ -344,7 +337,7 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
 
   //This methode is replaced with following lines
   //determine_correspondence(input_transformed,target, size_input, size_output, correspondence_result);
-  /*
+
   //TODO : KDSearch
   //TODO : 12-04 this is taking too long.https://github.com/PointCloudLibrary/pcl/blob/master/registration/include/pcl/registration/impl/correspondence_estimation.hpp
   https://github.com/PointCloudLibrary/pcl/blob/master/registration/include/pcl/registration/correspondence_estimation.h#L298
@@ -356,25 +349,35 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
       __private float a = (model_voxelized[3*i] - point_cloud_ptr[3*k])*(model_voxelized[3*i] - point_cloud_ptr[3*k]);
       __private float b = (model_voxelized[3*i+1] - point_cloud_ptr[3*k+1])*(model_voxelized[3*i+1] - point_cloud_ptr[3*k+1]);
       __private float c = (model_voxelized[3*i+2] - point_cloud_ptr[3*k+2])*(model_voxelized[3*i+2] - point_cloud_ptr[3*k+2]);
-      if (sqrt(a+b+c)>0.02f) {
+
+      /*
+      if (!sqrt(a+b+c)>0.02f) {
         continue;
-      }
+      }*/
       //What if it finds more than 1 ?
 
       //Save correspondence like this : Index of source point - Index-of found Point - distance
       //Add Correspondence to Result
-      correspondence_result[3*found]= (float)i;
-      correspondence_result[3*found+1] =(float)k;
+
+
+      /*
+      correspondence_result[3*found]= i;
+      correspondence_result[3*found+1] =k;
       correspondence_result[3*found+2] = sqrt(a+b+c);
+      */
       found = found+1;
+
+
       //ADD TO Correspondence cloud.
+
     }
+
   }
-  */
+
 
 
   //correspondence_result_count[angle*number_shift_step+shift] = found;
-    correspondence_result_count[1] = 456;
+    correspondence_result_count[start_index] = found;
     correspondence_result[2] = 456.0f;
 
 }

@@ -72,7 +72,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     std::cout << "Number of  should be dimension size: " << num_angle_steps_s<< " " <<num_shift_steps_s<< std::endl;
 
 
-    /* Load the source code containing the kernel*/
+    /* Load the source code containing the k ernel*/
     fp = fopen(fileName, "r");
     if (!fp) {
     fprintf(stderr, "Failed to load kernel\n");
@@ -103,10 +103,10 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
       CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE | CL_QUEUE_ON_DEVICE | CL_QUEUE_ON_DEVICE_DEFAULT,
       0
     };
-    std::cout<<ret<<" 3.1  code"<<std::endl;
+    std::cout<<ret<<" 3.1 code"<<std::endl;
 
     command_queue = clCreateCommandQueue(context, device_id, 0, &ret);
-    std::cout<<ret<<" 3.1  code"<<std::endl;
+    std::cout<<ret<<" 3.1 code"<<std::endl;
 
 
     //Check Concept of memory
@@ -252,7 +252,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
     std::cout <<"Number of correspondence found of an instance is: " << corr_result_count[1] << std::endl;
     for ( int i = 0 ; i <20; i++) {
-       // std::cout << correspondence_result[i]<< "  ";
+       // std::cout << correspondence_result[i]<< "   ";
          std::cout << corr_result_count[i]<< "  ";
     }
 
