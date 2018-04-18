@@ -375,8 +375,8 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
 
 
   //correspondence_result_count[angle*number_shift_step+shift] = found;
-    correspondence_result_count[0] = 456;
-    correspondence_result[1] = 456.0f;
+    correspondence_result_count[1] = 456;
+    correspondence_result[2] = 456.0f;
 
 }
 
