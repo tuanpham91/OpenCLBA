@@ -325,7 +325,6 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
 
   }
 
-  correspondence_result[0] = 123;
 
   //TEST :
   for (i = 0 ; i< model_voxelized_size; i++) {
