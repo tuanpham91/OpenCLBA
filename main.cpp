@@ -232,6 +232,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     cl_mem inputTransformedMemObj =NULL;
     int size_input_transformed_array =sources_sizes[0]*3*num_angle_steps*num_shift_steps;
     float* input_transformed_as_array = new float[size_input_transformed_array]();
+    std::cout<<"DEBUG : Size of input transformed array :" << size_input_transformed_array << std::endl;
     inputTransformedMemObj = clCreateBuffer(context,CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR,sizeof(float)*size_input_transformed_array,input_transformed_as_array,&ret);
     std::cout<<ret<< " Arg code 11.1 :"<<std::endl;
     ret= clSetKernelArg(kernel,10,sizeof(inputTransformedMemObj),&inputTransformedMemObj);
@@ -252,6 +253,9 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     ret = clEnqueueReadBuffer(command_queue,corr_result,CL_TRUE,0,sizeof(int)*prod, &corr_result_count[0],0,NULL,NULL);
     std::cout<<"Reading Buffer, code :" << ret << std::endl;
 
+    ret = clEnqueueReadBuffer(command_queue,inputTransformedMemObj,CL_TRUE,0,sizeof(float)*size_input_transformed_array, &input_transformed_as_array[0],0,NULL,NULL);
+    std::cout<<"Reading Buffer, code :" << ret << std::endl;
+
 
     std::cout <<"Number of correspondence found of an instance is: " << corr_result_count[1] << std::endl;
     for ( int i = 0 ; i <20; i++) {
@@ -259,6 +263,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
          std::cout << corr_result_count[i]<< "  ";
     }
 
+    std::cout<<"DEBUG : Last elements of input transformed is " << input_transformed_as_array[2460774]<< " "<<input_transformed_as_array[2460775]<< " "<<input_transformed_as_array[2460776]<< std::endl;
     std::cout<<std::endl;
       //free memory
 
