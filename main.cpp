@@ -72,10 +72,10 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     std::cout << "Number of  should be dimension size: " << num_angle_steps_s<< " " <<num_shift_steps_s<< std::endl;
 
 
-    /* Load the source code containing the k ernel*/
+    /* Load the source code  containing the kernel*/
     fp = fopen(fileName, "r");
     if (!fp) {
-    fprintf(stderr, "Failed to load kernel\n");
+    fprintf(stderr, "Failed  to load kernel\n");
     exit(1);
     }
 
@@ -87,11 +87,11 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     int num_shift_steps = std::round((shift_max - shift_min) / shift_step) + 1;
     int prod = num_angle_steps*num_shift_steps;
 
-    //Why allocate memory ?  see here:https://stackoverflow.com/questions/10575544/difference-between-array-type-and-array-allocated-with-malloc
+    //Why allocate memory ? see here:https://stackoverflow.com/questions/10575544/difference-between-array-type-and-array-allocated-with-malloc
 
 
     ret = clGetPlatformIDs(1, &platform_id, &ret_num_platforms);
-    std::cout<<ret<<" 1.  code"<<std::endl;
+    std::cout<<ret<<" 1. code"<<std::endl;
 
     ret = clGetDeviceIDs(platform_id, CL_DEVICE_TYPE_DEFAULT, 1, &device_id, &ret_num_devices);
     std::cout<<ret<<" 2.  code"<<std::endl;
@@ -137,59 +137,61 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
     //0. Arg
     argsMemObj = clCreateBuffer(context,CL_MEM_READ_WRITE  | CL_MEM_USE_HOST_PTR ,6*sizeof(float),args,&ret);
-    std::cout<<ret<<" Arg code 1.1 :"<<std::endl;
+    //std::cout<<ret<<" Arg code 1.1 :"<<std::endl;
     ret = clSetKernelArg(kernel,0, sizeof(argsMemObj),(void *)&argsMemObj);
-    std::cout<<ret<<" Arg code 1.2 :"<<std::endl;
+    //std::cout<<ret<<" Arg code 1.2 :"<<std::endl;
 
 
     //2. Arg initialTranslation
     float initialTranslationData[3];
     convertVector3fToCl(initialTranslation,initialTranslationData);
     initialTranslationMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE  | CL_MEM_USE_HOST_PTR ,3*sizeof(float),initialTranslationData,&ret);
-    std::cout<<ret<<" Arg code 2.1 "<<std::endl;
+    //std::cout<<ret<<" Arg code 2.1 "<<std::endl;
     ret = clSetKernelArg(kernel,1,sizeof(initialTranslationMemObj), &initialTranslationMemObj);
-    std::cout<<ret<<" Arg code 2.2:"<<std::endl;
+    //std::cout<<ret<<" Arg code 2.2:"<<std::endl;
 
     //3. Arg direction
 
     float directionData[3];
     convertVector3fToCl(initialTranslation,initialTranslationData);
     directionMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, 3*sizeof(float),direction.data(),&ret);
-    std::cout<<ret<<" Arg code 3.1 :"<<std::endl;
+    //std::cout<<ret<<" Arg code 3.1 :"<<std::endl;
     ret = clSetKernelArg(kernel,2,sizeof(directionMemObj), &directionMemObj);
-    std::cout<<ret<<" Arg code 3.2 :"<<std::endl;
+    //std::cout<<ret<<" Arg code 3.2 :"<<std::endl;
 
     //4. Arg model_voxelized
-    int model_voxelized_as_array_size = model_voxelized.get()->size()*3;
+    int model_voxelized_as_array_size = static_cast<int>(model_voxelized.get()->size())*3;
+    std::cout<<"DEBUG : Size of model voxelized : " << model_voxelized_as_array_size<<std::endl;
     float* model_voxelized_as_array = new float[model_voxelized_as_array_size]();
     convertPointCloudToCL(model_voxelized,model_voxelized_as_array);
     modelVoxelizedMembObj = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR , sizeof(float)*model_voxelized_as_array_size,model_voxelized_as_array,&ret);
-    std::cout<<ret<<" Arg code 4.1 :"<<std::endl;
+    //std::cout<<ret<<" Arg code 4.1 :"<<std::endl;
     ret = clSetKernelArg(kernel,3,sizeof(modelVoxelizedMembObj), &modelVoxelizedMembObj);
-    std::cout<<ret<<" Arg code 4.2 :"<<std::endl;
+    //std::cout<<ret<<" Arg code 4.2 :"<<std::endl;
 
     //5.Arg point_cloud_ptr
-    int point_cloud_ptr_array_size = point_cloud_ptr.get()->size()*3;
-    float* point_cloud_ptr_as_array = new float[point_cloud_ptr_array_size];
-    std::cout<< "Size of pointCloud is " << static_cast<int>((point_cloud_ptr.get()->size()))<<std::endl;
+    int point_cloud_ptr_array_size = static_cast<int>(point_cloud_ptr.get()->size());
+    float* point_cloud_ptr_as_array = new float[point_cloud_ptr_array_size*3];
     convertPointCloudToCL(point_cloud_ptr,point_cloud_ptr_as_array);
+    std::cout<< "Size of pointCloud is " << point_cloud_ptr_array_size<< " points , last value is: " << point_cloud_ptr_as_array[point_cloud_ptr_array_size-1] <<std::endl;
+
     pointCloudPtrMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, sizeof(float)*point_cloud_ptr_array_size, point_cloud_ptr_as_array,&ret);
-    std::cout<<ret<<" Arg code 5.1 :"<<std::endl;
+   //std::cout<<ret<<" Arg code 5.1 :"<<std::endl;
     ret = clSetKernelArg(kernel,4,sizeof(pointCloudPtrMemObj),&pointCloudPtrMemObj);
-    std::cout<<ret<<" Arg code 5.2 :"<<std::endl;
+    //std::cout<<ret<<" Arg code 5.2 :"<<std::endl;
 
      //6.Arg rotation
     float* rotation_as_array = new float[9];
     convertMatrix3fToCL(rotation,rotation_as_array);
     rotationMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, sizeof(float)*9,rotation_as_array,&ret);
-    std::cout<<ret<<" Arg code 6.1 :"<<std::endl;
+    //std::cout<<ret<<" Arg code 6.1 :"<<std::endl;
     ret = clSetKernelArg(kernel,5, sizeof(rotationMemObj), &rotationMemObj);
-    std::cout<<ret<<" Arg code 6.2 :"<<std::endl;
+    //std::cout<<ret<<" Arg code 6.2 :"<<std::endl;
 
     //7. Arg correspondence_result
     cl_mem correspondenceRes= NULL;
-    int size_correspondence_result = model_voxelized->size()*3*num_angle_steps*num_shift_steps;
-    std::cout<<size_correspondence_result<<" Number of max correspondence found:"<<std::endl;
+    int size_correspondence_result = static_cast<int>(model_voxelized->size())*3*num_angle_steps*num_shift_steps;
+    std::cout<<"DEBUG : Number of max correspondence found:"<<size_correspondence_result<<std::endl;
     float* correspondence_result = new float[size_correspondence_result];
     correspondenceRes = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, sizeof(float)*size_correspondence_result,correspondence_result,&ret);
     std::cout<<ret<<" Arg code 7.1 :"<<std::endl;
@@ -219,7 +221,8 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     cl_mem sourceSizesMemObj = NULL;
     int* sources_sizes= new int[2]();
     sources_sizes[0]= static_cast<int>(model_voxelized->size());
-    sources_sizes[1]= static_cast<int>(point_cloud_ptr->size());
+    sources_sizes[1]= static_cast<int>(point_cloud_ptr_array_size);
+    std::cout<<"DEBUG : Sources size is Voxelized : " << sources_sizes[0]<< " Point Cloud : "<< sources_sizes[1]<<std::endl;
     sourceSizesMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE| CL_MEM_USE_HOST_PTR, sizeof(int)*2, sources_sizes, &ret);
     std::cout<<ret<< " Arg code 10.1 :"<<std::endl;
     ret = clSetKernelArg(kernel,9,sizeof(sourceSizesMemObj),&sourceSizesMemObj);
@@ -227,7 +230,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
     //12. input_transformed
     cl_mem inputTransformedMemObj =NULL;
-    int size_input_transformed_array =model_voxelized->size()*3*num_angle_steps*num_shift_steps;
+    int size_input_transformed_array =sources_sizes[0]*3*num_angle_steps*num_shift_steps;
     float* input_transformed_as_array = new float[size_input_transformed_array]();
     inputTransformedMemObj = clCreateBuffer(context,CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR,sizeof(float)*size_input_transformed_array,input_transformed_as_array,&ret);
     std::cout<<ret<< " Arg code 11.1 :"<<std::endl;
@@ -239,7 +242,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
 
     ret =  clEnqueueNDRangeKernel(command_queue, kernel, 2 , NULL,work_units, NULL, 0, NULL, NULL);
-    std::cout<<"Running Program, code :" << ret <<std::endl;
+    std::cout<<"Running Program, code:" << ret <<std::endl;
 
     clFlush(command_queue);
     clFinish(command_queue);

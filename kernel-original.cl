@@ -1,5 +1,4 @@
-
-  #pragma OPENCL EXTENSION cl_khr_fp64 : enable
+#pragma OPENCL EXTENSION cl_khr_fp64 : enable
 
 
 void rotateByAngleCL(float angleInDegrees, float *res) {
@@ -212,6 +211,7 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
   __private float shift_max = floatArgs[4];
   __private float shift_step = floatArgs[5];
 
+
   __private int number_angle_step = work_size_dimension[0];
   __private int number_shift_step = work_size_dimension[1];
 
@@ -273,7 +273,6 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
   //computeCorrespondencesCL(transform,model_voxelized,point_cloud_ptr, correspondence_result, model_voxelized_size, point_cloud_ptr_size,input_transformed);
 
   __private bool ident = true;
-  __private int s_input_local = model_voxelized_size;
   __private int i = 0;
   __private int k = 0;
   __private int found = 0;
@@ -340,33 +339,34 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
 
   //TODO : KDSearch
   //TODO : 12-04 this is taking too long.https://github.com/PointCloudLibrary/pcl/blob/master/registration/include/pcl/registration/impl/correspondence_estimation.hpp
-  https://github.com/PointCloudLibrary/pcl/blob/master/registration/include/pcl/registration/correspondence_estimation.h#L298
+  //https://github.com/PointCloudLibrary/pcl/blob/master/registration/include/pcl/registration/correspondence_estimation.h#L298
   //TODO https://en.wikipedia.org/wiki/Iterative_closest_point
+
   for (i = 0 ; i< model_voxelized_size; i++) {
     for (k = 0; k< point_cloud_ptr_size; k++  ) {
-      __private float dis;
+      float dis;
       //TODO : implement this       tree_->nearestKSearch (input_->points[*idx], 1, index, distance);
-      __private float a = (model_voxelized[3*i] - point_cloud_ptr[3*k])*(model_voxelized[3*i] - point_cloud_ptr[3*k]);
-      __private float b = (model_voxelized[3*i+1] - point_cloud_ptr[3*k+1])*(model_voxelized[3*i+1] - point_cloud_ptr[3*k+1]);
-      __private float c = (model_voxelized[3*i+2] - point_cloud_ptr[3*k+2])*(model_voxelized[3*i+2] - point_cloud_ptr[3*k+2]);
+      float a = (input_transformed[3*i] - point_cloud_ptr[3*k])*(input_transformed[3*i] - point_cloud_ptr[3*k]);
+      float b = (input_transformed[3*i+1] - point_cloud_ptr[3*k+1])*(input_transformed[3*i+1] - point_cloud_ptr[3*k+1]);
+      float c = (input_transformed[3*i+2] - point_cloud_ptr[3*k+2])*(input_transformed[3*i+2] - point_cloud_ptr[3*k+2]);
+
 
       /*
       if (!sqrt(a+b+c)>0.02f) {
         continue;
-      }*/
-      //What if it finds more than 1 ?
+      }
 
+
+      //What if it finds more than 1 ?
       //Save correspondence like this : Index of source point - Index-of found Point - distance
       //Add Correspondence to Result
+      //if ((a+b+c)<=0.02) {
 
-
-      /*
       correspondence_result[3*found]= i;
       correspondence_result[3*found+1] =k;
       correspondence_result[3*found+2] = sqrt(a+b+c);
-      */
       found = found+1;
-
+      */
 
       //ADD TO Correspondence cloud.
 
@@ -377,8 +377,9 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
 
 
   //correspondence_result_count[angle*number_shift_step+shift] = found;
-    correspondence_result_count[start_index] = found;
-    correspondence_result[2] = 456.0f;
+
+    correspondence_result_count[start_index] = point_cloud_ptr_size;
+    //correspondence_result[2] = 456.0f;
 
 }
 
