@@ -258,12 +258,13 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
 
     std::cout <<"Number of correspondence found of an instance is: " << corr_result_count[1] << std::endl;
-    for ( int i = 0 ; i <20; i++) {
-       // std::cout << correspondence_result[i]<< "   ";
+    for ( int i = 0 ; i <121; i++) {
+       // std::cout << correspondence_result[i]<< "  ";
          std::cout << corr_result_count[i]<< "  ";
     }
 
     std::cout<<"DEBUG : Last elements of input transformed is " << input_transformed_as_array[2460774]<< " "<<input_transformed_as_array[2460775]<< " "<<input_transformed_as_array[2460776]<< std::endl;
+
     std::cout<<std::endl;
       //free memory
 
