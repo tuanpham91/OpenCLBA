@@ -309,17 +309,17 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
     //translation : https://www.youtube.com/watch?v=9KeW7onbX1Q
     for (int i = 0; i< model_voxelized_size ; i++) {
         //Rotation and Tranlation
-        input_transformed[start_index*model_voxelized_size + 3*i] = model_voxelized[start_index*model_voxelized_size+3*i]*transform[0] + model_voxelized[start_index*model_voxelized_size+3*i+1]*transform[4] + model_voxelized[start_index*model_voxelized_size + 3*i+2]*transform[8]+transform[3];
-        input_transformed[start_index*model_voxelized_size + 3*i+1] = model_voxelized[start_index*model_voxelized_size+3*i]*transform[1] + model_voxelized[start_index*model_voxelized_size+3*i+1]*transform[5] + model_voxelized[start_index*model_voxelized_size +3*i+2]*transform[9]+transform[7];
-        input_transformed[start_index*model_voxelized_size + 3*i+2] = model_voxelized[start_index*model_voxelized_size+3*i]*transform[2] + model_voxelized[start_index*model_voxelized_size+3*i+1]*transform[6] + model_voxelized[start_index*model_voxelized_size +3*i+2]*transform[10]+transform[11];
+        input_transformed[start_index*model_voxelized_size*3 + 3*i] = model_voxelized[3*i]*transform[0] + model_voxelized[3*i+1]*transform[4] + model_voxelized[ 3*i+2]*transform[8]+transform[3];
+        input_transformed[start_index*model_voxelized_size*3 + 3*i+1] = model_voxelized[3*i]*transform[1] + model_voxelized[3*i+1]*transform[5] + model_voxelized[3*i+2]*transform[9]+transform[7];
+        input_transformed[start_index*model_voxelized_size*3 + 3*i+2] = model_voxelized[3*i]*transform[2] + model_voxelized[3*i+1]*transform[6] + model_voxelized[3*i+2]*transform[10]+transform[11];
 
     }
   }
   else {
     for (int i = 0; i <model_voxelized_size; i++) {
-        input_transformed[start_index*model_voxelized_size+3*i]=model_voxelized[3*i];
-        input_transformed[start_index*model_voxelized_size+3*i+1]=model_voxelized[3*i+1];
-        input_transformed[start_index*model_voxelized_size+3*i+2]=model_voxelized[3*i+2];
+        input_transformed[start_index*model_voxelized_size*3+3*i]=model_voxelized[3*i];
+        input_transformed[start_index*model_voxelized_size*3+3*i+1]=model_voxelized[3*i+1];
+        input_transformed[start_index*model_voxelized_size*3+3*i+2]=model_voxelized[3*i+2];
     }
 
   }
@@ -378,7 +378,7 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
 
   //correspondence_result_count[angle*number_shift_step+shift] = found;
 
-    correspondence_result_count[start_index] = start_index;
+    correspondence_result_count[start_index] = start_index*model_voxelized_size;
     //correspondence_result[2] = 456.0f;
 
 }
