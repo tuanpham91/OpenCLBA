@@ -283,13 +283,13 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
       if (i == k ) {
         if (transform[i*4+k]!= 1.0f) {
           ident = false;
-        //  break;
+          break;
         }
       }
       else {
         if(transform[i*4+k]!= 0.0f) {
           ident = false;
-        //  break;correspondence_result_count[angle*number_shift_step+shift] = found;
+          break;
         }
       }
     }
@@ -346,9 +346,22 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
     for (k = 0; k< point_cloud_ptr_size; k++  ) {
       float dis;
       //TODO : implement this       tree_->nearestKSearch (input_->points[*idx], 1, index, distance);
-      float a = (input_transformed[3*i] - point_cloud_ptr[3*k])*(input_transformed[3*i] - point_cloud_ptr[3*k]);
-      float b = (input_transformed[3*i+1] - point_cloud_ptr[3*k+1])*(input_transformed[3*i+1] - point_cloud_ptr[3*k+1]);
-      float c = (input_transformed[3*i+2] - point_cloud_ptr[3*k+2])*(input_transformed[3*i+2] - point_cloud_ptr[3*k+2]);
+      //TODO : 22.04 : The problem is about the max index of input_transformed and point_cloud_ptr, please check
+      //float a = (input_transformed[start_index*model_voxelized_size*3+3*i] - point_cloud_ptr[3*k])*(input_transformed[start_index*model_voxelized_size*3+3*i] - point_cloud_ptr[3*k]);
+      //float b = (input_transformed[start_index*model_voxelized_size*3+3*i+1] - point_cloud_ptr[3*k+1])*(input_transformed[start_index*model_voxelized_size*3+3*i+1] - point_cloud_ptr[3*k+1]);
+      //float c = (input_transformed[start_index*model_voxelized_size*3+3*i+2] - point_cloud_ptr[3*k+2])*(input_transformed[start_index*model_voxelized_size*3+3*i+2] - point_cloud_ptr[3*k+2]);
+
+      //float a  =point_cloud_ptr[3*k];
+      //float b  = point_cloud_ptr[3*k+1];
+      //float c =point_cloud_ptr[3*k+2];
+
+      //float a  =input_transformed[start_index*model_voxelized_size*3+3*i];
+      //float b  =input_transformed[start_index*model_voxelized_size*3+3*i+1];
+      //float c = input_transformed[start_index*model_voxelized_size*3+3*i+2];
+
+      float a  =input_transformed[3*i];
+      float b  =input_transformed[3*i+1];
+      float c = input_transformed[3*i+2];
 
 
       /*
@@ -360,14 +373,16 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
       //What if it finds more than 1 ?
       //Save correspondence like this : Index of source point - Index-of found Point - distance
       //Add Correspondence to Result
-      //if ((a+b+c)<=0.02) {
-
-      correspondence_result[3*found]= i;
-      correspondence_result[3*found+1] =k;
-      correspondence_result[3*found+2] = sqrt(a+b+c);
-      found = found+1;
+      //
       */
-
+      if ((a+b+c)<=0.02) {
+        /*
+        correspondence_result[start_index*model_voxelized_size*3+3*found]= i;
+        correspondence_result[start_index*model_voxelized_size*3+3*found+1] =k;
+        correspondence_result[start_index*model_voxelized_size*3+3*found+2] = sqrt(a+b+c);
+        found = found+1;
+        */
+      }
       //ADD TO Correspondence cloud.
 
     }
@@ -378,7 +393,9 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
 
   //correspondence_result_count[angle*number_shift_step+shift] = found;
 
-    correspondence_result_count[start_index] = start_index*model_voxelized_size;
+    correspondence_result_count[start_index] = point_cloud_ptr[0];
+
+    //correspondence_result_count[1] = 3*point_cloud_ptr_size;
     //correspondence_result[2] = 456.0f;
 
 }

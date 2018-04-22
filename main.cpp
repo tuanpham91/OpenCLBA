@@ -148,7 +148,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     initialTranslationMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE  | CL_MEM_USE_HOST_PTR ,3*sizeof(float),initialTranslationData,&ret);
     //std::cout<<ret<<" Arg code 2.1 "<<std::endl;
     ret = clSetKernelArg(kernel,1,sizeof(initialTranslationMemObj), &initialTranslationMemObj);
-    //std::cout<<ret<<" Arg code 2.2:"<<std::endl;
+    //std::cout<<ret<<" Arg code 2.2 :"<<std::endl;
 
     //3. Arg direction
 
@@ -167,14 +167,13 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     modelVoxelizedMembObj = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR , sizeof(float)*model_voxelized_as_array_size,model_voxelized_as_array,&ret);
     //std::cout<<ret<<" Arg code 4.1 :"<<std::endl;
     ret = clSetKernelArg(kernel,3,sizeof(modelVoxelizedMembObj), &modelVoxelizedMembObj);
-    //std::cout<<ret<<" Arg code 4.2 :"<<std::endl;
+    //std::cout<<ret<<" Arg code 4.2:"<<std::endl;
 
     //5.Arg point_cloud_ptr
     int point_cloud_ptr_array_size = static_cast<int>(point_cloud_ptr.get()->size());
     float* point_cloud_ptr_as_array = new float[point_cloud_ptr_array_size*3];
     convertPointCloudToCL(point_cloud_ptr,point_cloud_ptr_as_array);
-    std::cout<< "Size of pointCloud is " << point_cloud_ptr_array_size<< " points , last value is: " << point_cloud_ptr_as_array[point_cloud_ptr_array_size-1] <<std::endl;
-
+    std::cout<< "Size of pointCloud is " << point_cloud_ptr_array_size<< " points , last value is: " << point_cloud_ptr_as_array[point_cloud_ptr_array_size*3-1] <<std::endl;
     pointCloudPtrMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, sizeof(float)*point_cloud_ptr_array_size, point_cloud_ptr_as_array,&ret);
    //std::cout<<ret<<" Arg code 5.1 :"<<std::endl;
     ret = clSetKernelArg(kernel,4,sizeof(pointCloudPtrMemObj),&pointCloudPtrMemObj);
@@ -260,7 +259,14 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     std::cout <<"Number of correspondence found of an instance is: " << corr_result_count[1] << std::endl;
     for ( int i = 0 ; i <121; i++) {
        // std::cout << correspondence_result[i]<< "  ";
-         std::cout << corr_result_count[i]<< "  ";
+        // std::cout << corr_result_count[i]<< "  ";
+         std::cout<< input_transformed_as_array[6779*3*2+i]<< " ";
+    }
+    std::cout<<std::endl<<std::endl;
+    for ( int i = 0 ; i <121; i++) {
+       // std::cout << correspondence_result[i]<< "  ";
+        // std::cout << corr_result_count[i]<< "  ";
+         std::cout<< model_voxelized_as_array[i]<< " ";
     }
 
     std::cout<<"DEBUG : Last elements of input transformed is " << input_transformed_as_array[2460774]<< " "<<input_transformed_as_array[2460775]<< " "<<input_transformed_as_array[2460776]<< std::endl;
