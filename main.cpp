@@ -35,7 +35,7 @@ cl_context context = NULL;
 cl_command_queue command_queue = NULL;
 cl_mem memobj , resobj, argsMemObj, countMemobj, initialTranslationMemObj, directionMemObj, modelVoxelizedMembObj, pointCloudPtrMemObj, rotationMemObj, correspondenceResultMemObj=NULL;
 
-cl_program program = NULL;
+cl_program  program = NULL;
 cl_kernel kernel = NULL;
 cl_platform_id platform_id = NULL;
 cl_uint ret_num_devices;
@@ -46,7 +46,7 @@ void printDeviceInfoWorkSize(cl_device_id device) {
     size_t size;
     size_t worksizes[3];
     clGetDeviceInfo(device,CL_DEVICE_MAX_WORK_ITEM_SIZES,sizeof(size_t)*3,worksizes,NULL);
-    std::cout<< " Work sizes are " <<worksizes[0]<<" ,"<<worksizes[1]<<" ,"<<worksizes[2]<<std::endl;
+    std::cout<< " Work sizes are  :" <<worksizes[0]<<" ,"<<worksizes[1]<<" ,"<<worksizes[2]<<std::endl;
 }
 
 void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float angle_step,
@@ -69,13 +69,14 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     int num_shift_steps_s = std::round((shift_max - shift_min) / shift_step) + 1;
     size_t work_units[2] ={(size_t)num_angle_steps_s,(size_t)num_shift_steps_s};
 
-    std::cout << "Number of  should be dimension size: " << num_angle_steps_s<< " " <<num_shift_steps_s<< std::endl;
+    std::cout << "Number of should be  dimension size:  " << num_angle_steps_s<< " " <<num_shift_steps_s<< std::endl;
 
 
-    /* Load the source code  containing the kernel*/
+    /* Load the source code  containing the
+     * kernel*/
     fp = fopen(fileName, "r");
     if (!fp) {
-    fprintf(stderr, "Failed  to load kernel\n");
+    fprintf(stderr, "Failed to  load kernel\n");
     exit(1);
     }
 
@@ -87,7 +88,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     int num_shift_steps = std::round((shift_max - shift_min) / shift_step) + 1;
     int prod = num_angle_steps*num_shift_steps;
 
-    //Why allocate memory ? see here:https://stackoverflow.com/questions/10575544/difference-between-array-type-and-array-allocated-with-malloc
+    //Why allocate memory ?see here:https://stackoverflow.com/questions/10575544/difference-between-array-type-and-array-allocated-with-malloc
 
 
     ret = clGetPlatformIDs(1, &platform_id, &ret_num_platforms);
@@ -103,7 +104,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
       CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE | CL_QUEUE_ON_DEVICE | CL_QUEUE_ON_DEVICE_DEFAULT,
       0
     };
-    std::cout<<ret<<" 3.1 code"<<std::endl;
+    std::cout<<ret<<" 3.1  code"<<std::endl;
 
     command_queue = clCreateCommandQueue(context, device_id, 0, &ret);
     std::cout<<ret<<" 3.1 code"<<std::endl;
@@ -161,9 +162,9 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
     //4. Arg model_voxelized
     int model_voxelized_as_array_size = static_cast<int>(model_voxelized.get()->size())*3;
-    std::cout<<"DEBUG : Size of model voxelized : " << model_voxelized_as_array_size<<std::endl;
-    float* model_voxelized_as_array = new float[model_voxelized_as_array_size]();
-    convertPointCloudToCL(model_voxelized,model_voxelized_as_array);
+    std::cout<<"DEBUG : Size of model voxelized : " << model_voxelized_as_array_size<< "or " << model_voxelized.get()->size()<< "last point is " << model_voxelized.get()->at(6778).x<< " " <<model_voxelized.get()->at(6778).y<< "  "<<model_voxelized.get()->at(6778).z <<std::endl;
+    float *model_voxelized_as_array = new float[model_voxelized_as_array_size]();
+    convertPointCloudToCL(model_voxelized,model_voxelized_as_array,model_voxelized_as_array_size/3);
     modelVoxelizedMembObj = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR , sizeof(float)*model_voxelized_as_array_size,model_voxelized_as_array,&ret);
     //std::cout<<ret<<" Arg code 4.1 :"<<std::endl;
     ret = clSetKernelArg(kernel,3,sizeof(modelVoxelizedMembObj), &modelVoxelizedMembObj);
@@ -171,14 +172,15 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
     //5.Arg point_cloud_ptr
     int point_cloud_ptr_array_size = static_cast<int>(point_cloud_ptr.get()->size())*3;
-    float* point_cloud_ptr_as_array = new float[point_cloud_ptr_array_size];
-    convertPointCloudToCL(point_cloud_ptr,point_cloud_ptr_as_array);
-    std::cout<< "Size of pointCloud is " << point_cloud_ptr_array_size<< " points , last value is: " << point_cloud_ptr_as_array[point_cloud_ptr_array_size*3-1] <<std::endl;
+    float* point_cloud_ptr_as_array = new float[point_cloud_ptr_array_size]();
+    convertPointCloudToCL(point_cloud_ptr,point_cloud_ptr_as_array,point_cloud_ptr_array_size/3);
+    std::cout<< "Size of pointCloud is " << point_cloud_ptr_array_size<< " points , last value is: " << point_cloud_ptr_as_array[point_cloud_ptr_array_size-1]<< " compare with "<< point_cloud_ptr.get()->at(point_cloud_ptr_array_size/3-1).z <<std::endl;
     pointCloudPtrMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, sizeof(float)*point_cloud_ptr_array_size, point_cloud_ptr_as_array,&ret);
    //std::cout<<ret<<" Arg code 5.1 :"<<std::endl;
     ret = clSetKernelArg(kernel,4,sizeof(pointCloudPtrMemObj),&pointCloudPtrMemObj);
     //std::cout<<ret<<" Arg code 5.2 :"<<std::endl;
 
+     std::cout<<std::endl;
      //6.Arg rotation
     float* rotation_as_array = new float[9];
     convertMatrix3fToCL(rotation,rotation_as_array);
@@ -191,7 +193,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     cl_mem correspondenceRes= NULL;
     int size_correspondence_result = static_cast<int>(model_voxelized->size())*3*num_angle_steps*num_shift_steps;
     std::cout<<"DEBUG : Number of max correspondence found:"<<size_correspondence_result<<std::endl;
-    float* correspondence_result = new float[size_correspondence_result];
+    float* correspondence_result = new float[size_correspondence_result]();
     correspondenceRes = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, sizeof(float)*size_correspondence_result,correspondence_result,&ret);
     std::cout<<ret<<" Arg code 7.1 :"<<std::endl;
     ret = clSetKernelArg(kernel,6,sizeof(correspondenceRes), &correspondenceRes);
@@ -203,7 +205,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     corr_result= clCreateBuffer(context, CL_MEM_READ_WRITE| CL_MEM_USE_HOST_PTR, sizeof(int)*prod,corr_result_count,&ret);
     std::cout<<ret<< " Arg code 7.1:"<<std::endl;
     ret=clSetKernelArg(kernel,7,sizeof(corr_result),&corr_result);
-    std::cout<<ret<< " Arg code 7.2:"<<std::endl;
+    std::cout<<ret<< " Arg code 7.2 :"<<std::endl;
 
 
     //9. Work size dimension
@@ -257,17 +259,13 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
 
     std::cout <<"Number of correspondence found of an instance is: " << corr_result_count[1] << std::endl;
-    for ( int i = 0 ; i <121; i++) {
-       // std::cout << correspondence_result[i]<< "  ";
-        // std::cout << corr_result_count[i]<< "  ";
-         std::cout<< input_transformed_as_array[6779*3*120+i]<< " ";
-    }
     std::cout<<std::endl<<std::endl;
-   /* for ( int i = 0 ; i <121; i++) {
-       // std::cout << correspondence_result[i]<< "  ";
-        // std::cout << corr_result_count[i]<< "  ";
-         std::cout<< model_voxelized_as_array[i]<< " ";
-    }
+    /*
+    for ( int i = 0 ; i <6779; i++) {
+           // std::cout << correspondence_result[i]<< "  ";
+            // std::cout << corr_result_count[i]<< "  ";
+         std::cout<< input_transformed_as_array[6779*3*2+i]<< " ";
+     }
     */
     std::cout<<"DEBUG : Last elements of input transformed is " << input_transformed_as_array[2460774]<< " "<<input_transformed_as_array[2460775]<< " "<<input_transformed_as_array[2460776]<< std::endl;
 

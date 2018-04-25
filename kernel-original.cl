@@ -275,7 +275,7 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
   __private bool ident = true;
   __private int i = 0;
   __private int k = 0;
-  __private int found = 0;
+
 
 
   for (i = 0 ; i < 4 ; i++) {
@@ -341,15 +341,20 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
   //TODO : 12-04 this is taking too long.https://github.com/PointCloudLibrary/pcl/blob/master/registration/include/pcl/registration/impl/correspondence_estimation.hpp
   //https://github.com/PointCloudLibrary/pcl/blob/master/registration/include/pcl/registration/correspondence_estimation.h#L298
   //TODO https://en.wikipedia.org/wiki/Iterative_closest_point
-
+  int found = 0;
+  int test = 0;
+  float a = 0.0;
+  float b = 0.0;
+  float c = 0.0;
   for (i = 0 ; i< model_voxelized_size; i++) {
-    for (k = 0; k< point_cloud_ptr_size; k++  ) {
-      float dis;
+    bool found_correspondence= false;
+    for (k = 0; (k< point_cloud_ptr_size)&&!found_correspondence; k++  ) {
+
       //TODO : implement this       tree_->nearestKSearch (input_->points[*idx], 1, index, distance);
       //TODO : 22.04 : The problem is about the max index of input_transformed and point_cloud_ptr, please check
-      float a = (input_transformed[start_index*model_voxelized_size*3+3*i] - point_cloud_ptr[3*k])*(input_transformed[start_index*model_voxelized_size*3+3*i] - point_cloud_ptr[3*k]);
-      float b = (input_transformed[start_index*model_voxelized_size*3+3*i+1] - point_cloud_ptr[3*k+1])*(input_transformed[start_index*model_voxelized_size*3+3*i+1] - point_cloud_ptr[3*k+1]);
-      float c = (input_transformed[start_index*model_voxelized_size*3+3*i+2] - point_cloud_ptr[3*k+2])*(input_transformed[start_index*model_voxelized_size*3+3*i+2] - point_cloud_ptr[3*k+2]);
+      a = (input_transformed[start_index*model_voxelized_size*3+3*i] - point_cloud_ptr[3*k])*(input_transformed[start_index*model_voxelized_size*3+3*i] - point_cloud_ptr[3*k]);
+      b = (input_transformed[start_index*model_voxelized_size*3+3*i+1] - point_cloud_ptr[3*k+1])*(input_transformed[start_index*model_voxelized_size*3+3*i+1] - point_cloud_ptr[3*k+1]);
+      c = (input_transformed[start_index*model_voxelized_size*3+3*i+2] - point_cloud_ptr[3*k+2])*(input_transformed[start_index*model_voxelized_size*3+3*i+2] - point_cloud_ptr[3*k+2]);
 
 
       //float a = point_cloud_ptr[3*k];
@@ -376,16 +381,19 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
       //Add Correspondence to Result
       //
       */
-      if ((a+b+c)>0.0004) {
+      if ((a+b+c)<0.3) {
         //TODO : problem with correspondence_result
-        correspondence_result[start_index*model_voxelized_size*3+3*found]= i;
-        correspondence_result[start_index*model_voxelized_size*3+3*found+1] =k;
-        correspondence_result[start_index*model_voxelized_size*3+3*found+2] = sqrt(a+b+c);
-        found = found+1;
-
+        //correspondence_result[start_index*model_voxelized_size*3+3*found]= i;
+        //correspondence_result[start_index*model_voxelized_size*3+3*found+1] =k;
+        //correspondence_result[start_index*model_voxelized_size*3+3*found+2] = sqrt(a+b+c);
+        found_correspondence=true;
+        //k = point_cloud_ptr_size; // TODO This is the problem - DONT DO THIS
       }
-      //ADD TO Correspondence cloud.
 
+
+    }
+    if (found_correspondence) {
+      test=test+1;
     }
 
   }
@@ -394,9 +402,9 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
 
   //correspondence_result_count[angle*number_shift_step+shift] = found;
 
-    correspondence_result_count[start_index] = point_cloud_ptr[point_cloud_ptr_size*3];
-
-    //correspondence_result_count[1] = 3*point_cloud_ptr_size;
+    //correspondence_result_count[start_index] = point_cloud_ptr[point_cloud_ptr_size*3];
+    correspondence_result_count[start_index] = test;
+    //correspondence_result_count[0] = 3*point_cloud_ptr_size;
     //correspondence_result[2] = 456.0f;
 
 }

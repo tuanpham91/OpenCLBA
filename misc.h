@@ -369,11 +369,12 @@ void convertMatrix3fToCL(Eigen::Matrix3f matrix3f, float* result) {
 
 }
 
-void convertPointCloudToCL(pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud, float* res) {
-    int size = pointCloud.get()->size();
+void convertPointCloudToCL(pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud, float* res,int size) {
     for (int i = 0 ; i <size ; i++) {
-    res[i*3]= pointCloud.get()->at(i).x;
-    res[i*3+1]= pointCloud.get()->at(i).y;
-    res[i*3+2]= pointCloud.get()->at(i).z;
+        res[i*3]= pointCloud.get()->at(i).x;
+        res[i*3+1]= pointCloud.get()->at(i).y;
+        res[i*3+2]= pointCloud.get()->at(i).z;
+
     }
+    std::cout<<size<< " points added"<<std::endl;
 }
