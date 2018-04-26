@@ -88,7 +88,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     int num_shift_steps = std::round((shift_max - shift_min) / shift_step) + 1;
     int prod = num_angle_steps*num_shift_steps;
 
-    //Why allocate memory ?see here:https://stackoverflow.com/questions/10575544/difference-between-array-type-and-array-allocated-with-malloc
+    //Why allocate memory ? see here:https://stackoverflow.com/questions/10575544/difference-between-array-type-and-array-allocated-with-malloc
 
 
     ret = clGetPlatformIDs(1, &platform_id, &ret_num_platforms);
@@ -149,7 +149,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     initialTranslationMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE  | CL_MEM_USE_HOST_PTR ,3*sizeof(float),initialTranslationData,&ret);
     //std::cout<<ret<<" Arg code 2.1 "<<std::endl;
     ret = clSetKernelArg(kernel,1,sizeof(initialTranslationMemObj), &initialTranslationMemObj);
-    //std::cout<<ret<<" Arg code 2.2 :"<<std::endl;
+    //std::cout<<ret<<"  Arg code 2.2 : "<<std::endl;
 
     //3. Arg direction
 
@@ -222,7 +222,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     cl_mem sourceSizesMemObj = NULL;
     int* sources_sizes= new int[2]();
     sources_sizes[0]= static_cast<int>(model_voxelized->size());
-    sources_sizes[1]= static_cast<int>(point_cloud_ptr_array_size);
+    sources_sizes[1]= static_cast<int>(point_cloud_ptr_array_size/3);
     std::cout<<"DEBUG : Sources size is Voxelized : " << sources_sizes[0]<< " Point Cloud : "<< sources_sizes[1]<<std::endl;
     sourceSizesMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE| CL_MEM_USE_HOST_PTR, sizeof(int)*2, sources_sizes, &ret);
     std::cout<<ret<< " Arg code 10.1 :"<<std::endl;
@@ -241,6 +241,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
      end = clock() ;
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
     std::cout<<std::endl<<"Time needed for preparing kernel is : " <<elapsed_secs<<std::endl;
+
 
 
     ret =  clEnqueueNDRangeKernel(command_queue, kernel, 2 , NULL,work_units, NULL, 0, NULL, NULL);

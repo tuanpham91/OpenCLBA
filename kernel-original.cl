@@ -352,9 +352,9 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
 
       //TODO : implement this       tree_->nearestKSearch (input_->points[*idx], 1, index, distance);
       //TODO : 22.04 : The problem is about the max index of input_transformed and point_cloud_ptr, please check
-      a = (input_transformed[start_index*model_voxelized_size*3+3*i] - point_cloud_ptr[3*k])*(input_transformed[start_index*model_voxelized_size*3+3*i] - point_cloud_ptr[3*k]);
-      b = (input_transformed[start_index*model_voxelized_size*3+3*i+1] - point_cloud_ptr[3*k+1])*(input_transformed[start_index*model_voxelized_size*3+3*i+1] - point_cloud_ptr[3*k+1]);
-      c = (input_transformed[start_index*model_voxelized_size*3+3*i+2] - point_cloud_ptr[3*k+2])*(input_transformed[start_index*model_voxelized_size*3+3*i+2] - point_cloud_ptr[3*k+2]);
+      //a = (input_transformed[start_index*model_voxelized_size*3+3*i] - point_cloud_ptr[3*k])*(input_transformed[start_index*model_voxelized_size*3+3*i] - point_cloud_ptr[3*k]);
+      //b = (input_transformed[start_index*model_voxelized_size*3+3*i+1] - point_cloud_ptr[3*k+1])*(input_transformed[start_index*model_voxelized_size*3+3*i+1] - point_cloud_ptr[3*k+1]);
+      //c = (input_transformed[start_index*model_voxelized_size*3+3*i+2] - point_cloud_ptr[3*k+2])*(input_transformed[start_index*model_voxelized_size*3+3*i+2] - point_cloud_ptr[3*k+2]);
 
 
       //float a = point_cloud_ptr[3*k];
@@ -365,9 +365,9 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
       //float b  =input_transformed[start_index*model_voxelized_size*3+3*i+1];
       //float c = input_transformed[start_index*model_voxelized_size*3+3*i+2];
 
-      //float a  =input_transformed[3*i];
-      //float b  =input_transformed[3*i+1];
-      //float c = input_transformed[3*i+2];
+      float a  =input_transformed[3*i];
+      float b  =input_transformed[3*i+1];
+      float c = input_transformed[3*i+2];
 
 
       /*
@@ -387,14 +387,14 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
         //correspondence_result[start_index*model_voxelized_size*3+3*found+1] =k;
         //correspondence_result[start_index*model_voxelized_size*3+3*found+2] = sqrt(a+b+c);
         found_correspondence=true;
+        int k = correspondence_result_count[start_index];
+        found = found +1 ;
         //k = point_cloud_ptr_size; // TODO This is the problem - DONT DO THIS
       }
 
 
     }
-    if (found_correspondence) {
-      test=test+1;
-    }
+
 
   }
 
@@ -403,7 +403,7 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
   //correspondence_result_count[angle*number_shift_step+shift] = found;
 
     //correspondence_result_count[start_index] = point_cloud_ptr[point_cloud_ptr_size*3];
-    correspondence_result_count[start_index] = test;
+    //correspondence_result_count[start_index] = found;
     //correspondence_result_count[0] = 3*point_cloud_ptr_size;
     //correspondence_result[2] = 456.0f;
 
