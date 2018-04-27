@@ -206,24 +206,19 @@ __kernel void find_correspondences(__global float *floatArgs, __global float *po
   float a = 0.0;
   float b = 0.0;
   float c = 0.0;
-  for (int i = 0 ; i< model_voxelized_size; i++) {
+  for (int i = 20 ; i< 25; i++) {
     bool found_correspondence= false;
-    for (int k = 0; (k< point_cloud_ptr_size)&&!found_correspondence; k++  ) {
-
-      //TODO : implement this       tree_->nearestKSearch (input_->points[*idx], 1, index, distance);
-      //TODO : 22.04 : The problem is about the max index of input_transformed and point_cloud_ptr, please check
+    for (int k = 0; k< point_cloud_ptr_size; k++  ) {
       a = (input_transformed[start_index*model_voxelized_size*3+3*i] - point_cloud_ptr[3*k])*(input_transformed[start_index*model_voxelized_size*3+3*i] - point_cloud_ptr[3*k]);
       b = (input_transformed[start_index*model_voxelized_size*3+3*i+1] - point_cloud_ptr[3*k+1])*(input_transformed[start_index*model_voxelized_size*3+3*i+1] - point_cloud_ptr[3*k+1]);
       c = (input_transformed[start_index*model_voxelized_size*3+3*i+2] - point_cloud_ptr[3*k+2])*(input_transformed[start_index*model_voxelized_size*3+3*i+2] - point_cloud_ptr[3*k+2]);
+      if (a<c) {
 
-      if (b<c) {
-        //TODO : problem with correspondence_result
-        //correspondence_result[start_index*model_voxelized_size*3+3*found]= i;
-        //correspondence_result[start_index*model_voxelized_size*3+3*found+1] =k;
-        //correspondence_result[start_index*model_voxelized_size*3+3*found+2] = sqrt(a+b+c);
-        found_correspondence=true;
-        found = found +1 ;
-        //k = point_cloud_ptr_size; // TODO This is the problem - DONT DO THIS
+        correspondence_result[start_index*model_voxelized_size*3+3*i]= i;
+        correspondence_result[start_index*model_voxelized_size*3+3*i+1] =k;
+        correspondence_result[start_index*model_voxelized_size*3+3*i+2] = sqrt(a+b+c);
+        k=point_cloud_ptr_size;
+        found++;
       }
 
 

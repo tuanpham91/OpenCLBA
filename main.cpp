@@ -41,6 +41,9 @@ cl_platform_id platform_id = NULL;
 cl_uint ret_num_devices;
 cl_uint ret_num_platforms;
 
+void determineWorksizes(int *result, int sizeOfProblem){
+    //This assume that device has a 256*256*256 size; Dont use all
+}
 
 void printDeviceInfoWorkSize(cl_device_id device) {
     size_t size;
@@ -127,6 +130,9 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
         // Print the log
         printf("%s\n", log);
     }
+    end = clock() ;
+    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+    std::cout<<std::endl<<"Time needed for Build programm method is : " <<elapsed_secs<<std::endl;
 
     printDeviceInfoWorkSize(device_id);
     kernel = clCreateKernel(program,"transforming_models", &ret);
@@ -212,7 +218,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     clFinish(command_queue);
 
     end = clock() ;
-    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+    elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
     std::cout<<std::endl<<"Time needed for 1. kernel method is : " <<elapsed_secs<<std::endl;
 
 
