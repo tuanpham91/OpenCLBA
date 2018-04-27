@@ -216,13 +216,12 @@ __kernel void find_correspondences(__global float *floatArgs, __global float *po
       b = (input_transformed[start_index*model_voxelized_size*3+3*i+1] - point_cloud_ptr[3*k+1])*(input_transformed[start_index*model_voxelized_size*3+3*i+1] - point_cloud_ptr[3*k+1]);
       c = (input_transformed[start_index*model_voxelized_size*3+3*i+2] - point_cloud_ptr[3*k+2])*(input_transformed[start_index*model_voxelized_size*3+3*i+2] - point_cloud_ptr[3*k+2]);
 
-      if ((a+b+c)<0.3) {
+      if (b<c) {
         //TODO : problem with correspondence_result
         //correspondence_result[start_index*model_voxelized_size*3+3*found]= i;
         //correspondence_result[start_index*model_voxelized_size*3+3*found+1] =k;
         //correspondence_result[start_index*model_voxelized_size*3+3*found+2] = sqrt(a+b+c);
         found_correspondence=true;
-        int k = correspondence_result_count[start_index];
         found = found +1 ;
         //k = point_cloud_ptr_size; // TODO This is the problem - DONT DO THIS
       }
@@ -240,6 +239,43 @@ __kernel void find_correspondences(__global float *floatArgs, __global float *po
 
 }
 //  shift_and_roll_without_sum
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // TUAN : Line 374 global_classification
 /*

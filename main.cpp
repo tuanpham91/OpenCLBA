@@ -69,11 +69,11 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     int num_shift_steps_s = std::round((shift_max - shift_min) / shift_step) + 1;
     size_t work_units[2] ={(size_t)num_angle_steps_s,(size_t)num_shift_steps_s};
 
-    std::cout << "Number of should be dimension size:  " << num_angle_steps_s<< " " <<num_shift_steps_s<< std::endl;
+    std::cout << "Number of should be  dimension size:  " << num_angle_steps_s<< " " <<num_shift_steps_s<< std::endl;
 
     fp = fopen(fileName, "r");
     if (!fp) {
-    fprintf(stderr, "Failed to  load kernel\n");
+    fprintf(stderr, "Failed to load kernel\n");
     exit(1);
     }
 
@@ -214,13 +214,9 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     end = clock() ;
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
     std::cout<<std::endl<<"Time needed for 1. kernel method is : " <<elapsed_secs<<std::endl;
-    /*
-    for ( int i = 0 ; i <6779; i++) {
-           // std::cout << correspondence_result[i]<< "  ";
-            // std::cout << corr_result_count[i]<< "  ";
-         std::cout<< input_transformed_as_array[6779*3*2+i]<< " ";
-     }
-    */
+
+
+
     std::cout<<"DEBUG : Last elements of input transformed is " << input_transformed_as_array[2460774]<< " "<<input_transformed_as_array[2460775]<< " "<<input_transformed_as_array[2460776]<< std::endl;
 
     kernel = clCreateKernel(program,"find_correspondences", &ret);
