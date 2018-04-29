@@ -283,12 +283,14 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
     //4. Arg correspondence_result_count;
     cl_mem corr_result = NULL;
-    int corr_result_size = (sources_sizes[0]*num_angle_steps*num_shift_steps+9)/10;
-    int *corr_result_count = new int[corr_result_size]();
+    int corr_result_size = (sources_sizes[0]*num_angle_steps*num_shift_steps+number_per_thread[0]-1)/number_per_thread[0];
+    int *corr_result_count = new int[corr_result_size]();   
     corr_result= clCreateBuffer(context, CL_MEM_READ_WRITE| CL_MEM_USE_HOST_PTR, sizeof(int)*corr_result_size,corr_result_count,&ret);
     std::cout<<ret<<" Part 2.1.4 : "<<std::endl;
     ret=clSetKernelArg(kernel,3,sizeof(corr_result),&corr_result);
     std::cout<<ret<<" Part 2.1.4 : "<<std::endl;
+    std::cout<<"DEBUG : Number of max Work Items :"<<corr_result_size<< " "<<std::endl;
+
 
     sourceSizesMemObj = NULL;
     sources_sizes= new int[2]();
@@ -303,7 +305,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     ret= clSetKernelArg(kernel,5,sizeof(inputTransformedMemObj),&inputTransformedMemObj);
     std::cout<<ret<<" Part 2.1.7 : "<<std::endl;
 
-    ret =  clEnqueueNDRangeKernel(command_queue, kernel, 3, NULL,work_units2, NULL, 0, NULL, NULL);
+    //ret =  clEnqueueNDRangeKernel(command_queue, kernel, 3, NULL,work_units2, NULL, 0, NULL, NULL);
     std::cout<<"Running Program part 2, code:" << ret <<std::endl;
 
 

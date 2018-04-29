@@ -186,11 +186,12 @@ __kernel void find_correspondences(__global int *intArgs, __global float *point_
   __private int dim2 = get_global_id(1);
   __private int dim3 = get_global_id(2);
 
+  __private int size = intArgs[0];
   __private int model_voxelized_size = sources_size[0];
   __private int point_cloud_ptr_size = sources_size[1];
 
   //This caused buffer overrun;
-  __private int start_index1 = (dim1+1)*192*192+(dim2+1)*192+dim3+1;
+  __private int start_index1 = (dim1+1)*192*192+(dim2+1)*192+dim3-1;
   __private int start_index = 0;
 
   __private int start = start_index1*10;
@@ -202,7 +203,7 @@ __kernel void find_correspondences(__global int *intArgs, __global float *point_
   float a = 0.0;
   float b = 0.0;
   float c = 0.0;
-  for (int i = start ; i< (start+10); i++) {
+  for (int i = start ; i< (start+size); i++) {
     bool found_correspondence= false;
     for (int k = 0; k< point_cloud_ptr_size; k++  ) {
       a = (input_transformed[start_index*model_voxelized_size*3+3*i] - point_cloud_ptr[3*k])*(input_transformed[start_index*model_voxelized_size*3+3*i] - point_cloud_ptr[3*k]);
