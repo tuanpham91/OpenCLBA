@@ -183,27 +183,24 @@ int findMaxIndexOfVectorOfPairsCL(__global float *angle_count,__global int *size
 __kernel void find_correspondences(__global int *intArgs, __global float *point_cloud_ptr, __global float *correspondence_result,__global int *correspondence_result_count, __global int *sources_size, __global float *input_transformed) {
 
   __private int dim1 = get_global_id(0);
-  __private int dim2 = get_global_id(1);
-  __private int dim3 = get_global_id(2);
+  //__private int dim2 = get_global_id(1);
+  //__private int dim3 = get_global_id(2);
 
   __private int size = intArgs[0];
   __private int model_voxelized_size = sources_size[0];
   __private int point_cloud_ptr_size = sources_size[1];
 
   //This caused buffer overrun;
-  __private int start_index1 = (dim1+1)*192*192+(dim2+1)*192+dim3-1;
-  __private int start_index = 0;
-
-  __private int start = start_index1*10;
-
-
-
+  //__private int start_index1 = (dim1)*192*192+(dim2)*192+dim3;
+  __private int start = dim1*size;
+  __private int end = min(start+size, ..);
   int found = 0;
-  int test = 0;
   float a = 0.0;
   float b = 0.0;
   float c = 0.0;
-  for (int i = start ; i< (start+size); i++) {
+
+
+  for (int i = start ; i< end; i++) {
     bool found_correspondence= false;
     for (int k = 0; k< point_cloud_ptr_size; k++  ) {
       a = (input_transformed[start_index*model_voxelized_size*3+3*i] - point_cloud_ptr[3*k])*(input_transformed[start_index*model_voxelized_size*3+3*i] - point_cloud_ptr[3*k]);
@@ -222,7 +219,7 @@ __kernel void find_correspondences(__global int *intArgs, __global float *point_
 
 
   }
-    correspondence_result_count[start_index1] = start_index1;
+  correspondence_result_count[dim1]=dim1;
 }
 
 
