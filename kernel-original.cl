@@ -66,7 +66,6 @@ void determine_correspondence(float *input, float *output,int *size_source, int 
   for (int i = 0 ; i!= *size_source; i++) {
     for (int k = 0; k!= *size_target; k++  ) {
       float dis;
-
       //TODO : implement this       tree_->nearestKSearch (input_->points[*idx], 1, index, distance);
       //TODO : Review the 0.02f
       if ((dis == calculate_distance(&input[i*3],&output[k*3]))>0.02f) {
@@ -182,30 +181,27 @@ int findMaxIndexOfVectorOfPairsCL(__global float *angle_count,__global int *size
 
 __kernel void find_correspondences(__global int *intArgs, __global float *point_cloud_ptr, __global float *correspondence_result,__global float *correspondence_result_count, __global int *sources_size, __global float *input_transformed) {
 
-  __private int dim1 = get_global_id(0);
+  __private int i = get_global_id(0);
   __private int max_number_of_points = intArgs[1];
-  if (dim1 >= max_number_of_points) {
+
+  if (i >= max_number_of_points) {
     return;
   }
 
-
-
-  __private int model_voxelized_size = sources_size[0];
   __private int point_cloud_ptr_size = sources_size[1];
 
-  int found = 0;
   float a = 0.0;
   float b = 0.0;
   float c = 0.0;
   float dis = 10;
-  int i = dim1;
+
   for (int k = 0; k< point_cloud_ptr_size; k++  ) {
     a = (input_transformed[3*i] - point_cloud_ptr[3*k])*(input_transformed[3*i] - point_cloud_ptr[3*k]);
     b = (input_transformed[3*i+1] - point_cloud_ptr[3*k+1])*(input_transformed[3*i+1] - point_cloud_ptr[3*k+1]);
     c = (input_transformed[3*i+2] - point_cloud_ptr[3*k+2])*(input_transformed[3*i+2] - point_cloud_ptr[3*k+2]);
     dis = sqrt(a+b+c);
     //if (dis<=0.5) {
-    if (dis<1.75) {
+    if (dis<0.5) {
       correspondence_result[3*i]= (float)i;
       correspondence_result[3*i+1] =(float)k;
       correspondence_result[3*i+2] = dis;
@@ -213,7 +209,7 @@ __kernel void find_correspondences(__global int *intArgs, __global float *point_
     }
   }
 
-  correspondence_result_count[dim1]=dis;
+  correspondence_result_count[i]=dis;
 }
 
 

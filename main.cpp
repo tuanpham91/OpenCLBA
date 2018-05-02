@@ -217,7 +217,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     clFlush(command_queue);
     clFinish(command_queue);
 
-    end = clock() ;
+
     elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
     std::cout<<std::endl<<"Time needed for 1. kernel method is : " <<elapsed_secs<<std::endl;
     std::cout<<"DEBUG : Last elements of input transformed is " << input_transformed_as_array[2460774]<< " "<<input_transformed_as_array[2460775]<< " "<<input_transformed_as_array[2460776]<< std::endl;
@@ -282,7 +282,8 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     ret= clSetKernelArg(kernel,5,sizeof(inputTransformedMemObj),&inputTransformedMemObj);
     std::cout<<ret<<" Part 2.1.7 : "<<std::endl;
 
-    ret =  clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL,work_units2, NULL, 0, NULL, NULL);
+    size_t local_work_size[1] = {(size_t) 64};
+    ret =  clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL,work_units2, local_work_size, 0, NULL, NULL);
     std::cout<<"Running Program part 2, code:" << ret <<std::endl;
 
     clFlush(command_queue);
@@ -301,8 +302,8 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
         std::cout<<correspondence_result[i]<<"  ";
     }
 
-    end = clock() ;
-    elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+    clock_t end2 = clock() ;
+    elapsed_secs = double(end2 - end) / CLOCKS_PER_SEC;
     std::cout<<std::endl<<"Time needed for 2. kernel method is : " <<elapsed_secs<<std::endl;
 
 }
