@@ -41,29 +41,9 @@ cl_platform_id platform_id = NULL;
 cl_uint ret_num_devices;
 cl_uint ret_num_platforms;
 
-void determineWorksizes( int sizeOfProblem, int *res, int num){
-    //This assume that device has a 256*256*256 size; Dont use all
-    int res_dim_1 =0;
-    int res_dim_2 =0;
-    int res_dim_3 =0;
-    int temp = 0;
-    int work_size_required = (sizeOfProblem+num-1)/num;
 
-    res_dim_1 = work_size_required/(192*192);
-    temp  = work_size_required - res_dim_1*192*192;
-    res_dim_2 = temp/192;
-    temp = temp - res_dim_2*192;
-    res_dim_3 = temp;
-    res[0] = res_dim_1;
-    res[1] = res_dim_2;
-    res[2] = res_dim_3;
-    std::cout<<"dimension " << res_dim_1 << " " << res_dim_2 << " " <<res_dim_3<<" for problem size " << sizeOfProblem << std::endl;
-
-}
-
-
-int determinNumWorkItems(int sizeOfProblem, int num) {
-    return (sizeOfProblem+num-1)/num;
+int determinNumWorkItems(int sizeOfProblem) {
+    return ((sizeOfProblem+63)/64)*64;
 }
 void printDeviceInfoWorkSize(cl_device_id device) {
     size_t size;
@@ -245,24 +225,24 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
 
 
-
-
     kernel = clCreateKernel(program,"find_correspondences", &ret);
     std::cout<<ret<<" Part 2 :find correspondence "<<std::endl;
     int number_of_points_to_calculate = sources_sizes[0]*num_angle_steps*num_shift_steps;
-    int int_args[2] = {number_of_points_per_work_item,number_of_points_to_calculate};
+    int int_args[2] = {1,number_of_points_to_calculate};
     cl_mem intArgs = NULL;
     intArgs = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, sizeof(int)*2,int_args,&ret);
-    std::cout<<ret<<" Part 2.1.0 : "<<std::endl;
+    //std::cout<<ret<<" Part 2.1.0 : "<<std::endl;
     ret = clSetKernelArg(kernel,0,sizeof(intArgs), &intArgs);
     std::cout<<ret<<" Part 2.1.0 : "<<std::endl;
 
-    size_t work_units2[1]= {(size_t)((sources_sizes[0]*num_angle_steps*num_shift_steps+number_of_points_per_work_item-1)/number_of_points_per_work_item)-1000};
+    size_t work_units2[1]= {(size_t)determinNumWorkItems(number_of_points_to_calculate)};
+
+    std::cout<< number_of_points_to_calculate<<" : Number of work items, Number of optimal work Items : " <<determinNumWorkItems(number_of_points_to_calculate)<<std::endl;;
 
     int point_cloud_ptr_array_size = static_cast<int>(point_cloud_ptr.get()->size())*3;
     float* point_cloud_ptr_as_array = new float[point_cloud_ptr_array_size]();
     convertPointCloudToCL(point_cloud_ptr,point_cloud_ptr_as_array,point_cloud_ptr_array_size/3);
-    std::cout<< "Size of pointCloud is " << point_cloud_ptr_array_size<< " points , last value is: " << point_cloud_ptr_as_array[point_cloud_ptr_array_size-1]<< " compare with "<< point_cloud_ptr.get()->at(point_cloud_ptr_array_size/3-1).z <<std::endl;
+    std::cout<< "Size of pointCloud array is " << point_cloud_ptr_array_size<< " points , last value is: " << point_cloud_ptr_as_array[point_cloud_ptr_array_size-1]<< " compare with "<< point_cloud_ptr.get()->at(point_cloud_ptr_array_size/3-1).z <<std::endl;
     pointCloudPtrMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, sizeof(float)*point_cloud_ptr_array_size, point_cloud_ptr_as_array,&ret);
     std::cout<<ret<<" Part 2.1.2 : "<<std::endl;
     ret = clSetKernelArg(kernel,1,sizeof(pointCloudPtrMemObj),&pointCloudPtrMemObj);
@@ -279,7 +259,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
     //4. Arg correspondence_result_count;
     cl_mem corr_result = NULL;
-    int corr_result_size = (sources_sizes[0]*num_angle_steps*num_shift_steps+number_of_points_per_work_item-1)/number_of_points_per_work_item;
+    int corr_result_size = number_of_points_to_calculate;
     //int *corr_result_count = new int[corr_result_size]();
     float *corr_result_count = new float[corr_result_size]();
     corr_result= clCreateBuffer(context, CL_MEM_READ_WRITE| CL_MEM_USE_HOST_PTR, sizeof(float)*corr_result_size,corr_result_count,&ret);
@@ -314,12 +294,12 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     ret = clEnqueueReadBuffer(command_queue,correspondenceRes,CL_TRUE,0,sizeof(float)*size_correspondence_result, &correspondence_result[0],0,NULL,NULL);
     std::cout<<"Reading Buffer , code :" << ret << std::endl;
 
-    for ( int i = corr_result_size-100; i <corr_result_size; i++) {
-    //for ( int i = 0; i <100; i++) {
+    //for ( int i = corr_result_size-100; i <corr_result_size; i++) {
+    for ( int i = 0; i <100; i++) {
        //std::cout << corr_result_count[i]<<"  ";
-        std::cout << corr_result_count[i]<<"  ";
+        //std::cout << corr_result_count[i]<<"  ";
+        std::cout<<correspondence_result[i]<<"  ";
     }
-    std::cout <<std::endl<< correspondence_result[820259*3+2]<<"  ";
 
     end = clock() ;
     elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;

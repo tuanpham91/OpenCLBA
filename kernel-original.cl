@@ -183,41 +183,37 @@ int findMaxIndexOfVectorOfPairsCL(__global float *angle_count,__global int *size
 __kernel void find_correspondences(__global int *intArgs, __global float *point_cloud_ptr, __global float *correspondence_result,__global float *correspondence_result_count, __global int *sources_size, __global float *input_transformed) {
 
   __private int dim1 = get_global_id(0);
-
-  __private int size = intArgs[0];
   __private int max_number_of_points = intArgs[1];
+  if (dim1 >= max_number_of_points) {
+    return;
+  }
+
+
 
   __private int model_voxelized_size = sources_size[0];
   __private int point_cloud_ptr_size = sources_size[1];
-
-  __private int start = dim1*size;
-  __private int end = min(start+size, max_number_of_points);
 
   int found = 0;
   float a = 0.0;
   float b = 0.0;
   float c = 0.0;
   float dis = 10;
-  int i = start;
-  for (i = start ; i< start+1; i++) {
-    for (int k = 0; k< point_cloud_ptr_size; k++  ) {
-      a = (input_transformed[3*i] - point_cloud_ptr[3*k])*(input_transformed[3*i] - point_cloud_ptr[3*k]);
-      b = (input_transformed[3*i+1] - point_cloud_ptr[3*k+1])*(input_transformed[3*i+1] - point_cloud_ptr[3*k+1]);
-      c = (input_transformed[3*i+2] - point_cloud_ptr[3*k+2])*(input_transformed[3*i+2] - point_cloud_ptr[3*k+2]);
-      dis = sqrt(a+b+c);
-      //if (dis<=0.5) {
-      if (dis<0.5) {
-        //correspondence_result[3*i]= (float)i;
-        //correspondence_result[3*i+1] =(float)k;
-        //correspondence_result[3*i+2] = dis;
-        correspondence_result[3*i]= (float)i;
-        correspondence_result[3*i+1] =(float)k;
-        correspondence_result[3*i+2] = dis;
-        k=point_cloud_ptr_size;
-      }
+  int i = dim1;
+  for (int k = 0; k< point_cloud_ptr_size; k++  ) {
+    a = (input_transformed[3*i] - point_cloud_ptr[3*k])*(input_transformed[3*i] - point_cloud_ptr[3*k]);
+    b = (input_transformed[3*i+1] - point_cloud_ptr[3*k+1])*(input_transformed[3*i+1] - point_cloud_ptr[3*k+1]);
+    c = (input_transformed[3*i+2] - point_cloud_ptr[3*k+2])*(input_transformed[3*i+2] - point_cloud_ptr[3*k+2]);
+    dis = sqrt(a+b+c);
+    //if (dis<=0.5) {
+    if (dis<1.75) {
+      correspondence_result[3*i]= (float)i;
+      correspondence_result[3*i+1] =(float)k;
+      correspondence_result[3*i+2] = dis;
+      k=point_cloud_ptr_size;
     }
   }
-  correspondence_result_count[dim1]=start;
+
+  correspondence_result_count[dim1]=dis;
 }
 
 

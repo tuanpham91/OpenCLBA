@@ -376,5 +376,4 @@ void convertPointCloudToCL(pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud, float
         res[i*3+2]= pointCloud.get()->at(i).z;
 
     }
-    std::cout<<size<< " points added"<<std::endl;
 }
