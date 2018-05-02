@@ -180,46 +180,44 @@ int findMaxIndexOfVectorOfPairsCL(__global float *angle_count,__global int *size
 }
 
 
-__kernel void find_correspondences(__global int *intArgs, __global float *point_cloud_ptr, __global float *correspondence_result,__global int *correspondence_result_count, __global int *sources_size, __global float *input_transformed) {
+__kernel void find_correspondences(__global int *intArgs, __global float *point_cloud_ptr, __global float *correspondence_result,__global float *correspondence_result_count, __global int *sources_size, __global float *input_transformed) {
 
   __private int dim1 = get_global_id(0);
-  //__private int dim2 = get_global_id(1);
-  //__private int dim3 = get_global_id(2);
 
   __private int size = intArgs[0];
+  __private int max_number_of_points = intArgs[1];
+
   __private int model_voxelized_size = sources_size[0];
   __private int point_cloud_ptr_size = sources_size[1];
 
-  //This caused buffer overrun;
-  //__private int start_index1 = (dim1)*192*192+(dim2)*192+dim3;
   __private int start = dim1*size;
-  __private int end = min(start+size, ..);
+  __private int end = min(start+size, max_number_of_points);
+
   int found = 0;
   float a = 0.0;
   float b = 0.0;
   float c = 0.0;
-
-
-  for (int i = start ; i< end; i++) {
-    bool found_correspondence= false;
+  float dis = 10;
+  int i = start;
+  for (i = start ; i< start+1; i++) {
     for (int k = 0; k< point_cloud_ptr_size; k++  ) {
-      a = (input_transformed[start_index*model_voxelized_size*3+3*i] - point_cloud_ptr[3*k])*(input_transformed[start_index*model_voxelized_size*3+3*i] - point_cloud_ptr[3*k]);
-      b = (input_transformed[start_index*model_voxelized_size*3+3*i+1] - point_cloud_ptr[3*k+1])*(input_transformed[start_index*model_voxelized_size*3+3*i+1] - point_cloud_ptr[3*k+1]);
-      c = (input_transformed[start_index*model_voxelized_size*3+3*i+2] - point_cloud_ptr[3*k+2])*(input_transformed[start_index*model_voxelized_size*3+3*i+2] - point_cloud_ptr[3*k+2]);
-      if (a<c) {
-        correspondence_result[start_index*model_voxelized_size*3+3*i]= i;
-        correspondence_result[start_index*model_voxelized_size*3+3*i+1] =k;
-        correspondence_result[start_index*model_voxelized_size*3+3*i+2] = sqrt(a+b+c);
+      a = (input_transformed[3*i] - point_cloud_ptr[3*k])*(input_transformed[3*i] - point_cloud_ptr[3*k]);
+      b = (input_transformed[3*i+1] - point_cloud_ptr[3*k+1])*(input_transformed[3*i+1] - point_cloud_ptr[3*k+1]);
+      c = (input_transformed[3*i+2] - point_cloud_ptr[3*k+2])*(input_transformed[3*i+2] - point_cloud_ptr[3*k+2]);
+      dis = sqrt(a+b+c);
+      //if (dis<=0.5) {
+      if (dis<0.5) {
+        //correspondence_result[3*i]= (float)i;
+        //correspondence_result[3*i+1] =(float)k;
+        //correspondence_result[3*i+2] = dis;
+        correspondence_result[3*i]= (float)i;
+        correspondence_result[3*i+1] =(float)k;
+        correspondence_result[3*i+2] = dis;
         k=point_cloud_ptr_size;
-        found++;
       }
-
-
     }
-
-
   }
-  correspondence_result_count[dim1]=dim1;
+  correspondence_result_count[dim1]=start;
 }
 
 

@@ -249,17 +249,16 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
     kernel = clCreateKernel(program,"find_correspondences", &ret);
     std::cout<<ret<<" Part 2 :find correspondence "<<std::endl;
-
-    int number_per_thread[1] = {number_of_points_per_work_item};
+    int number_of_points_to_calculate = sources_sizes[0]*num_angle_steps*num_shift_steps;
+    int int_args[2] = {number_of_points_per_work_item,number_of_points_to_calculate};
     cl_mem intArgs = NULL;
-    intArgs = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, sizeof(int),number_per_thread,&ret);
+    intArgs = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, sizeof(int)*2,int_args,&ret);
     std::cout<<ret<<" Part 2.1.0 : "<<std::endl;
     ret = clSetKernelArg(kernel,0,sizeof(intArgs), &intArgs);
     std::cout<<ret<<" Part 2.1.0 : "<<std::endl;
 
+    size_t work_units2[1]= {(size_t)((sources_sizes[0]*num_angle_steps*num_shift_steps+number_of_points_per_work_item-1)/number_of_points_per_work_item)-1000};
 
-    //size_t work_units2[3]= {(size_t)dims[0]+1,(size_t)dims[1]+1,(size_t)dims[2]};
-    size_t work_units2[1]= {(size_t)((sources_sizes[0]*num_angle_steps*num_shift_steps+4)/5)};
     int point_cloud_ptr_array_size = static_cast<int>(point_cloud_ptr.get()->size())*3;
     float* point_cloud_ptr_as_array = new float[point_cloud_ptr_array_size]();
     convertPointCloudToCL(point_cloud_ptr,point_cloud_ptr_as_array,point_cloud_ptr_array_size/3);
@@ -280,9 +279,10 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
     //4. Arg correspondence_result_count;
     cl_mem corr_result = NULL;
-    int corr_result_size = (sources_sizes[0]*num_angle_steps*num_shift_steps+number_per_thread[0]-1)/number_per_thread[0];
-    int *corr_result_count = new int[corr_result_size]();   
-    corr_result= clCreateBuffer(context, CL_MEM_READ_WRITE| CL_MEM_USE_HOST_PTR, sizeof(int)*corr_result_size,corr_result_count,&ret);
+    int corr_result_size = (sources_sizes[0]*num_angle_steps*num_shift_steps+number_of_points_per_work_item-1)/number_of_points_per_work_item;
+    //int *corr_result_count = new int[corr_result_size]();
+    float *corr_result_count = new float[corr_result_size]();
+    corr_result= clCreateBuffer(context, CL_MEM_READ_WRITE| CL_MEM_USE_HOST_PTR, sizeof(float)*corr_result_size,corr_result_count,&ret);
     std::cout<<ret<<" Part 2.1.4 : "<<std::endl;
     ret=clSetKernelArg(kernel,3,sizeof(corr_result),&corr_result);
     std::cout<<ret<<" Part 2.1.4 : "<<std::endl;
@@ -308,12 +308,18 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     clFlush(command_queue);
     clFinish(command_queue);
 
-    ret = clEnqueueReadBuffer(command_queue,corr_result,CL_TRUE,0,sizeof(int)*corr_result_size, &corr_result_count[0],0,NULL,NULL);
+    ret = clEnqueueReadBuffer(command_queue,corr_result,CL_TRUE,0,sizeof(float)*corr_result_size, &corr_result_count[0],0,NULL,NULL);
     std::cout<<"Reading Buffer , code :" << ret << std::endl;
 
-    for ( int i = 0 ; i <1200; i++) {
-       std::cout << corr_result_count[i]<< "  ";
+    ret = clEnqueueReadBuffer(command_queue,correspondenceRes,CL_TRUE,0,sizeof(float)*size_correspondence_result, &correspondence_result[0],0,NULL,NULL);
+    std::cout<<"Reading Buffer , code :" << ret << std::endl;
+
+    for ( int i = corr_result_size-100; i <corr_result_size; i++) {
+    //for ( int i = 0; i <100; i++) {
+       //std::cout << corr_result_count[i]<<"  ";
+        std::cout << corr_result_count[i]<<"  ";
     }
+    std::cout <<std::endl<< correspondence_result[820259*3+2]<<"  ";
 
     end = clock() ;
     elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
