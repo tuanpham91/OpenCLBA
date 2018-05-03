@@ -41,10 +41,10 @@ cl_platform_id platform_id = NULL;
 cl_uint ret_num_devices;
 cl_uint ret_num_platforms;
 
-
 int determinNumWorkItems(int sizeOfProblem) {
     return ((sizeOfProblem+63)/64)*64;
 }
+
 void printDeviceInfoWorkSize(cl_device_id device) {
     size_t size;
     size_t worksizes[3];
@@ -109,7 +109,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
 
     //Check Concept of memory
-    float args[6] ={angle_min, angle_max, angle_step, shift_min, shift_max, shift_step};
+
 
     program = clCreateProgramWithSource(context,1,(const char**)&source_str, (const size_t*)&source_size, &ret);
     std::cout<<ret<<" 4.  code"<<std::endl;
@@ -136,29 +136,10 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     printDeviceInfoWorkSize(device_id);
     kernel = clCreateKernel(program,"transforming_models", &ret);
 
+    float args[21] ={angle_min, angle_max, angle_step, shift_min, shift_max, shift_step,initialTranslation[0],initialTranslation[1],initialTranslation[2],direction[0],direction[1],direction[2],rotation[0],rotation[1],rotation[2],rotation[3],rotation[4],rotation[5],rotation[6],rotation[7],rotation[8]};
     //0. Arg
-    argsMemObj = clCreateBuffer(context,CL_MEM_READ_WRITE  | CL_MEM_USE_HOST_PTR ,6*sizeof(float),args,&ret);
-    //std::cout<<ret<<" Arg code 1.1 :"<<std::endl;
+    argsMemObj = clCreateBuffer(context,CL_MEM_READ_WRITE  | CL_MEM_USE_HOST_PTR ,21*sizeof(float),args,&ret);
     ret = clSetKernelArg(kernel,0, sizeof(argsMemObj),(void *)&argsMemObj);
-    //std::cout<<ret<<" Arg code 1.2 :"<<std::endl;
-
-
-    //2. Arg initialTranslation
-    float initialTranslationData[3];
-    convertVector3fToCl(initialTranslation,initialTranslationData);
-    initialTranslationMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE  | CL_MEM_USE_HOST_PTR ,3*sizeof(float),initialTranslationData,&ret);
-    //std::cout<<ret<<" Arg code 2.1 "<<std::endl;
-    ret = clSetKernelArg(kernel,1,sizeof(initialTranslationMemObj), &initialTranslationMemObj);
-    //std::cout<<ret<<"  Arg code 2.2 : "<<std::endl;
-
-    //3. Arg direction
-
-    float directionData[3];
-    convertVector3fToCl(initialTranslation,initialTranslationData);
-    directionMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, 3*sizeof(float),direction.data(),&ret);
-    //std::cout<<ret<<" Arg code 3.1 :"<<std::endl;
-    ret = clSetKernelArg(kernel,2,sizeof(directionMemObj), &directionMemObj);
-    //std::cout<<ret<<" Arg code 3.2 :"<<std::endl;
 
     //4. Arg model_voxelized
     int model_voxelized_as_array_size = static_cast<int>(model_voxelized.get()->size())*3;
@@ -167,49 +148,32 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     convertPointCloudToCL(model_voxelized,model_voxelized_as_array,model_voxelized_as_array_size/3);
     modelVoxelizedMembObj = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR , sizeof(float)*model_voxelized_as_array_size,model_voxelized_as_array,&ret);
     //std::cout<<ret<<" Arg code 4.1 :"<<std::endl;
-    ret = clSetKernelArg(kernel,3,sizeof(modelVoxelizedMembObj), &modelVoxelizedMembObj);
+    ret = clSetKernelArg(kernel,1,sizeof(modelVoxelizedMembObj), &modelVoxelizedMembObj);
     //std::cout<<ret<<" Arg code 4.2:"<<std::endl;
 
-         //6.Arg rotation
-    float* rotation_as_array = new float[9];
-    convertMatrix3fToCL(rotation,rotation_as_array);
-    rotationMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, sizeof(float)*9,rotation_as_array,&ret);
-    //std::cout<<ret<<" Arg code 6.1:"<<std::endl;
-    ret = clSetKernelArg(kernel,4, sizeof(rotationMemObj), &rotationMemObj);
-    //std::cout<<ret<<" Arg code 6.2 :"<<std::endl;
 
-        //9. Work size dimension
+    //9. Work size dimension
     cl_mem workSizeMemObj = NULL;
-    int* worksizes = new int[2]();
+    int* worksizes = new int[3]();
     worksizes[0]= num_angle_steps;
     worksizes[1]= num_shift_steps;
+    worksizes[2]= static_cast<int>(model_voxelized->size());
     workSizeMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE| CL_MEM_USE_HOST_PTR, sizeof(int)*2,worksizes,&ret);
     std::cout<<ret<< " Arg code 9.1 :"<<std::endl;
-    ret=clSetKernelArg(kernel,5,sizeof(workSizeMemObj),&workSizeMemObj);
+    ret=clSetKernelArg(kernel,2,sizeof(workSizeMemObj),&workSizeMemObj);
     std::cout<<ret<< " Arg code 9.2 :"<<std::endl;
 
-    //10 and 11. To be shifted
-    cl_mem sourceSizesMemObj = NULL;
-    int* sources_sizes= new int[2]();
-    sources_sizes[0]= static_cast<int>(model_voxelized->size());
-    sources_sizes[1]= static_cast<int>(point_cloud_ptr->size());
 
-    std::cout<<"DEBUG : Sources size is Voxelized : " << sources_sizes[0]<< " Point Cloud : "<< sources_sizes[1]<<std::endl;
-    sourceSizesMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE| CL_MEM_USE_HOST_PTR, sizeof(int)*2, sources_sizes, &ret);
-    std::cout<<ret<< " Arg code 10.1 :"<<std::endl;
-    ret = clSetKernelArg(kernel,6,sizeof(sourceSizesMemObj),&sourceSizesMemObj);
-    std::cout<<ret<< " Arg code 10.2  :"<<std::endl;
 
     //12. input_transformed
     cl_mem inputTransformedMemObj =NULL;
-    int size_input_transformed_array =sources_sizes[0]*3*num_angle_steps*num_shift_steps;
+    int size_input_transformed_array =worksizes[2]*3*num_angle_steps*num_shift_steps;
     float* input_transformed_as_array = new float[size_input_transformed_array]();
-    std::cout<<"DEBUG : Size of input transformed array :" << size_input_transformed_array << std::endl;
+    //std::cout<<"DEBUG : Size of input transformed array :" << size_input_transformed_array << std::endl;
     inputTransformedMemObj = clCreateBuffer(context,CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR,sizeof(float)*size_input_transformed_array,input_transformed_as_array,&ret);
-    std::cout<<ret<< " Arg code 11.1 :"<<std::endl;
-    ret= clSetKernelArg(kernel,7,sizeof(inputTransformedMemObj),&inputTransformedMemObj);
-    std::cout<<ret<< " Arg code 12.2:"<<std::endl;
-
+    //std::cout<<ret<< " Arg code 11.1 :"<<std::endl;
+    ret= clSetKernelArg(kernel,3,sizeof(inputTransformedMemObj),&inputTransformedMemObj);
+    //std::cout<<ret<< " Arg code 12.2:"<<std::endl;
 
     size_t work_units[3] ={(size_t)num_angle_steps_s,(size_t)num_shift_steps_s, model_voxelized.get()->size()};
 
@@ -224,41 +188,38 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     std::cout<<"DEBUG : Last elements of input transformed is " << input_transformed_as_array[2460774]<< " "<<input_transformed_as_array[2460775]<< " "<<input_transformed_as_array[2460776]<< std::endl;
 
 
-
-
     kernel = clCreateKernel(program,"find_correspondences", &ret);
     std::cout<<ret<<" Part 2 :find correspondence "<<std::endl;
-    int number_of_points_to_calculate = sources_sizes[0]*num_angle_steps*num_shift_steps;
+    int number_of_points_to_calculate = worksizes[2]*num_angle_steps*num_shift_steps;
     int int_args[2] = {1,number_of_points_to_calculate};
     cl_mem intArgs = NULL;
     intArgs = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, sizeof(int)*2,int_args,&ret);
     //std::cout<<ret<<" Part 2.1.0 : "<<std::endl;
     ret = clSetKernelArg(kernel,0,sizeof(intArgs), &intArgs);
-    std::cout<<ret<<" Part 2.1.0 : "<<std::endl;
+    //std::cout<<ret<<" Part 2.1.0 : "<<std::endl;
 
     size_t work_units2[1]= {(size_t)determinNumWorkItems(number_of_points_to_calculate)};
-
-    std::cout<< number_of_points_to_calculate<<" : Number of work items, Number of optimal work Items : " <<determinNumWorkItems(number_of_points_to_calculate)<<std::endl;;
 
     int point_cloud_ptr_array_size = static_cast<int>(point_cloud_ptr.get()->size())*3;
     float* point_cloud_ptr_as_array = new float[point_cloud_ptr_array_size]();
     convertPointCloudToCL(point_cloud_ptr,point_cloud_ptr_as_array,point_cloud_ptr_array_size/3);
     std::cout<< "Size of pointCloud array is " << point_cloud_ptr_array_size<< " points , last value is: " << point_cloud_ptr_as_array[point_cloud_ptr_array_size-1]<< " compare with "<< point_cloud_ptr.get()->at(point_cloud_ptr_array_size/3-1).z <<std::endl;
     pointCloudPtrMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, sizeof(float)*point_cloud_ptr_array_size, point_cloud_ptr_as_array,&ret);
-    std::cout<<ret<<" Part 2.1.2 : "<<std::endl;
+    //std::cout<<ret<<" Part 2.1.2 : "<<std::endl;
     ret = clSetKernelArg(kernel,1,sizeof(pointCloudPtrMemObj),&pointCloudPtrMemObj);
-    std::cout<<ret<<" Part 2.1.2 : "<<std::endl;
+    //std::cout<<ret<<" Part 2.1.2 : "<<std::endl;
 
     cl_mem correspondenceRes= NULL;
     int size_correspondence_result = static_cast<int>(model_voxelized->size())*3*num_angle_steps*num_shift_steps;
     std::cout<<"DEBUG : Number of max correspondence found:"<<size_correspondence_result<<std::endl;
     float* correspondence_result = new float[size_correspondence_result]();
     correspondenceRes = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, sizeof(float)*size_correspondence_result,correspondence_result,&ret);
-    std::cout<<ret<<" Part 2.1.3 : "<<std::endl;
+    //std::cout<<ret<<" Part 2.1.3 : "<<std::endl;
     ret = clSetKernelArg(kernel,2,sizeof(correspondenceRes), &correspondenceRes);
-    std::cout<<ret<<" Part 2.1.3 : "<<std::endl;
+    //std::cout<<ret<<" Part 2.1.3 : "<<std::endl;
 
     //4. Arg correspondence_result_count;
+    /*
     cl_mem corr_result = NULL;
     int corr_result_size = number_of_points_to_calculate;
     //int *corr_result_count = new int[corr_result_size]();
@@ -268,20 +229,20 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     ret=clSetKernelArg(kernel,3,sizeof(corr_result),&corr_result);
     std::cout<<ret<<" Part 2.1.4 : "<<std::endl;
     std::cout<<"DEBUG : Number of max Work Items :"<<corr_result_size<< " "<<std::endl;
+    */
 
-
-    sourceSizesMemObj = NULL;
-    sources_sizes= new int[2]();
+    cl_mem sourceSizesMemObj = NULL;
+    int *sources_sizes= new int[2]();
     sources_sizes[0]= static_cast<int>(model_voxelized->size());
     sources_sizes[1]= static_cast<int>(point_cloud_ptr_array_size/3);
-    std::cout<<"DEBUG : Sources size is Voxelized : " << sources_sizes[0]<< " Point Cloud : "<< sources_sizes[1]<<std::endl;
+    //std::cout<<"DEBUG : Sources size is Voxelized : " << sources_sizes[0]<< " Point Cloud : "<< sources_sizes[1]<<std::endl;
     sourceSizesMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE| CL_MEM_USE_HOST_PTR, sizeof(int)*2, sources_sizes, &ret);
-    std::cout<<ret<<" Part 2.1.6 : "<<std::endl;
-    ret = clSetKernelArg(kernel,4,sizeof(sourceSizesMemObj),&sourceSizesMemObj);
-    std::cout<<ret<<" Part 2.1.6 : "<<std::endl;
+    //std::cout<<ret<<" Part 2.1.6 : "<<std::endl;
+    ret = clSetKernelArg(kernel,3,sizeof(sourceSizesMemObj),&sourceSizesMemObj);
+   // std::cout<<ret<<" Part 2.1.6 : "<<std::endl;
 
-    ret= clSetKernelArg(kernel,5,sizeof(inputTransformedMemObj),&inputTransformedMemObj);
-    std::cout<<ret<<" Part 2.1.7 : "<<std::endl;
+    ret= clSetKernelArg(kernel,4,sizeof(inputTransformedMemObj),&inputTransformedMemObj);
+    //std::cout<<ret<<" Part 2.1.7 : "<<std::endl;
 
     size_t local_work_size[1] = {(size_t) 64};
     ret =  clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL,work_units2, local_work_size, 0, NULL, NULL);
@@ -289,23 +250,28 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
     clFlush(command_queue);
     clFinish(command_queue);
-
+    /* FOR SPEED REASON
     ret = clEnqueueReadBuffer(command_queue,corr_result,CL_TRUE,0,sizeof(float)*corr_result_size, &corr_result_count[0],0,NULL,NULL);
     std::cout<<"Reading Buffer , code :" << ret << std::endl;
-
+    */
+    /* FOR SPEED REASON
     ret = clEnqueueReadBuffer(command_queue,correspondenceRes,CL_TRUE,0,sizeof(float)*size_correspondence_result, &correspondence_result[0],0,NULL,NULL);
     std::cout<<"Reading Buffer , code :" << ret << std::endl;
-
+    */
     //for ( int i = corr_result_size-100; i <corr_result_size; i++) {
+    /*FOR SPEED REASON
     for ( int i = 0; i <100; i++) {
        //std::cout << corr_result_count[i]<<"  ";
         //std::cout << corr_result_count[i]<<"  ";
         std::cout<<correspondence_result[i]<<"  ";
     }
+    */
 
     clock_t end2 = clock() ;
     elapsed_secs = double(end2 - end) / CLOCKS_PER_SEC;
     std::cout<<std::endl<<"Time needed for 2. kernel method is : " <<elapsed_secs<<std::endl;
+
+
 
 }
 

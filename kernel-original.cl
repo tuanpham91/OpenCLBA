@@ -179,7 +179,7 @@ int findMaxIndexOfVectorOfPairsCL(__global float *angle_count,__global int *size
 }
 
 
-__kernel void find_correspondences(__global int *intArgs, __global float *point_cloud_ptr, __global float *correspondence_result,__global float *correspondence_result_count, __global int *sources_size, __global float *input_transformed) {
+__kernel void find_correspondences(__global int *intArgs, __global float *point_cloud_ptr, __global float *correspondence_result, __global int *sources_size, __global float *input_transformed) {
 
   __private int i = get_global_id(0);
   __private int max_number_of_points = intArgs[1];
@@ -187,6 +187,7 @@ __kernel void find_correspondences(__global int *intArgs, __global float *point_
   if (i >= max_number_of_points) {
     return;
   }
+
   __private int point_cloud_ptr_size = sources_size[1];
 
   float a = 0.0;
@@ -198,7 +199,7 @@ __kernel void find_correspondences(__global int *intArgs, __global float *point_
     b = (input_transformed[3*i+1] - point_cloud_ptr[3*k+1])*(input_transformed[3*i+1] - point_cloud_ptr[3*k+1]);
     c = (input_transformed[3*i+2] - point_cloud_ptr[3*k+2])*(input_transformed[3*i+2] - point_cloud_ptr[3*k+2]);
     //if (dis<=0.5) {
-    if (a+b+c<0.5) {
+    if (a+b+c<3.5) {
       correspondence_result[3*i]= (float)i;
       correspondence_result[3*i+1] =(float)k;
       correspondence_result[3*i+2] = a+b+c;
@@ -472,8 +473,13 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
     //correspondence_result[2] = 456.0f;
 
 }
-
-__kernel void transforming_models(__global float *floatArgs, __global float *initialTranslation, __global float *direction,__global float *model_voxelized,__global float *rotation, __global int *work_size_dimension, __global int *sources_size, __global float *input_transformed) {
+/*
+  floatArgs:
+  initialTranslation : 6-8
+  direction :  9-11
+  rotation :12-20 (TODO: WHY IS IT NOT USED)
+*/
+__kernel void transforming_models(__global float *floatArgs,__global float *model_voxelized, __global int *work_size_dimension,  __global float *input_transformed) {
 
   __private int angle = get_global_id(0);
   __private int shift = get_global_id(1);
@@ -491,14 +497,13 @@ __kernel void transforming_models(__global float *floatArgs, __global float *ini
 
   __private int number_angle_step = work_size_dimension[0];
   __private int number_shift_step = work_size_dimension[1];
+  __private int model_voxelized_size = work_size_dimension[2];
 
   //Space holder for shifted point Cloud
-
   __private float rot[9] = {};
   __private float trans[3]= {};
   __private float transform[16]= {};
 
-  __private int model_voxelized_size = sources_size[0];
   __private int start_index = (number_shift_step*angle+shift)*model_voxelized_size;
 
   //This methode is replaced by following lines :
@@ -517,10 +522,11 @@ __kernel void transforming_models(__global float *floatArgs, __global float *ini
 
   //This methode is replaced by following lines :
   //shiftByValueCL(shift_min+ shift*shift_step, initialTranslation, direction, trans);
+  //TODO 3/5 : maybe something wrong here
   __private float shift_temp = shift_min + shift*shift_step;
-  trans[0] = initialTranslation[0]*shift_temp/direction[2];
-  trans[1] = initialTranslation[1]*shift_temp/direction[2];
-  trans[2] = initialTranslation[2]*shift_temp/direction[2];
+  trans[0] = floatArgs[6]*shift_temp/floatArgs[11];
+  trans[1] = floatArgs[7]*shift_temp/floatArgs[11];
+  trans[2] = floatArgs[8]*shift_temp/floatArgs[11];
 
   //This methode is replaced by following lines :
   //buildTransformationMatrixCL(rot,trans,transform);
@@ -541,7 +547,6 @@ __kernel void transforming_models(__global float *floatArgs, __global float *ini
   transform[14] = 0;
   transform[15] = 1;
 
-  __private float res[10];
   __private float max_distance_sqr = (float) 0.0004f;
 
   //computeCorrespondencesCL(transform,model_voxelized,point_cloud_ptr, correspondence_result, model_voxelized_size, point_cloud_ptr_size,input_transformed);
