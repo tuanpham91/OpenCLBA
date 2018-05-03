@@ -70,7 +70,6 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
     int num_angle_steps_s = std::round((angle_max - angle_min) / angle_step) + 1;
     int num_shift_steps_s = std::round((shift_max - shift_min) / shift_step) + 1;
-    size_t work_units[2] ={(size_t)num_angle_steps_s,(size_t)num_shift_steps_s};
 
     std::cout << "Number of should be  dimension size:  " << num_angle_steps_s<< " " <<num_shift_steps_s<< std::endl;
 
@@ -211,12 +210,14 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     ret= clSetKernelArg(kernel,7,sizeof(inputTransformedMemObj),&inputTransformedMemObj);
     std::cout<<ret<< " Arg code 12.2:"<<std::endl;
 
-    ret =  clEnqueueNDRangeKernel(command_queue, kernel, 2 , NULL,work_units, NULL, 0, NULL, NULL);
+
+    size_t work_units[3] ={(size_t)num_angle_steps_s,(size_t)num_shift_steps_s, model_voxelized.get()->size()};
+
+    ret =  clEnqueueNDRangeKernel(command_queue, kernel, 3 , NULL,work_units, NULL, 0, NULL, NULL);
     std::cout<<"Running Program, code:" << ret <<std::endl;
 
     clFlush(command_queue);
     clFinish(command_queue);
-
 
     elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
     std::cout<<std::endl<<"Time needed for 1. kernel method is : " <<elapsed_secs<<std::endl;

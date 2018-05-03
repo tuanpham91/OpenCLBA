@@ -206,7 +206,7 @@ __kernel void find_correspondences(__global int *intArgs, __global float *point_
     }
   }
   //Subject to Change
-  correspondence_result_count[i]=a+b+c;
+  //correspondence_result_count[i]=a+b+c;
 }
 
 
@@ -477,6 +477,7 @@ __kernel void transforming_models(__global float *floatArgs, __global float *ini
 
   __private int angle = get_global_id(0);
   __private int shift = get_global_id(1);
+  __private int point = get_global_id(2);
 
   __private float angle_min = floatArgs[0];
   __private float angle_max = floatArgs[1];
@@ -493,14 +494,12 @@ __kernel void transforming_models(__global float *floatArgs, __global float *ini
 
   //Space holder for shifted point Cloud
 
-
   __private float rot[9] = {};
   __private float trans[3]= {};
   __private float transform[16]= {};
 
   __private int model_voxelized_size = sources_size[0];
-  __private int start_index = number_shift_step*angle+shift;
-  //CHECKED
+  __private int start_index = (number_shift_step*angle+shift)*model_voxelized_size;
 
   //This methode is replaced by following lines :
   //rotateByAngleCL(angle_min+ angle*angle_step, rot);
@@ -552,7 +551,6 @@ __kernel void transforming_models(__global float *floatArgs, __global float *ini
   __private int k = 0;
 
 
-
   for (i = 0 ; i < 4 ; i++) {
     for (k = 0; k < 4 ; k++) {
       if (i == k ) {
@@ -570,22 +568,30 @@ __kernel void transforming_models(__global float *floatArgs, __global float *ini
     }
   }
 
+  i = point;
   if (!ident) {
-    for (int i = 0; i< model_voxelized_size ; i++) {
+    /*for (int i = 0; i< model_voxelized_size ; i++) {
         //Rotation and Tranlation
         input_transformed[start_index*model_voxelized_size*3 + 3*i] = model_voxelized[3*i]*transform[0] + model_voxelized[3*i+1]*transform[4] + model_voxelized[ 3*i+2]*transform[8]+transform[3];
         input_transformed[start_index*model_voxelized_size*3 + 3*i+1] = model_voxelized[3*i]*transform[1] + model_voxelized[3*i+1]*transform[5] + model_voxelized[3*i+2]*transform[9]+transform[7];
         input_transformed[start_index*model_voxelized_size*3 + 3*i+2] = model_voxelized[3*i]*transform[2] + model_voxelized[3*i+1]*transform[6] + model_voxelized[3*i+2]*transform[10]+transform[11];
 
-    }
+    }*/
+    input_transformed[start_index + 3*i] = model_voxelized[3*i]*transform[0] + model_voxelized[3*i+1]*transform[4] + model_voxelized[ 3*i+2]*transform[8]+transform[3];
+    input_transformed[start_index + 3*i+1] = model_voxelized[3*i]*transform[1] + model_voxelized[3*i+1]*transform[5] + model_voxelized[3*i+2]*transform[9]+transform[7];
+    input_transformed[start_index + 3*i+2] = model_voxelized[3*i]*transform[2] + model_voxelized[3*i+1]*transform[6] + model_voxelized[3*i+2]*transform[10]+transform[11];
+
   }
   else {
-    for (int i = 0; i <model_voxelized_size; i++) {
+  /*
         input_transformed[start_index*model_voxelized_size*3+3*i]=model_voxelized[3*i];
         input_transformed[start_index*model_voxelized_size*3+3*i+1]=model_voxelized[3*i+1];
         input_transformed[start_index*model_voxelized_size*3+3*i+2]=model_voxelized[3*i+2];
     }
-
+*/
+    input_transformed[start_index+3*i]=model_voxelized[3*i];
+    input_transformed[start_index+3*i+1]=model_voxelized[3*i+1];
+    input_transformed[start_index+3*i+2]=model_voxelized[3*i+2];
   }
 }
 
