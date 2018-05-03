@@ -136,7 +136,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     printDeviceInfoWorkSize(device_id);
     kernel = clCreateKernel(program,"transforming_models", &ret);
 
-    float args[21] ={angle_min, angle_max, angle_step, shift_min, shift_max, shift_step,initialTranslation[0],initialTranslation[1],initialTranslation[2],direction[0],direction[1],direction[2],rotation[0],rotation[1],rotation[2],rotation[3],rotation[4],rotation[5],rotation[6],rotation[7],rotation[8]};
+    float args[21] ={angle_min, angle_max, angle_step, shift_min, shift_max, shift_step,initialTranslation[0],initialTranslation[1],initialTranslation[2],direction[0],direction[1],direction[2],rotation(0,0),rotation(0,1),rotation(0,2),rotation(1,0),rotation(1,1),rotation(1,2),rotation(2,0),rotation(2,1),rotation(2,2)};
     //0. Arg
     argsMemObj = clCreateBuffer(context,CL_MEM_READ_WRITE  | CL_MEM_USE_HOST_PTR ,21*sizeof(float),args,&ret);
     ret = clSetKernelArg(kernel,0, sizeof(argsMemObj),(void *)&argsMemObj);
@@ -162,8 +162,6 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     std::cout<<ret<< " Arg code 9.1 :"<<std::endl;
     ret=clSetKernelArg(kernel,2,sizeof(workSizeMemObj),&workSizeMemObj);
     std::cout<<ret<< " Arg code 9.2 :"<<std::endl;
-
-
 
     //12. input_transformed
     cl_mem inputTransformedMemObj =NULL;
@@ -218,19 +216,6 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     ret = clSetKernelArg(kernel,2,sizeof(correspondenceRes), &correspondenceRes);
     //std::cout<<ret<<" Part 2.1.3 : "<<std::endl;
 
-    //4. Arg correspondence_result_count;
-    /*
-    cl_mem corr_result = NULL;
-    int corr_result_size = number_of_points_to_calculate;
-    //int *corr_result_count = new int[corr_result_size]();
-    float *corr_result_count = new float[corr_result_size]();
-    corr_result= clCreateBuffer(context, CL_MEM_READ_WRITE| CL_MEM_USE_HOST_PTR, sizeof(float)*corr_result_size,corr_result_count,&ret);
-    std::cout<<ret<<" Part 2.1.4 : "<<std::endl;
-    ret=clSetKernelArg(kernel,3,sizeof(corr_result),&corr_result);
-    std::cout<<ret<<" Part 2.1.4 : "<<std::endl;
-    std::cout<<"DEBUG : Number of max Work Items :"<<corr_result_size<< " "<<std::endl;
-    */
-
     cl_mem sourceSizesMemObj = NULL;
     int *sources_sizes= new int[2]();
     sources_sizes[0]= static_cast<int>(model_voxelized->size());
@@ -250,22 +235,24 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
     clFlush(command_queue);
     clFinish(command_queue);
-    /* FOR SPEED REASON
+
+
+    /*
     ret = clEnqueueReadBuffer(command_queue,corr_result,CL_TRUE,0,sizeof(float)*corr_result_size, &corr_result_count[0],0,NULL,NULL);
     std::cout<<"Reading Buffer , code :" << ret << std::endl;
     */
-    /* FOR SPEED REASON
+
     ret = clEnqueueReadBuffer(command_queue,correspondenceRes,CL_TRUE,0,sizeof(float)*size_correspondence_result, &correspondence_result[0],0,NULL,NULL);
     std::cout<<"Reading Buffer , code :" << ret << std::endl;
-    */
+
     //for ( int i = corr_result_size-100; i <corr_result_size; i++) {
-    /*FOR SPEED REASON
+
     for ( int i = 0; i <100; i++) {
        //std::cout << corr_result_count[i]<<"  ";
         //std::cout << corr_result_count[i]<<"  ";
         std::cout<<correspondence_result[i]<<"  ";
     }
-    */
+
 
     clock_t end2 = clock() ;
     elapsed_secs = double(end2 - end) / CLOCKS_PER_SEC;
