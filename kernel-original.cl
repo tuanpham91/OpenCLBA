@@ -187,29 +187,26 @@ __kernel void find_correspondences(__global int *intArgs, __global float *point_
   if (i >= max_number_of_points) {
     return;
   }
-
   __private int point_cloud_ptr_size = sources_size[1];
 
   float a = 0.0;
   float b = 0.0;
   float c = 0.0;
-  float dis = 10;
 
   for (int k = 0; k< point_cloud_ptr_size; k++  ) {
     a = (input_transformed[3*i] - point_cloud_ptr[3*k])*(input_transformed[3*i] - point_cloud_ptr[3*k]);
     b = (input_transformed[3*i+1] - point_cloud_ptr[3*k+1])*(input_transformed[3*i+1] - point_cloud_ptr[3*k+1]);
     c = (input_transformed[3*i+2] - point_cloud_ptr[3*k+2])*(input_transformed[3*i+2] - point_cloud_ptr[3*k+2]);
-    dis = sqrt(a+b+c);
     //if (dis<=0.5) {
-    if (dis<0.5) {
+    if (a+b+c<0.5) {
       correspondence_result[3*i]= (float)i;
       correspondence_result[3*i+1] =(float)k;
-      correspondence_result[3*i+2] = dis;
+      correspondence_result[3*i+2] = a+b+c;
       k=point_cloud_ptr_size;
     }
   }
-
-  correspondence_result_count[i]=dis;
+  //Subject to Change
+  correspondence_result_count[i]=a+b+c;
 }
 
 
