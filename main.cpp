@@ -235,24 +235,22 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
     clFlush(command_queue);
     clFinish(command_queue);
-
-
     /*
     ret = clEnqueueReadBuffer(command_queue,corr_result,CL_TRUE,0,sizeof(float)*corr_result_size, &corr_result_count[0],0,NULL,NULL);
     std::cout<<"Reading Buffer , code :" << ret << std::endl;
     */
-
+    /*
     ret = clEnqueueReadBuffer(command_queue,correspondenceRes,CL_TRUE,0,sizeof(float)*size_correspondence_result, &correspondence_result[0],0,NULL,NULL);
     std::cout<<"Reading Buffer , code :" << ret << std::endl;
-
+    */
     //for ( int i = corr_result_size-100; i <corr_result_size; i++) {
 
-    for ( int i = 0; i <100; i++) {
+    /*for ( int i = 0; i <100; i++) {
        //std::cout << corr_result_count[i]<<"  ";
         //std::cout << corr_result_count[i]<<"  ";
         std::cout<<correspondence_result[i]<<"  ";
     }
-
+    */
 
     clock_t end2 = clock() ;
     elapsed_secs = double(end2 - end) / CLOCKS_PER_SEC;
