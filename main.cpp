@@ -107,10 +107,6 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     command_queue = clCreateCommandQueue(context, device_id, 0, &ret);
     std::cout<<ret<<" 3.1  code"<<std::endl;
 
-
-    //Check Concept of memory
-
-
     program = clCreateProgramWithSource(context,1,(const char**)&source_str, (const size_t*)&source_size, &ret);
     std::cout<<ret<<" 4.  code"<<std::endl;
 
@@ -133,7 +129,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
     std::cout<<std::endl<<"Time needed for Build programm method is : " <<elapsed_secs<<std::endl;
 
-    printDeviceInfoWorkSize(device_id);
+    //printDeviceInfoWorkSize(device_id);
     kernel = clCreateKernel(program,"transforming_models", &ret);
 
     float args[21] ={angle_min, angle_max, angle_step, shift_min, shift_max, shift_step,initialTranslation[0],initialTranslation[1],initialTranslation[2],direction[0],direction[1],direction[2],rotation(0,0),rotation(0,1),rotation(0,2),rotation(1,0),rotation(1,1),rotation(1,2),rotation(2,0),rotation(2,1),rotation(2,2)};
@@ -256,6 +252,25 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     elapsed_secs = double(end2 - end) / CLOCKS_PER_SEC;
     std::cout<<std::endl<<"Time needed for 2. kernel method is : " <<elapsed_secs<<std::endl;
 
+
+    kernel = clCreateKernel(program,"computeDifferencesForCorrespondence", &ret);
+    std::cout<<ret<<" Part 3.: "<<std::endl;
+
+    ret = clSetKernelArg(kernel,0,sizeof(correspondenceRes),&correspondenceRes);
+    std::cout<<ret<<" Part 3.1: "<<std::endl;
+
+
+    ret = clSetKernelArg(kernel,1, sizeof(argsMemObj),(void *)&argsMemObj);
+    std::cout<<ret<<" Part 3.1: "<<std::endl;
+
+    ret = clSetKernelArg(kernel,2, sizeof(workSizeMemObj),(void *)workSizeMemObj);
+    std::cout<<ret<<" Part 3.2: "<<std::endl;
+
+    clock_t end3 = clock() ;
+
+
+    elapsed_secs = double(end3 - end) / CLOCKS_PER_SEC;
+    std::cout<<std::endl<<"Time needed for 3. kernel method is : " <<elapsed_secs<<std::endl;
 
 
 }
