@@ -228,7 +228,10 @@ __kernel void transforming_models(__global float *floatArgs,__global float *mode
     OLD ----- NEW
     correspondence_count -> correspondence_result
     size_correspondence_count -> work_sizes[2]
-    angle_count, shift_count -> WTF
+    angle_count, shift_count ->??
+
+    Task ;
+
 */
 __kernel void computeDifferencesForCorrespondence(__global float *correspondence_result,__global float *floatArgs,  __global int *work_sizes,  __global float *angle_count, __global float *shift_count) {
     int i  = get_global_id(0);

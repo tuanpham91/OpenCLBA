@@ -260,10 +260,10 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     std::cout<<ret<<" Part 3.1: "<<std::endl;
 
 
-    ret = clSetKernelArg(kernel,1, sizeof(argsMemObj),(void *)&argsMemObj);
+    ret = clSetKernelArg(kernel,1, sizeof(argsMemObj),&argsMemObj);
     std::cout<<ret<<" Part 3.1: "<<std::endl;
 
-    ret = clSetKernelArg(kernel,2, sizeof(workSizeMemObj),(void *)workSizeMemObj);
+    ret = clSetKernelArg(kernel,2, sizeof(workSizeMemObj),&workSizeMemObj);
     std::cout<<ret<<" Part 3.2: "<<std::endl;
 
     clock_t end3 = clock() ;
