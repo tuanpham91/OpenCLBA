@@ -1,66 +1,5 @@
 #pragma OPENCL EXTENSION cl_khr_fp64 : enable
 //https://stackoverflow.com/questions/36410745/how-to-pass-c-vector-of-vectors-to-opencl-kernel
-
-
-void rigidTransformationCL (int size,float *input, float4 transformation_matrix, float *input_transformed) {
-  for (int i = 0; i< size ; i++) {
-      float temp = input[4*i];
-      input_transformed[4*i] = temp*transformation_matrix[0] + input[4*i+1]*transformation_matrix[1] + input[4*i+2]*transformation_matrix[2]+ input[4*i+3]*transformation_matrix[3];
-      input_transformed[4*i+1] = temp*transformation_matrix[4] + input[4*i+1]*transformation_matrix[5] + input[4*i+2]*transformation_matrix[6]+ input[4*i+3]*transformation_matrix[7];
-      input_transformed[4*i+2] = temp*transformation_matrix[8] + input[4*i+1]*transformation_matrix[9] + input[4*i+2]*transformation_matrix[10]+ input[4*i+3]*transformation_matrix[11];
-      input_transformed[4*i+3] = temp*transformation_matrix[12] + input[4*i+1]*transformation_matrix[13] + input[4*i+2]*transformation_matrix[14]+ input[4*i+3]*transformation_matrix[15];
-  }
-}
-
-float checkMinBoundsForValueCL(float value, float start, float step) {
-	float val = value - step;
-	if (val > start) {
-		if (val - step >= start) {
-			return val - step;
-		}
-		return val;
-	}
-	return start;
-}
-
-float checkMaxBoundsForValueCL(float value, float end, float step) {
-	float val = value + step;
-	if (val < end) {
-		if (val + step <= end) {
-			return val + step;
-		}
-		return val;
-	}
-	return end;
-}
-
-
-int findMaxIndexOfVectorOfTuplesCL(__global float *tuples,__global int *size) {
-  int max_index =0;
-  float max= 0.0f;
-  //TODO : Review this
-  for (int i = 0 ; i < size[0] ; i++) {
-    if (tuples[i*3+2]>max) {
-      max = tuples[i*3+2];
-      max_index = i;
-    }
-  }
-  return max_index;
-}
-
-int findMaxIndexOfVectorOfPairsCL(__global float *angle_count,__global int *size) {
-  int max_index =0;
-  float max= 0.0f;
-  for (int i = 0 ; i < size[0] ; i++) {
-    if (angle_count[3*i+1]>max) {
-      max = angle_count[i*3+1];
-      max_index = i;
-    }
-  }
-  return max_index;
-}
-
-
 __kernel void find_correspondences(__global int *intArgs, __global float *point_cloud_ptr, __global float *correspondence_result, __global int *sources_size, __global float *input_transformed) {
 
   __private int i = get_global_id(0);
@@ -233,12 +172,18 @@ __kernel void transforming_models(__global float *floatArgs,__global float *mode
     Task ;
 
 */
-__kernel void computeDifferencesForCorrespondence(__global float *correspondence_result,__global float *floatArgs,  __global int *work_sizes,  __global float *angle_count, __global float *shift_count) {
+__kernel void computeDifferencesForCorrespondence(__global float *correspondence_result,__global float *floatArgs,  __global int *work_sizes,  __global float *correspondecne_result_count) {
+    //angle
     int i  = get_global_id(0);
+    //shift
+    int k  = get_global_id(1);
 
-    float angle_temp = correspondence_result[i];
-    float shift_temp = correspondence_result[i+1];
-    float count_temp = correspondence_result[i+2];
+    int num_angle_steps = work_sizes[0];
+    int num_shift_steps = work_sizes[1];
+
+    //float angle_temp = correspondence_result[i];
+    //float shift_temp = correspondence_result[i+1];
+    //float count_temp = correspondence_result[i+2];
 
     __private float angleStart = floatArgs[0];
     __private float angleEnd = floatArgs[1];
@@ -249,57 +194,12 @@ __kernel void computeDifferencesForCorrespondence(__global float *correspondence
     __private float shiftEnd = floatArgs[4];
     __private float shiftStep = floatArgs[5];
 
-    __private int size_correspondence_count = work_sizes[2];
+    __private int model_voxelized_size = work_sizes[2];
+
+
+    int start_index = (num_shift_steps*i+k)*model_voxelized_size;
     //4.5 : TODO : from here
 
-    float **iterator;
-    int iter_help;
-    for (int  i = 0; i < size_correspondence_count ; i++) {
-      if (angle_count[i]==angle_temp) {
-        iter_help = i;
-        break;
-      }
-    }
-
-    if (iter_help != size_correspondence_count) {
-      angle_count[iter_help+1] += count_temp;
-    } else {
-      //Add more into angle_count
-      //TODO : Size angle count here is not defined
-      //angle_count. //TODO :
-    }
-
-    for (int  i = 0; i < size_correspondence_count ; i++) {
-      if (shift_count[i]==shift_temp) {
-        iter_help = i;
-        break;
-      }
-    }
-
-    if (iter_help != size_correspondence_count) {
-      shift_count[iter_help+1] += shift_temp;
-    } else {
-      //angle_count.push_back //TODO :
-    }
-    //TODO : Which size here
-    /*int max_index_angles= findMaxIndexOfVectorOfPairsCL(angle_count,size_correspondence_count);
-    //TODO : Which size here
-    int max_index_shift = findMaxIndexOfVectorOfPairsCL(shift_count,size_correspondence_count);
-
-    int correspondence_index = findMaxIndexOfVectorOfTuplesCL(correspondence_count, size_correspondence_count);
-
-    ;
-    float max_angle = angle_count[max_index_angles];
-    float max_shift = angle_count[max_index_angles];
-
-    angleStart = checkMinBoundsForValueCL(max_angle,angleStart,angleStep);
-    angleEnd = checkMaxBoundsForValueCL(max_angle,angleEnd, angleStep);
-    shiftStart = checkMinBoundsForValueCL(max_shift,shiftStart,shiftStep);
-    shiftEnd = checkMaxBoundsForValueCL(max_shift,shiftEnd,shiftStep);
-    angleStep= angleStep/5.0f;
-    shiftStep= shiftStep/5.0f;
-    //TODO :
-    */
 }
 
 //https://stackoverflow.com/questions/7627098/what-is-a-lambda-expression-in-c11

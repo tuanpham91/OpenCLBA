@@ -266,8 +266,19 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     ret = clSetKernelArg(kernel,2, sizeof(workSizeMemObj),&workSizeMemObj);
     std::cout<<ret<<" Part 3.2: "<<std::endl;
 
+    cl_mem correspondenceResultCountMem =NULL;
+    int correspondenceResultCountSize =3*num_angle_steps*num_shift_steps;
+    int* correspindenceResultCount = new int[correspondenceResultCountSize]();
+    correspondenceResultCountMem = clCreateBuffer(context,CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR,sizeof(int)*correspondenceResultCountSize,correspindenceResultCount,&ret);
+    std::cout<<ret<< " Arg code 3.3 :"<<std::endl;
+    ret= clSetKernelArg(kernel,3,sizeof(correspondenceResultCountMem),&correspondenceResultCountMem);
+    std::cout<<ret<< " Arg code 3.3:"<<std::endl;
     clock_t end3 = clock() ;
 
+    size_t work_units3[2] ={(size_t)num_angle_steps_s,(size_t)num_shift_steps_s};
+
+    ret =  clEnqueueNDRangeKernel(command_queue, kernel, 2, NULL,work_units3,NULL, 0, NULL, NULL);
+    std::cout<<"Running Program part 3, code:" << ret <<std::endl;
 
     elapsed_secs = double(end3 - end) / CLOCKS_PER_SEC;
     std::cout<<std::endl<<"Time needed for 3. kernel method is : " <<elapsed_secs<<std::endl;
