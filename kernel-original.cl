@@ -1,5 +1,5 @@
 #pragma OPENCL EXTENSION cl_khr_fp64 : enable
-//https://stackoverflow.com/questions/36410745/how-to-pass-c-vector-of-vectors-to-opencl-kernel
+
 __kernel void find_correspondences(__global int *intArgs, __global float *point_cloud_ptr, __global float *correspondence_result, __global int *sources_size, __global float *input_transformed) {
 
   __private int i = get_global_id(0);
@@ -20,7 +20,7 @@ __kernel void find_correspondences(__global int *intArgs, __global float *point_
     b = (input_transformed[3*i+1] - point_cloud_ptr[3*k+1])*(input_transformed[3*i+1] - point_cloud_ptr[3*k+1]);
     c = (input_transformed[3*i+2] - point_cloud_ptr[3*k+2])*(input_transformed[3*i+2] - point_cloud_ptr[3*k+2]);
     //if (dis<=0.5) {
-    if (a+b+c<1.5) {
+    if (a+b+c<2.5) {
       correspondence_result[3*i]= (float)i;
       correspondence_result[3*i+1] =(float)k;
       correspondence_result[3*i+2] = a+b+c;
@@ -82,8 +82,6 @@ __kernel void transforming_models(__global float *floatArgs,__global float *mode
 
   __private int start_index = (number_shift_step*angle+shift)*model_voxelized_size;
 
-  //This methode is replaced by following lines :
-  //rotateByAngleCL(angle_min+ angle*angle_step, rot);
 
   __private float angle_temp =(angle_min+angle*angle_step)*(0.01745328888);
   rot[0] = cos(angle_temp);
@@ -96,16 +94,11 @@ __kernel void transforming_models(__global float *floatArgs,__global float *mode
   rot[7] = 0.0f;
   rot[8] = 1.0f;
 
-  //This methode is replaced by following lines :
-  //shiftByValueCL(shift_min+ shift*shift_step, initialTranslation, direction, trans);
-  //TODO 3/5 : maybe something wrong here
   __private float shift_temp = shift_min + shift*shift_step;
   trans[0] = floatArgs[6]*shift_temp/floatArgs[11];
   trans[1] = floatArgs[7]*shift_temp/floatArgs[11];
   trans[2] = floatArgs[8]*shift_temp/floatArgs[11];
 
-  //This methode is replaced by following lines :
-  //buildTransformationMatrixCL(rot,trans,transform);
   transform[0] = rot[0];
   transform[1] = rot[1];
   transform[2] = rot[2];
@@ -124,8 +117,6 @@ __kernel void transforming_models(__global float *floatArgs,__global float *mode
   transform[15] = 1;
 
   __private float max_distance_sqr = (float) 0.0004f;
-
-  //computeCorrespondencesCL(transform,model_voxelized,point_cloud_ptr, correspondence_result, model_voxelized_size, point_cloud_ptr_size,input_transformed);
 
   __private bool ident = true;
   __private int i = 0;
@@ -172,7 +163,7 @@ __kernel void transforming_models(__global float *floatArgs,__global float *mode
     Task ;
 
 */
-__kernel void computeDifferencesForCorrespondence(__global float *correspondence_result,__global float *floatArgs,  __global int *work_sizes,  __global float *correspondecne_result_count) {
+__kernel void computeDifferencesForCorrespondence(__global float *correspondence_result,__global float *floatArgs,  __global int *work_sizes,  __global int *correspondence_result_count) {
     //angle
     int i  = get_global_id(0);
     //shift
@@ -198,6 +189,16 @@ __kernel void computeDifferencesForCorrespondence(__global float *correspondence
 
 
     int start_index = (num_shift_steps*i+k)*model_voxelized_size;
+    int count = 0;
+    for (int i = 0 ; i<model_voxelized_size; i++ ){
+      if (correspondence_result[3*(i+start_index)+2]!= 0) {
+        count++;
+      }
+    }
+
+    correspondence_result_count[(num_shift_steps*i+k)*3] = i;
+    correspondence_result_count[(num_shift_steps*i+k)*3+1] =k;
+    correspondence_result_count[(num_shift_steps*i+k)*3+2] = count;
     //4.5 : TODO : from here
 
 }
