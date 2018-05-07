@@ -74,50 +74,33 @@ void getModelsInDirectory(bf::path& dir, std::string & rel_path_so_far, std::vec
 
 //generate a point cloud from a ply file
 //Tuan :: from those pictures to PointCloud, save into pointer modelCloud
-//Tuan :: model cloud meaning that the cloud point from Model, not the One 
+//Tuan :: model cloud meaning that the cloud point from Model, not the One
 void generatePointCloudFromModel(pcl::PointCloud<pcl::PointXYZ>::Ptr& modelCloud, pcl::PointCloud<pcl::PointXYZ>::Ptr& model_voxelized, std::string path) {
-	//get models in directory
-	// Tuan : THe model we already have
-	std::vector < std::string > files;
-	std::string start = "";
-	//Model with ending "ply"
-	std::string ext = std::string("ply");
-	bf::path dir = path;
-	getModelsInDirectory(dir, start, files, ext);
-	std::stringstream model_path;
-	model_path << path << "/" << files[0];
-	std::string path_model = model_path.str();
-	//sample points on surface of model	
-	//Tuan :: method in vtk_model_sampling
-	uniform_sampling(path_model, 100000, *modelCloud, 1.f);
-    
-	//downsample points CAD
-	float VOXEL_SIZE_ICP_ = 0.02f;
-	/*
-	Tuan :: The VoxelGrid class creates a 3D voxel grid (think about a voxel grid as a set of tiny 3D boxes in space) over the input point cloud data. 
-	Then, in each voxel (i.e., 3D box), all the points present will be approximated (i.e., downsampled) with their centroid. 
-	This approach is a bit slower than approximating them with the center of the voxel, but it represents the underlying surface more accurately.
+        //get models in directory
+        std::vector < std::string > files;
+        std::string start = "";
+        std::string ext = std::string("ply");
+        bf::path dir = path;
+        getModelsInDirectory(dir, start, files, ext);
+        std::stringstream model_path;
+        model_path << path << "/" << files[0];
+        std::string path_model = model_path.str();
+        //sample points on surface of model
+        uniform_sampling(path_model, 100000, *modelCloud, 1.f);
+    //downsample points CAD
+        float VOXEL_SIZE_ICP_ = 0.02f;
+        pcl::VoxelGrid<pcl::PointXYZ> voxel_grid_icp;
+        voxel_grid_icp.setInputCloud(modelCloud);
+        voxel_grid_icp.setLeafSize(VOXEL_SIZE_ICP_, VOXEL_SIZE_ICP_, VOXEL_SIZE_ICP_);
+        voxel_grid_icp.filter(*model_voxelized);
 
-	A voxel represents a value on a regular grid in three-dimensional space. Wiki
-	*/
-	pcl::VoxelGrid<pcl::PointXYZ> voxel_grid_icp;
-
-
-	voxel_grid_icp.setInputCloud(modelCloud);
-	voxel_grid_icp.setLeafSize(VOXEL_SIZE_ICP_, VOXEL_SIZE_ICP_, VOXEL_SIZE_ICP_);
-	//Tuan :: http://pointclouds.org/documentation/tutorials/voxel_grid.php
-	voxel_grid_icp.filter(*model_voxelized);
-
-	Eigen::Matrix4f rotationZ;
-	rotationZ << 0, 1, 0, 0,
-		-1, 0, 0, 0,
-		0, 0, 1, 0,
-		0, 0, 0, 1;
-
-	//Tuan ::http://docs.pointclouds.org/1.7.0/group__common.html#ga1b1184df8fe618d2014518aa262fa591
-	//Tuan : Transform point cloud with rotation
-	pcl::transformPointCloud(*modelCloud, *modelCloud, rotationZ);
-	pcl::transformPointCloud(*model_voxelized, *model_voxelized, rotationZ);
+        Eigen::Matrix4f rotationZ;
+        rotationZ << 0, 1, 0, 0,
+                -1, 0, 0, 0,
+                0, 0, 1, 0,
+                0, 0, 0, 1;
+        pcl::transformPointCloud(*modelCloud, *modelCloud, rotationZ);
+        pcl::transformPointCloud(*model_voxelized, *model_voxelized, rotationZ);
 }
 
 //cut the model in half in given direction, 0 for x-axis, 1 for y-axis, 2 for z-axis
@@ -146,11 +129,11 @@ void cutModelinHalf(pcl::PointCloud<pcl::PointXYZ>::Ptr& modelCloud, pcl::PointC
 
 //cut a part of the back of the model off, until specified value, keep only part before the value
 void cutPartOfModel(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr& cut, float to_cut_until) {
-	for (int i = 0; i < cloud->points.size(); i++) {
-		if (cloud->points.at(i).z < to_cut_until) {
-			cut->push_back(cloud->points.at(i));
-		}
-	}
+        for (int i = 0; i < cloud->points.size(); i++) {
+                if (cloud->points.at(i).z < to_cut_until) {
+                        cut->push_back(cloud->points.at(i));
+                }
+        }
 }
 
 //get the model size in z direction
@@ -254,14 +237,14 @@ float computeMiddle(pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud_ptr, float z
 
 //compute minimum z-value of cloud
 float getMinZValue(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
-	float z = 2.0f;
-	for (int i = 0; i < cloud->points.size(); i++) {
-		pcl::PointXYZ point = cloud->at(i);
-		if (point.z < z) {
-			z = point.z;
-		}
-	}
-	return z;
+        float z = 2.0f;
+        for (int i = 0; i < cloud->points.size(); i++) {
+                pcl::PointXYZ point = cloud->at(i);
+                if (point.z < z) {
+                        z = point.z;
+                }
+        }
+        return z;
 }
 
 //compute minimum point of cloud
