@@ -77,22 +77,42 @@ __kernel void transforming_models(__global float *floatArgs,__global float *mode
 
   //Space holder for shifted point Cloud
   __private float rot[9] = {};
+  __private float source[9]= {}
+  __private float rotating[9]= {}
+
   __private float trans[3]= {};
   __private float transform[16]= {};
 
   __private int start_index = (number_shift_step*angle+shift)*model_voxelized_size;
 
+  for (int sourceCount = 0 ; i< 9 ; i++) {
+    source[i] = floatArgs[12+i];
+  }
 
   __private float angle_temp =(angle_min+angle*angle_step)*(0.01745328888);
-  rot[0] = cos(angle_temp);
-  rot[1] = -sin(angle_temp);
-  rot[2] = 0.0f;
-  rot[3] = sin(angle_temp);
-  rot[4] = cos(angle_temp);
-  rot[5] = 0.0f;
-  rot[6] = 0.0f;
-  rot[7] = 0.0f;
-  rot[8] = 1.0f;
+  rotating[0] = cos(angle_temp);
+  rotating[1] = -sin(angle_temp);
+  rotating[2] = 0.0f;
+  rotating[3] = sin(angle_temp);
+  rotating[4] = cos(angle_temp);
+  rotating[5] = 0.0f;
+  rotating[6] = 0.0f;
+  rotating[7] = 0.0f;
+  rotating[8] = 1.0f;
+
+  rot[0]= source[0]*rotating[0]+source[1]*rotating[3]+source[2]*rotating[6];
+  rot[1]= source[0]*rotating[1]+source[1]*rotating[4]+source[2]*rotating[7];
+  rot[2]= source[0]*rotating[2]+source[1]*rotating[5]+source[2]*rotating[8];
+
+  rot[3]= source[3]*rotating[0]+source[4]*rotating[3]+source[5]*rotating[6];
+  rot[4]= source[3]*rotating[1]+source[4]*rotating[4]+source[5]*rotating[7];
+  rot[5]= source[3]*rotating[2]+source[4]*rotating[5]+source[5]*rotating[8];
+
+  rot[6]= source[6]*rotating[0]+source[7]*rotating[3]+source[8]*rotating[6];
+  rot[7]= source[6]*rotating[1]+source[7]*rotating[4]+source[8]*rotating[7];
+  rot[8]= source[6]*rotating[2]+source[7]*rotating[5]+source[8]*rotating[8];
+
+
 
   __private float shift_temp = shift_min + shift*shift_step;
   trans[0] = floatArgs[6]*shift_temp/floatArgs[11];
