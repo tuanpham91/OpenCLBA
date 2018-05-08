@@ -77,16 +77,15 @@ __kernel void transforming_models(__global float *floatArgs,__global float *mode
 
   //Space holder for shifted point Cloud
   __private float rot[9] = {};
-  __private float source[9]= {}
-  __private float rotating[9]= {}
+  __private float source[9]= {};
+  __private float rotating[9]= {};
 
-  __private float trans[3]= {};
   __private float transform[16]= {};
 
   __private int start_index = (number_shift_step*angle+shift)*model_voxelized_size;
 
-  for (int sourceCount = 0 ; i< 9 ; i++) {
-    source[i] = floatArgs[12+i];
+  for (int sourceCount = 0 ; sourceCount< 9 ; sourceCount++) {
+    source[sourceCount] = floatArgs[12+sourceCount];
   }
 
   __private float angle_temp =(angle_min+angle*angle_step)*(0.01745328888);
@@ -100,43 +99,28 @@ __kernel void transforming_models(__global float *floatArgs,__global float *mode
   rotating[7] = 0.0f;
   rotating[8] = 1.0f;
 
-  rot[0]= source[0]*rotating[0]+source[1]*rotating[3]+source[2]*rotating[6];
-  rot[1]= source[0]*rotating[1]+source[1]*rotating[4]+source[2]*rotating[7];
-  rot[2]= source[0]*rotating[2]+source[1]*rotating[5]+source[2]*rotating[8];
+  transform[0]= floatArgs[12]*rotating[0]+floatArgs[13]*rotating[3]+floatArgs[14]*rotating[6];
+  transform[1]= floatArgs[12]*rotating[1]+floatArgs[13]*rotating[4]+floatArgs[14]*rotating[7];
+  transform[2]= floatArgs[12]*rotating[2]+floatArgs[13]*rotating[5]+floatArgs[14]*rotating[8];
 
-  rot[3]= source[3]*rotating[0]+source[4]*rotating[3]+source[5]*rotating[6];
-  rot[4]= source[3]*rotating[1]+source[4]*rotating[4]+source[5]*rotating[7];
-  rot[5]= source[3]*rotating[2]+source[4]*rotating[5]+source[5]*rotating[8];
+  transform[3]= floatArgs[15]*rotating[0]+floatArgs[16]*rotating[3]+floatArgs[17]*rotating[6];
+  transform[4]= floatArgs[15]*rotating[1]+floatArgs[16]*rotating[4]+floatArgs[17]*rotating[7];
+  transform[5]= floatArgs[15]*rotating[2]+floatArgs[16]*rotating[5]+floatArgs[17]*rotating[8];
 
-  rot[6]= source[6]*rotating[0]+source[7]*rotating[3]+source[8]*rotating[6];
-  rot[7]= source[6]*rotating[1]+source[7]*rotating[4]+source[8]*rotating[7];
-  rot[8]= source[6]*rotating[2]+source[7]*rotating[5]+source[8]*rotating[8];
-
+  transform[6]= floatArgs[18]*rotating[0]+floatArgs[19]*rotating[3]+floatArgs[20]*rotating[6];
+  transform[7]= floatArgs[18]*rotating[1]+floatArgs[19]*rotating[4]+floatArgs[20]*rotating[7];
+  transform[8]= floatArgs[18]*rotating[2]+floatArgs[19]*rotating[5]+floatArgs[20]*rotating[8];
 
 
   __private float shift_temp = shift_min + shift*shift_step;
-  trans[0] = floatArgs[6]*shift_temp/floatArgs[11];
-  trans[1] = floatArgs[7]*shift_temp/floatArgs[11];
-  trans[2] = floatArgs[8]*shift_temp/floatArgs[11];
+  transform[9] = floatArgs[6]+ floatArgs[9]*shift_temp/floatArgs[11];
+  transform[10] =floatArgs[7]+ floatArgs[10]*shift_temp/floatArgs[11];
+  transform[11] =floatArgs[8]+ floatArgs[11]*shift_temp/floatArgs[11];
 
-  transform[0] = rot[0];
-  transform[1] = rot[1];
-  transform[2] = rot[2];
-  transform[3] = rot[3];
-  transform[4] = rot[4];
-  transform[5] = rot[5];
-  transform[6] = rot[6];
-  transform[7] = rot[7];
-  transform[8] = rot[8];
-  transform[9] = trans[0];
-  transform[10] = trans[1];
-  transform[11] = trans[2];
   transform[12] = 0;
   transform[13] = 0;
   transform[14] = 0;
   transform[15] = 1;
-
-  __private float max_distance_sqr = (float) 0.0004f;
 
   __private bool ident = true;
   __private int i = 0;

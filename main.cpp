@@ -344,7 +344,8 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     std::cout<<std::endl<<"Time needed for 1. kernel method is : " <<elapsed_secs<<std::endl;
     std::cout<<"DEBUG : Last elements of input transformed is " << input_transformed_as_array[2460774]<< " "<<input_transformed_as_array[2460775]<< " "<<input_transformed_as_array[2460776]<< std::endl;
 
-
+    ret = clEnqueueReadBuffer(command_queue,inputTransformedMemObj,CL_TRUE,0,sizeof(float)*size_input_transformed_array, &input_transformed_as_array[0],0,NULL,NULL);
+    std::cout<<"Reading Buffer , code :" << ret << std::endl;
     /*
      *PART 2 : Transforming models
      */
@@ -453,14 +454,14 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     elapsed_secs = double(end3 - end) / CLOCKS_PER_SEC;
     std::cout<<std::endl<<"Time needed for 3. kernel method is : " <<elapsed_secs<<std::endl;
 
-
+    for (int i = 0 ;i< model_voxelized->size();i++) {
+        std::cout <<input_transformed_as_array[3*i]<<"  "<<input_transformed_as_array[3*i+1]<<"  "<<input_transformed_as_array[3*i+2]<<"  "<<std::endl;
+    }
 }
 
 
 int main()
 {
-
-
     //TODO : Parameterize this please
     std::string path= "/home/tuan/Desktop/Models";
     std::string oct_dir ="/home/tuan/Desktop/042801/";
@@ -481,7 +482,7 @@ int main()
 
     generatePointCloudFromModel(modelCloud, model_voxelized, path);
 
-    std::cout<<"DEBUG : getModelSize : "<< getModelSize(model_voxelized)<< " Get MinZ Value : " << getMinZValue(point_cloud_not_cut)<<std::endl;
+   // std::cout<<"DEBUG : getModelSize : "<< getModelSize(model_voxelized)<< " Get MinZ Value : " << getMinZValue(point_cloud_not_cut)<<std::endl;
     cutPartOfModel(point_cloud_not_cut, point_cloud_ptr, getModelSize(model_voxelized) - 0.1f + getMinZValue(point_cloud_not_cut));
 
     std::pair<Eigen::Vector3f, Eigen::Vector3f> direction = computeNeedleDirection(peak_points);
@@ -540,50 +541,56 @@ int main()
     //https://stackoverflow.com/questions/26804153/opencl-work-group-concept
 
     //http://downloads.ti.com/mctools/esd/docs/opencl/execution/kernels-workgroups-workitems.html
-    /*
+
     shift_and_roll_without_sum_in_cl(angleStart,angleEnd, angleStep,shiftStart, shiftEnd, shiftStep,
                                      correspondence_count, rotation,
                                      initialTranslation, std::get<1>(direction), model_voxelized,
                                      point_cloud_ptr,5);
-    */
+
     //TEST 1 : Anglemin = angleStart
-    std::cout<<"IST"<<std::endl;
 
-    float rot[9] = {};
-    float source[9]={};
-    convertMatrix3fToCL(rotation,source);
-    float angle_temp =(angleStart)*(0.01745328888);
-    rot[0] = cos(angle_temp);
-    rot[1] = -sin(angle_temp);
-    rot[2] = 0.0f;
-    rot[3] = sin(angle_temp);
-    rot[4] = cos(angle_temp);
-    rot[5] = 0.0f;
-    rot[6] = 0.0f;
-    rot[7] = 0.0f;
-    rot[8] = 1.0f;
-
-    float res[9] = {};
-    res[0]= source[0]*rot[0]+source[1]*rot[3]+source[2]*rot[6];
-    res[1]= source[0]*rot[1]+source[1]*rot[4]+source[2]*rot[7];
-    res[2]= source[0]*rot[2]+source[1]*rot[5]+source[2]*rot[8];
-
-    res[3]= source[3]*rot[0]+source[4]*rot[3]+source[5]*rot[6];
-    res[4]= source[3]*rot[1]+source[4]*rot[4]+source[5]*rot[7];
-    res[5]= source[3]*rot[2]+source[4]*rot[5]+source[5]*rot[8];
-
-    res[6]= source[6]*rot[0]+source[7]*rot[3]+source[8]*rot[6];
-    res[7]= source[6]*rot[1]+source[7]*rot[4]+source[8]*rot[7];
-    res[8]= source[6]*rot[2]+source[7]*rot[5]+source[8]*rot[8];
-
-    for (int i = 0 ; i<3 ; i++) {
-        std::cout<<res[i*3]<< "  "<<res[i*3+1]<<"  "<<res[i*3+2]<<std::endl;
-    }
-
-    Eigen::Matrix3f rotation1;
-
-    std::cout<<std::endl<<"SOLL"<<std::endl;
-
-    std::cout<<rotateByAngle(angleStart,rotation)<<std::endl;
     return 0;
 }
+
+
+
+/*
+std::cout<<"IST"<<std::endl;
+
+float rot[9] = {};
+float source[9]={};
+convertMatrix3fToCL(rotation,source);
+float angle_temp =(angleStart)*(0.01745328888);
+rot[0] = cos(angle_temp);
+rot[1] = -sin(angle_temp);
+rot[2] = 0.0f;
+rot[3] = sin(angle_temp);
+rot[4] = cos(angle_temp);
+rot[5] = 0.0f;
+rot[6] = 0.0f;
+rot[7] = 0.0f;
+rot[8] = 1.0f;
+
+float res[9] = {};
+res[0]= source[0]*rot[0]+source[1]*rot[3]+source[2]*rot[6];
+res[1]= source[0]*rot[1]+source[1]*rot[4]+source[2]*rot[7];
+res[2]= source[0]*rot[2]+source[1]*rot[5]+source[2]*rot[8];
+
+res[3]= source[3]*rot[0]+source[4]*rot[3]+source[5]*rot[6];
+res[4]= source[3]*rot[1]+source[4]*rot[4]+source[5]*rot[7];
+res[5]= source[3]*rot[2]+source[4]*rot[5]+source[5]*rot[8];
+
+res[6]= source[6]*rot[0]+source[7]*rot[3]+source[8]*rot[6];
+res[7]= source[6]*rot[1]+source[7]*rot[4]+source[8]*rot[7];
+res[8]= source[6]*rot[2]+source[7]*rot[5]+source[8]*rot[8];
+
+for (int i = 0 ; i<3 ; i++) {
+    std::cout<<res[i*3]<< "  "<<res[i*3+1]<<"  "<<res[i*3+2]<<std::endl;
+}
+
+Eigen::Matrix3f rotation1;
+
+std::cout<<std::endl<<"SOLL"<<std::endl;
+
+std::cout<<rotateByAngle(angleStart,rotation)<<std::endl;
+*/
