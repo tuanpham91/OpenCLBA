@@ -1,4 +1,5 @@
 #pragma OPENCL EXTENSION cl_khr_fp64 : enable
+
 __kernel void find_correspondences(__global int *intArgs, __global float *point_cloud_ptr, __global float *correspondence_result, __global int *sources_size, __global float *input_transformed) {
 
   __private int i = get_global_id(0);
@@ -29,6 +30,8 @@ __kernel void find_correspondences(__global int *intArgs, __global float *point_
   //Subject to Change
   //correspondence_result_count[i]=a+b+c;
 }
+
+
 // TUAN : Line 374 global_classification
 /*
   1. floatArgs : Collections of arguments with float data type like : float angle_min, float angle_max, float angle_step, float shift_min, float shift_max, float shift_step,
@@ -43,67 +46,7 @@ __kernel void find_correspondences(__global int *intArgs, __global float *point_
   10. model_voxelized_size:
   11. point_cloud_ptr_size:
 */
-
-__kernel void making_matrix(__global float *floatArgs, __global float *transform_matrix, __global int *work_size_dimension) {
-  __private int angle = get_global_id(0);
-  __private int shift = get_global_id(1);
-
-  __private float angle_min = floatArgs[0];
-  __private float angle_max = floatArgs[1];
-
-  __private float angle_step = floatArgs[2];
-  __private float shift_min  = floatArgs[3];
-
-  __private float shift_max = floatArgs[4];
-  __private float shift_step = floatArgs[5];
-
-  __private int number_angle_step = work_size_dimension[0];
-  __private int number_shift_step = work_size_dimension[1];
-  __private int model_voxelized_size = work_size_dimension[2];
-
-  __private float rot[9] = {};
-  __private float source[9]= {};
-  __private float rotating[9]= {};
-
-  __private int start_index = (number_shift_step*angle+shift)*16;
-
-
-  __private float angle_temp =(angle_min+angle*angle_step)*(0.01745328888);
-
-
-  rotating[0] = cos(angle_temp);
-  rotating[1] = -sin(angle_temp);
-  rotating[2] = 0.0f;
-  rotating[3] = sin(angle_temp);
-  rotating[4] = cos(angle_temp);
-  rotating[5] = 0.0f;
-  rotating[6] = 0.0f;
-  rotating[7] = 0.0f;
-  rotating[8] = 1.0f;
-
-  transform_matrix[start_index+0]= floatArgs[12]*rotating[0]+floatArgs[13]*rotating[3]+floatArgs[14]*rotating[6];
-  transform_matrix[start_index+1]= floatArgs[12]*rotating[1]+floatArgs[13]*rotating[4]+floatArgs[14]*rotating[7];
-  transform_matrix[start_index+2]= floatArgs[12]*rotating[2]+floatArgs[13]*rotating[5]+floatArgs[14]*rotating[8];
-
-  transform_matrix[start_index+4]= floatArgs[15]*rotating[0]+floatArgs[16]*rotating[3]+floatArgs[17]*rotating[6];
-  transform_matrix[start_index+5]= floatArgs[15]*rotating[1]+floatArgs[16]*rotating[4]+floatArgs[17]*rotating[7];
-  transform_matrix[start_index+6]= floatArgs[15]*rotating[2]+floatArgs[16]*rotating[5]+floatArgs[17]*rotating[8];
-
-  transform_matrix[start_index+8]= floatArgs[18]*rotating[0]+floatArgs[19]*rotating[3]+floatArgs[20]*rotating[6];
-  transform_matrix[start_index+9]= floatArgs[18]*rotating[1]+floatArgs[19]*rotating[4]+floatArgs[20]*rotating[7];
-  transform_matrix[start_index+10]= floatArgs[18]*rotating[2]+floatArgs[19]*rotating[5]+floatArgs[20]*rotating[8];
-
-
-  __private float shift_temp = shift_min + shift*shift_step;
-  transform_matrix[start_index+3] = floatArgs[6]+ floatArgs[9]*shift_temp/floatArgs[11];
-  transform_matrix[start_index+7] =floatArgs[7]+ floatArgs[10]*shift_temp/floatArgs[11];
-  transform_matrix[start_index+11] =floatArgs[8]+ floatArgs[11]*shift_temp/floatArgs[11];
-
-  transform_matrix[start_index+12] = floatArgs[0]*0;
-  transform_matrix[start_index+13] = floatArgs[0]*0;
-  transform_matrix[start_index+14] = floatArgs[0]*0;
-  transform_matrix[start_index+15] = floatArgs[0]*0;
-
+__kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global float *initialTranslation, __global float *direction,__global float *model_voxelized, __global float *point_cloud_ptr, __global float *rotation, __global float *correspondence_result,__global int *correspondence_result_count, __global int *work_size_dimension, __global int *sources_size, __global float *input_transformed) {
 }
 
 /*
@@ -199,9 +142,9 @@ __kernel void transforming_models(__global float *floatArgs,__global float *mode
 
   i = point;
   if (!ident) {
-    input_transformed[start_index + 3*i] = model_voxelized[3*i]*transform[0] + model_voxelized[3*i+1]*transform[1] + model_voxelized[ 3*i+2]*transform[2]+transform[3];
-    input_transformed[start_index + 3*i+1] = model_voxelized[3*i]*transform[4] + model_voxelized[3*i+1]*transform[5] + model_voxelized[3*i+2]*transform[6]+transform[7];
-    input_transformed[start_index + 3*i+2] = model_voxelized[3*i]*transform[8] + model_voxelized[3*i+1]*transform[9] + model_voxelized[3*i+2]*transform[10]+transform[11];
+    input_transformed[start_index + 3*i] = model_voxelized[3*i]*transform[0] + model_voxelized[3*i+1]*transform[4] + model_voxelized[ 3*i+2]*transform[8]+transform[3];
+    input_transformed[start_index + 3*i+1] = model_voxelized[3*i]*transform[1] + model_voxelized[3*i+1]*transform[5] + model_voxelized[3*i+2]*transform[9]+transform[7];
+    input_transformed[start_index + 3*i+2] = model_voxelized[3*i]*transform[2] + model_voxelized[3*i+1]*transform[6] + model_voxelized[3*i+2]*transform[10]+transform[11];
 
   }
   else {
