@@ -90,7 +90,7 @@ void testCreatingMatrix(float *floatArgs) {
 
               float shift_temp = shift_min + n*shift_step;
               transform[3] = floatArgs[6]+ floatArgs[9]*shift_temp/floatArgs[11];
-              transform[7] =floatArgs[7]+ floatArgs[10]*shift_temp/floatArgs[11];
+              transform[7] = floatArgs[7]+ floatArgs[10]*shift_temp/floatArgs[11];
               transform[11] =floatArgs[8]+ floatArgs[11]*shift_temp/floatArgs[11];
 
               transform[12] = 0;
@@ -362,17 +362,65 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     end = clock() ;
 
     /*
+     *
+     *
+     * PART 0 : MATRIX
+    */
+    kernel = clCreateKernel(program,"making_matrix", &ret);
+    std::cout<<"Creating KErnel, code:" << ret <<std::endl;
+
+    float args[21] ={angle_min, angle_max, angle_step, shift_min, shift_max, shift_step,initialTranslation[0],initialTranslation[1],initialTranslation[2],direction[0],direction[1],direction[2],rotation(0,0),rotation(0,1),rotation(0,2),rotation(1,0),rotation(1,1),rotation(1,2),rotation(2,0),rotation(2,1),rotation(2,2)};
+    argsMemObj = clCreateBuffer(context,CL_MEM_READ_WRITE  | CL_MEM_USE_HOST_PTR ,21*sizeof(float),args,&ret);
+    std::cout<<"Creating 1, code:" << ret <<std::endl;
+
+    ret = clSetKernelArg(kernel,0, sizeof(argsMemObj),&argsMemObj);
+    std::cout<<"Creating 2, code:" << ret <<std::endl;
+
+
+    float *transformMatrixes = new float[num_angle_steps*num_shift_steps*16]();
+    cl_mem matrixMemOb = NULL;
+    matrixMemOb = clCreateBuffer(context,CL_MEM_READ_WRITE  | CL_MEM_USE_HOST_PTR ,num_angle_steps*num_shift_steps*16*sizeof(float),args,&ret);
+    std::cout<<"Creating 3, code:" << ret <<std::endl;
+
+    ret = clSetKernelArg(kernel,1, sizeof(matrixMemOb),&matrixMemOb);
+    std::cout<<"Creating 4, code:" << ret <<std::endl;
+
+    cl_mem workSizeMemObj = NULL;
+    int* worksizes = new int[3]();
+    worksizes[0]= num_angle_steps;
+    worksizes[1]= num_shift_steps;
+    worksizes[2]= static_cast<int>(model_voxelized->size());
+     workSizeMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE| CL_MEM_USE_HOST_PTR, sizeof(int)*2,worksizes,&ret);
+    ret=clSetKernelArg(kernel,2,sizeof(workSizeMemObj),&workSizeMemObj);
+
+
+    size_t work_units0[2] = {(size_t)num_angle_steps,(size_t)num_shift_steps};
+
+    ret =  clEnqueueNDRangeKernel(command_queue, kernel, 2 , NULL,work_units0, NULL, 0, NULL, NULL);
+    std::cout<<"Running Program 0, code:" << ret <<std::endl;
+
+    clFlush(command_queue);
+    clFinish(command_queue);
+    ret = clEnqueueReadBuffer(command_queue,matrixMemOb,CL_TRUE,0,sizeof(float)*num_angle_steps*num_shift_steps*16, &transformMatrixes[0],0,NULL,NULL);
+    std::cout<<"Reading Buffer , code :" << ret << std::endl;
+
+
+
+
+    for ( int i = 0; i <121*4; i++) {
+
+        std::cout<<transformMatrixes[i*4]<<"  "<<transformMatrixes[i*4+1]<<"  "<<transformMatrixes[i*4+2]<<"  "<<transformMatrixes[i*4+3]<<"  "<<std::endl;
+    }
+
+
+
+    /*
      *PART 1 : Transforming models
      */
 
     kernel = clCreateKernel(program,"transforming_models", &ret);
 
-    float args[21] ={angle_min, angle_max, angle_step, shift_min, shift_max, shift_step,initialTranslation[0],initialTranslation[1],initialTranslation[2],direction[0],direction[1],direction[2],rotation(0,0),rotation(0,1),rotation(0,2),rotation(1,0),rotation(1,1),rotation(1,2),rotation(2,0),rotation(2,1),rotation(2,2)};
-    for (int k = 0; k <21 ; k++) {
-        std::cout<<args[k]<< " ";
-    }
-    argsMemObj = clCreateBuffer(context,CL_MEM_READ_WRITE  | CL_MEM_USE_HOST_PTR ,21*sizeof(float),args,&ret);
-    ret = clSetKernelArg(kernel,0, sizeof(argsMemObj),(void *)&argsMemObj);
+    ret = clSetKernelArg(kernel,0, sizeof(argsMemObj),&argsMemObj);
 
     //4. Arg model_voxelized
     int model_voxelized_as_array_size = static_cast<int>(model_voxelized.get()->size())*3;
@@ -382,13 +430,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     ret = clSetKernelArg(kernel,1,sizeof(modelVoxelizedMembObj), &modelVoxelizedMembObj);
 
     //9. Work size dimension
-    cl_mem workSizeMemObj = NULL;
-    int* worksizes = new int[3]();
-    worksizes[0]= num_angle_steps;
-    worksizes[1]= num_shift_steps;
-    worksizes[2]= static_cast<int>(model_voxelized->size());
-    std::cout<< "Number of steps "<< num_angle_steps<< " " << num_shift_steps<< std::endl;
-    workSizeMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE| CL_MEM_USE_HOST_PTR, sizeof(int)*2,worksizes,&ret);
+
     ret=clSetKernelArg(kernel,2,sizeof(workSizeMemObj),&workSizeMemObj);
 
     //12. input_transformed
@@ -404,9 +446,6 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
     clFlush(command_queue);
     clFinish(command_queue);
-    ret =  clEnqueueNDRangeKernel(command_queue, kernel, 3 , NULL,work_units, NULL, 0, NULL, NULL);
-    std::cout<<"Running Program, code:" << ret <<std::endl;
-
 
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
     std::cout<<std::endl<<"Time needed for 1. kernel method is : " <<elapsed_secs<<std::endl;
@@ -523,11 +562,14 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     std::cout<<std::endl<<"Time needed for 3. kernel method is : " <<elapsed_secs<<std::endl;
 
 
-    testCreatingMatrix(args);
+    //testCreatingMatrix(args);
+
     /*for (int i = 0 ;i< model_voxelized->size();i++) {
         std::cout <<input_transformed_as_array[3*i]<<"  "<<input_transformed_as_array[3*i+1]<<"  "<<input_transformed_as_array[3*i+2]<<"  "<<std::endl;
+        //std::cout <<model_voxelized_as_array[3*i]<<"  "<<model_voxelized_as_array[3*i+1]<<"  "<<model_voxelized_as_array[3*i+2]<<"  "<<std::endl;
     }
     */
+
 }
 
 
