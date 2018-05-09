@@ -84,9 +84,6 @@ __kernel void transforming_models(__global float *floatArgs,__global float *mode
 
   __private int start_index = (number_shift_step*angle+shift)*model_voxelized_size;
 
-  for (int sourceCount = 0 ; sourceCount< 9 ; sourceCount++) {
-    source[sourceCount] = floatArgs[12+sourceCount];
-  }
 
   __private float angle_temp =(angle_min+angle*angle_step)*(0.01745328888);
   rotating[0] = cos(angle_temp);
@@ -103,18 +100,18 @@ __kernel void transforming_models(__global float *floatArgs,__global float *mode
   transform[1]= floatArgs[12]*rotating[1]+floatArgs[13]*rotating[4]+floatArgs[14]*rotating[7];
   transform[2]= floatArgs[12]*rotating[2]+floatArgs[13]*rotating[5]+floatArgs[14]*rotating[8];
 
-  transform[3]= floatArgs[15]*rotating[0]+floatArgs[16]*rotating[3]+floatArgs[17]*rotating[6];
-  transform[4]= floatArgs[15]*rotating[1]+floatArgs[16]*rotating[4]+floatArgs[17]*rotating[7];
-  transform[5]= floatArgs[15]*rotating[2]+floatArgs[16]*rotating[5]+floatArgs[17]*rotating[8];
+  transform[4]= floatArgs[15]*rotating[0]+floatArgs[16]*rotating[3]+floatArgs[17]*rotating[6];
+  transform[5]= floatArgs[15]*rotating[1]+floatArgs[16]*rotating[4]+floatArgs[17]*rotating[7];
+  transform[6]= floatArgs[15]*rotating[2]+floatArgs[16]*rotating[5]+floatArgs[17]*rotating[8];
 
-  transform[6]= floatArgs[18]*rotating[0]+floatArgs[19]*rotating[3]+floatArgs[20]*rotating[6];
-  transform[7]= floatArgs[18]*rotating[1]+floatArgs[19]*rotating[4]+floatArgs[20]*rotating[7];
-  transform[8]= floatArgs[18]*rotating[2]+floatArgs[19]*rotating[5]+floatArgs[20]*rotating[8];
+  transform[8]= floatArgs[18]*rotating[0]+floatArgs[19]*rotating[3]+floatArgs[20]*rotating[6];
+  transform[9]= floatArgs[18]*rotating[1]+floatArgs[19]*rotating[4]+floatArgs[20]*rotating[7];
+  transform[10]= floatArgs[18]*rotating[2]+floatArgs[19]*rotating[5]+floatArgs[20]*rotating[8];
 
 
   __private float shift_temp = shift_min + shift*shift_step;
-  transform[9] = floatArgs[6]+ floatArgs[9]*shift_temp/floatArgs[11];
-  transform[10] =floatArgs[7]+ floatArgs[10]*shift_temp/floatArgs[11];
+  transform[3] = floatArgs[6]+ floatArgs[9]*shift_temp/floatArgs[11];
+  transform[7] =floatArgs[7]+ floatArgs[10]*shift_temp/floatArgs[11];
   transform[11] =floatArgs[8]+ floatArgs[11]*shift_temp/floatArgs[11];
 
   transform[12] = 0;

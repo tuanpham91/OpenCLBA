@@ -22,7 +22,7 @@ translation:
 0.387955
 -0.17752
 
-IST :DEBUG : getModelSize : 2.98004 Get MinZ Value : 0.960938
+DEBUG : getModelSize : 2.98004 Get MinZ Value : 0.960938
 origin:
 0.861663
 0.968085
@@ -44,6 +44,7 @@ translation:
  1.09399
 0.387955
 -0.17752
+Tip Approximation took 0ms.
 165.879
 -174.42
   178.5
