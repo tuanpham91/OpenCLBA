@@ -53,7 +53,7 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
   floatArgs:
   initialTranslation : 6-8
   direction :  9-11
-  rotation :12-20 (TODO: WHY IS IT NOT USED)
+  rotation :12-20
 */
 __kernel void transforming_models(__global float *floatArgs,__global float *model_voxelized, __global int *work_size_dimension,  __global float *input_transformed) {
 
@@ -82,7 +82,7 @@ __kernel void transforming_models(__global float *floatArgs,__global float *mode
 
   __private float transform[16]= {};
 
-  __private int start_index = (number_shift_step*angle+shift)*model_voxelized_size;
+  __private int start_index = (number_shift_step*angle+shift)*model_voxelized_size*3;
 
 
   __private float angle_temp =(angle_min+angle*angle_step)*(0.01745328888);
@@ -142,9 +142,9 @@ __kernel void transforming_models(__global float *floatArgs,__global float *mode
 
   i = point;
   if (!ident) {
-    input_transformed[start_index + 3*i] = model_voxelized[3*i]*transform[0] + model_voxelized[3*i+1]*transform[4] + model_voxelized[ 3*i+2]*transform[8]+transform[3];
-    input_transformed[start_index + 3*i+1] = model_voxelized[3*i]*transform[1] + model_voxelized[3*i+1]*transform[5] + model_voxelized[3*i+2]*transform[9]+transform[7];
-    input_transformed[start_index + 3*i+2] = model_voxelized[3*i]*transform[2] + model_voxelized[3*i+1]*transform[6] + model_voxelized[3*i+2]*transform[10]+transform[11];
+    input_transformed[start_index + 3*i] = model_voxelized[3*i]*transform[0] + model_voxelized[3*i+1]*transform[1] + model_voxelized[ 3*i+2]*transform[2]+transform[3];
+    input_transformed[start_index + 3*i+1] = model_voxelized[3*i]*transform[4] + model_voxelized[3*i+1]*transform[5] + model_voxelized[3*i+2]*transform[6]+transform[7];
+    input_transformed[start_index + 3*i+2] = model_voxelized[3*i]*transform[8] + model_voxelized[3*i+1]*transform[9] + model_voxelized[3*i+2]*transform[10]+transform[11];
 
   }
   else {

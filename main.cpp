@@ -409,6 +409,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
 
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+
     std::cout<<std::endl<<"Time needed for 1. kernel method is : " <<elapsed_secs<<std::endl;
     std::cout<<"DEBUG : Last elements of input transformed is " << input_transformed_as_array[2460774]<< " "<<input_transformed_as_array[2460775]<< " "<<input_transformed_as_array[2460776]<< std::endl;
 
@@ -523,11 +524,11 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     std::cout<<std::endl<<"Time needed for 3. kernel method is : " <<elapsed_secs<<std::endl;
 
 
-    testCreatingMatrix(args);
-    /*for (int i = 0 ;i< model_voxelized->size();i++) {
-        std::cout <<input_transformed_as_array[3*i]<<"  "<<input_transformed_as_array[3*i+1]<<"  "<<input_transformed_as_array[3*i+2]<<"  "<<std::endl;
+    //testCreatingMatrix(args);
+    for (int i = 0 ;i< 121;i++) {
+        std::cout <<input_transformed_as_array[6779*3*i]<<"  "<<input_transformed_as_array[6779*3*i+1]<<"  "<<input_transformed_as_array[6779*3*i+2]<<"  "<<std::endl;
     }
-    */
+
 }
 
 
@@ -623,45 +624,3 @@ int main()
     return 0;
 }
 
-
-
-/*
-std::cout<<"IST"<<std::endl;
-
-float rot[9] = {};
-float source[9]={};
-convertMatrix3fToCL(rotation,source);
-float angle_temp =(angleStart)*(0.01745328888);
-rot[0] = cos(angle_temp);
-rot[1] = -sin(angle_temp);
-rot[2] = 0.0f;
-rot[3] = sin(angle_temp);
-rot[4] = cos(angle_temp);
-rot[5] = 0.0f;
-rot[6] = 0.0f;
-rot[7] = 0.0f;
-rot[8] = 1.0f;
-
-float res[9] = {};
-res[0]= source[0]*rot[0]+source[1]*rot[3]+source[2]*rot[6];
-res[1]= source[0]*rot[1]+source[1]*rot[4]+source[2]*rot[7];
-res[2]= source[0]*rot[2]+source[1]*rot[5]+source[2]*rot[8];
-
-res[3]= source[3]*rot[0]+source[4]*rot[3]+source[5]*rot[6];
-res[4]= source[3]*rot[1]+source[4]*rot[4]+source[5]*rot[7];
-res[5]= source[3]*rot[2]+source[4]*rot[5]+source[5]*rot[8];
-
-res[6]= source[6]*rot[0]+source[7]*rot[3]+source[8]*rot[6];
-res[7]= source[6]*rot[1]+source[7]*rot[4]+source[8]*rot[7];
-res[8]= source[6]*rot[2]+source[7]*rot[5]+source[8]*rot[8];
-
-for (int i = 0 ; i<3 ; i++) {
-    std::cout<<res[i*3]<< "  "<<res[i*3+1]<<"  "<<res[i*3+2]<<std::endl;
-}
-
-Eigen::Matrix3f rotation1;
-
-std::cout<<std::endl<<"SOLL"<<std::endl;
-
-std::cout<<rotateByAngle(angleStart,rotation)<<std::endl;
-*/
