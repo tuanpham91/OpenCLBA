@@ -56,7 +56,6 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
   rotation :12-20
 */
 __kernel void transforming_models(__global float *floatArgs,__global float *model_voxelized, __global int *work_size_dimension,  __global float *input_transformed) {
-
   __private int angle = get_global_id(0);
   __private int shift = get_global_id(1);
   __private int point = get_global_id(2);
@@ -152,6 +151,9 @@ __kernel void transforming_models(__global float *floatArgs,__global float *mode
     input_transformed[start_index+3*i+1]=model_voxelized[3*i+1];
     input_transformed[start_index+3*i+2]=model_voxelized[3*i+2];
   }
+
+
+
 }
 
 /* TODO : Evaluate this :

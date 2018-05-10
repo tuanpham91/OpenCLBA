@@ -383,12 +383,14 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
     //9. Work size dimension
     cl_mem workSizeMemObj = NULL;
-    int* worksizes = new int[3]();
+    int* worksizes = new int[4]();
     worksizes[0]= num_angle_steps;
     worksizes[1]= num_shift_steps;
-    worksizes[2]= static_cast<int>(model_voxelized->size());
-    std::cout<< "Number of steps "<< num_angle_steps<< " " << num_shift_steps<< std::endl;
-    workSizeMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE| CL_MEM_USE_HOST_PTR, sizeof(int)*2,worksizes,&ret);
+    worksizes[2]= model_voxelized->size();
+
+
+    std::cout<< "Number of steps "<< num_angle_steps<< " " << num_shift_steps<< " Number of items "<< worksizes[2]<< std::endl;
+    workSizeMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE| CL_MEM_USE_HOST_PTR, sizeof(int)*3,worksizes,&ret);
     ret=clSetKernelArg(kernel,2,sizeof(workSizeMemObj),&workSizeMemObj);
 
     //12. input_transformed
@@ -399,6 +401,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     ret= clSetKernelArg(kernel,3,sizeof(inputTransformedMemObj),&inputTransformedMemObj);
 
     size_t work_units[3] ={(size_t)num_angle_steps_s,(size_t)num_shift_steps_s, model_voxelized.get()->size()};
+    std::cout<<"DEBUG WORK UNITS " <<work_units[0]<< " " << work_units[1]<< " " << work_units[2]<< " " << std::endl;
     ret =  clEnqueueNDRangeKernel(command_queue, kernel, 3 , NULL,work_units, NULL, 0, NULL, NULL);
     std::cout<<"Running Program, code:" << ret <<std::endl;
 
@@ -411,12 +414,15 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
 
     std::cout<<std::endl<<"Time needed for 1. kernel method is : " <<elapsed_secs<<std::endl;
-    std::cout<<"DEBUG : Last elements of input transformed is " << input_transformed_as_array[2460774]<< " "<<input_transformed_as_array[2460775]<< " "<<input_transformed_as_array[2460776]<< std::endl;
 
     ret = clEnqueueReadBuffer(command_queue,inputTransformedMemObj,CL_TRUE,0,sizeof(float)*size_input_transformed_array, &input_transformed_as_array[0],0,NULL,NULL);
     std::cout<<"Reading Buffer , code :" << ret << std::endl;
+
+
+
+
     /*
-     *PART 2 : Transforming models
+     *PART 2 : FIND CORRESPONDECES
      */
 
     kernel = clCreateKernel(program,"find_correspondences", &ret);
