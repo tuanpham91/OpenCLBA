@@ -214,6 +214,8 @@ boost::shared_ptr<std::vector<std::tuple<int, int, cv::Mat, cv::Mat>>> recognize
 }
 
 void findNextIteration(int *res, int numOfIteration, float *floatArgs) {
+    //TODO : HERE JUST THE INDEX IS FOUND; HENCE ITS WRONG
+
     //find Max Angle,
     float max_angle = 0;
     float temp =0 ;
