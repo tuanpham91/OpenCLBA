@@ -94,6 +94,7 @@ __kernel void transforming_models(__global float *floatArgs,__global float *mode
   transform[11] =floatArgs[8]+ floatArgs[11]*shift_temp/floatArgs[11];
 
   __private bool ident = true;
+
   for (int i = 0 ; i < 4 ; i++) {
     for (int k = 0; k < 4 ; k++) {
       if (i == k ) {

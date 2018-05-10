@@ -213,6 +213,39 @@ boost::shared_ptr<std::vector<std::tuple<int, int, cv::Mat, cv::Mat>>> recognize
     return needle_width;
 }
 
+void findNextIteration(float *res, int numOfIteration) {
+    //find Max Angle
+    float max_angle = 0;
+    float temp =0 ;
+    for (int i = 0; i<numOfIteration; i++) {
+        if (res[3*i+2]>temp) {
+            temp=res[3*i+2];
+            max_angle = res[3*i];
+        }
+    }
+
+    //find Max Shift
+    float max_shift = 0;
+    temp = 0;
+    for (int i = 0; i<numOfIteration; i++) {
+        if (res[3*i+2]>temp) {
+            temp=res[3*i+2];
+            max_shift = res[3*i+1];
+        }
+    }
+
+    //find Max Pair
+    float max_pair_angle =0;
+    float max_pair_shift =0;
+    temp = 0;
+    for (int i = 0; i<numOfIteration; i++) {
+        if (res[3*i+2]>temp) {
+            temp=res[3*i+2];
+            max_pair_shift = res[3*i+1];
+            max_pair_angle = res[3*i];
+        }
+    }
+}
 int determinNumWorkItems(int sizeOfProblem) {
     return ((sizeOfProblem+63)/64)*64;
 }
@@ -421,7 +454,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
     ret =  clEnqueueNDRangeKernel(command_queue, kernel, 2, NULL,work_units3,NULL, 0, NULL, NULL);
 
-    //ret = clEnqueueReadBuffer(command_queue,correspondenceResultCountMem,CL_TRUE,0,sizeof(int)*correspondenceResultCountSize, &correspindenceResultCount[0],0,NULL,NULL);
+    ret = clEnqueueReadBuffer(command_queue,correspondenceResultCountMem,CL_TRUE,0,sizeof(int)*correspondenceResultCountSize, &correspindenceResultCount[0],0,NULL,NULL);
 
     //ret = clEnqueueReadBuffer(command_queue,correspondenceRes,CL_TRUE,0,sizeof(float)*size_correspondence_result, &correspondence_result[0],0,NULL,NULL);
 
@@ -437,8 +470,9 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     elapsed_secs = double(end3 - begin) / CLOCKS_PER_SEC;
     std::cout<<std::endl<<"Time needed for 3. kernel method is : " <<elapsed_secs<<std::endl;
 
+    //Step1 : find the angle with the max count.
+    float max_angle = findMaxIndexOfVectorOfPairs
 
-    //testCreatingMatrix(args);
     /*
     for (int i = 0 ;i< 121;i++) {
         std::cout <<input_transformed_as_array[6779*3*i]<<"  "<<input_transformed_as_array[6779*3*i+1]<<"  "<<input_transformed_as_array[6779*3*i+2]<<"  "<<std::endl;
