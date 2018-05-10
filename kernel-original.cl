@@ -156,16 +156,6 @@ __kernel void transforming_models(__global float *floatArgs,__global float *mode
 
 }
 
-/* TODO : Evaluate this :
-    Schema
-    OLD ----- NEW
-    correspondence_count -> correspondence_result
-    size_correspondence_count -> work_sizes[2]
-    angle_count, shift_count ->??
-
-    Task ;
-
-*/
 __kernel void computeDifferencesForCorrespondence(__global float *correspondence_result,__global float *floatArgs,  __global int *work_sizes,  __global int *correspondence_result_count) {
     //angle
     int i  = get_global_id(0);

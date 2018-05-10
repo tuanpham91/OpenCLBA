@@ -293,10 +293,9 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
                                       std::vector<std::tuple<float, float, float>>& count,
                                       Eigen::Matrix3f rotation, Eigen::Vector3f initialTranslation, Eigen::Vector3f direction,
                                       pcl::PointCloud<pcl::PointXYZ>::Ptr model_voxelized, pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud_ptr, int number_of_points_per_work_item
+
                                       ) {
-    clock_t begin = clock();
     clock_t end = clock();
-    double elapsed_secs1 = double(end - begin) / CLOCKS_PER_SEC;
 
     FILE *fp;
     char fileName[] = "/home/tuan/Desktop/OpenCLBA-Local/OpenCLBA/kernel-original.cl";
@@ -324,25 +323,21 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     int prod = num_angle_steps*num_shift_steps;
 
     ret = clGetPlatformIDs(1, &platform_id, &ret_num_platforms);
-    std::cout<<ret<<" 1. code"<<std::endl;
 
     ret = clGetDeviceIDs(platform_id, CL_DEVICE_TYPE_DEFAULT, 1, &device_id, &ret_num_devices);
-    std::cout<<ret<<" 2.  code"<<std::endl;
 
     context = clCreateContext(NULL, 1, &device_id, NULL, NULL, &ret);
-    std::cout<<ret<<" 3.  code"<<std::endl;
+
     cl_queue_properties props[] = {
       CL_QUEUE_PROPERTIES,
       CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE | CL_QUEUE_ON_DEVICE | CL_QUEUE_ON_DEVICE_DEFAULT,
       0
     };
-    std::cout<<ret<<" 3.1  code"<<std::endl;
+
 
     command_queue = clCreateCommandQueue(context, device_id, 0, &ret);
-    std::cout<<ret<<" 3.1  code"<<std::endl;
 
     program = clCreateProgramWithSource(context,1,(const char**)&source_str, (const size_t*)&source_size, &ret);
-    std::cout<<ret<<" 4.  code"<<std::endl;
 
     ret = clBuildProgram(program, 1, &device_id, NULL, NULL, NULL);
     std::cout<<ret<<" 5. code"<<std::endl;
@@ -359,7 +354,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
         // Print the log
         printf("%s\n", log);
     }
-    end = clock() ;
+    clock_t begin = clock();
 
     /*
      *PART 1 : Transforming models
@@ -385,7 +380,6 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     worksizes[1]= num_shift_steps;
     worksizes[2]= model_voxelized->size();
 
-    std::cout<< "Number of steps "<< num_angle_steps<< " " << num_shift_steps<< " Number of items "<< worksizes[2]<< std::endl;
     workSizeMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE| CL_MEM_USE_HOST_PTR, sizeof(int)*3,worksizes,&ret);
     ret=clSetKernelArg(kernel,2,sizeof(workSizeMemObj),&workSizeMemObj);
 
@@ -397,15 +391,12 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     ret= clSetKernelArg(kernel,3,sizeof(inputTransformedMemObj),&inputTransformedMemObj);
 
     size_t work_units[3] ={(size_t)num_angle_steps_s,(size_t)num_shift_steps_s, model_voxelized.get()->size()};
-    std::cout<<"DEBUG WORK UNITS " <<work_units[0]<< " " << work_units[1]<< " " << work_units[2]<< " " << std::endl;
     ret =  clEnqueueNDRangeKernel(command_queue, kernel, 3 , NULL,work_units, NULL, 0, NULL, NULL);
-    std::cout<<"Running Program, code:" << ret <<std::endl;
+
 
     clFlush(command_queue);
     clFinish(command_queue);
     ret =  clEnqueueNDRangeKernel(command_queue, kernel, 3 , NULL,work_units, NULL, 0, NULL, NULL);
-    std::cout<<"Running Program, code:" << ret <<std::endl;
-
 
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
 
@@ -430,13 +421,11 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     int point_cloud_ptr_array_size = static_cast<int>(point_cloud_ptr.get()->size())*3;
     float* point_cloud_ptr_as_array = new float[point_cloud_ptr_array_size]();
     convertPointCloudToCL(point_cloud_ptr,point_cloud_ptr_as_array,point_cloud_ptr_array_size/3);
-    std::cout<< "Size of pointCloud array is " << point_cloud_ptr_array_size<< " points , last value is: " << point_cloud_ptr_as_array[point_cloud_ptr_array_size-1]<< " compare with "<< point_cloud_ptr.get()->at(point_cloud_ptr_array_size/3-1).z <<std::endl;
     pointCloudPtrMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, sizeof(float)*point_cloud_ptr_array_size, point_cloud_ptr_as_array,&ret);
     ret = clSetKernelArg(kernel,1,sizeof(pointCloudPtrMemObj),&pointCloudPtrMemObj);
 
     cl_mem correspondenceRes= NULL;
     int size_correspondence_result = static_cast<int>(model_voxelized->size())*3*num_angle_steps*num_shift_steps;
-    std::cout<<"DEBUG : Number of max correspondence found:"<<size_correspondence_result<<std::endl;
     float* correspondence_result = new float[size_correspondence_result]();
     correspondenceRes = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, sizeof(float)*size_correspondence_result,correspondence_result,&ret);
     ret = clSetKernelArg(kernel,2,sizeof(correspondenceRes), &correspondenceRes);
@@ -447,7 +436,6 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     sources_sizes[1]= static_cast<int>(point_cloud_ptr_array_size/3);
     sourceSizesMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE| CL_MEM_USE_HOST_PTR, sizeof(int)*2, sources_sizes, &ret);
     ret = clSetKernelArg(kernel,3,sizeof(sourceSizesMemObj),&sourceSizesMemObj);
-
 
     ret= clSetKernelArg(kernel,4,sizeof(inputTransformedMemObj),&inputTransformedMemObj);
     //std::cout<<ret<<" Part 2.1.7 : "<<std::endl;
@@ -503,7 +491,6 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     std::cout<<ret<< " Arg code 3.3 :"<<std::endl;
     ret= clSetKernelArg(kernel,3,sizeof(correspondenceResultCountMem),&correspondenceResultCountMem);
     std::cout<<ret<< " Arg code 3.3:"<<std::endl;
-    clock_t end3 = clock() ;
 
     size_t work_units3[2] ={(size_t)num_angle_steps_s,(size_t)num_shift_steps_s};
     std::cout<<"Work units :" << work_units3[0] << " "<< work_units3[1]<<std::endl;
@@ -516,10 +503,15 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
     ret = clEnqueueReadBuffer(command_queue,correspondenceRes,CL_TRUE,0,sizeof(float)*size_correspondence_result, &correspondence_result[0],0,NULL,NULL);
     std::cout<<"Reading Buffer , code :" << ret << std::endl;
+
+    /*
     for ( int i = 0; i <121; i++) {
         std::cout<<correspindenceResultCount[3*i]<<"  "<<correspindenceResultCount[3*i+1]<<"  "<<correspindenceResultCount[3*i+2]<<"  " <<std::endl;
     }
-    elapsed_secs = double(end3 - end) / CLOCKS_PER_SEC;
+    */
+    clock_t end3 = clock() ;
+
+    elapsed_secs = double(end3 - begin) / CLOCKS_PER_SEC;
     std::cout<<std::endl<<"Time needed for 3. kernel method is : " <<elapsed_secs<<std::endl;
 
 
