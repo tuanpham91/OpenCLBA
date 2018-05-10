@@ -20,7 +20,7 @@ __kernel void find_correspondences(__global int *intArgs, __global float *point_
     b = (input_transformed[3*i+1] - point_cloud_ptr[3*k+1])*(input_transformed[3*i+1] - point_cloud_ptr[3*k+1]);
     c = (input_transformed[3*i+2] - point_cloud_ptr[3*k+2])*(input_transformed[3*i+2] - point_cloud_ptr[3*k+2]);
     //if (dis<=0.5) {
-    if (a+b+c<1.5) {
+    if (sqrt(a+b+c)<0.02f) {
       correspondence_result[3*i]= (float)i;
       correspondence_result[3*i+1] =(float)k;
       correspondence_result[3*i+2] = a+b+c;
@@ -194,7 +194,7 @@ __kernel void computeDifferencesForCorrespondence(__global float *correspondence
     int start_index = (num_shift_steps*i+k)*model_voxelized_size;
     int count = 0;
     for (int i = 0 ; i<model_voxelized_size; i++ ){
-      if (correspondence_result[3*(i+start_index)+2]!= 0) {
+      if (correspondence_result[3*(i+start_index)+2]!= 0&&correspondence_result[3*(i+start_index)+1]!= 0) {
         count++;
       }
     }

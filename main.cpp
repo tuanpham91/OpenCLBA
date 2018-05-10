@@ -366,11 +366,8 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
      */
 
     kernel = clCreateKernel(program,"transforming_models", &ret);
-
     float args[21] ={angle_min, angle_max, angle_step, shift_min, shift_max, shift_step,initialTranslation[0],initialTranslation[1],initialTranslation[2],direction[0],direction[1],direction[2],rotation(0,0),rotation(0,1),rotation(0,2),rotation(1,0),rotation(1,1),rotation(1,2),rotation(2,0),rotation(2,1),rotation(2,2)};
-    for (int k = 0; k <21 ; k++) {
-        std::cout<<args[k]<< " ";
-    }
+
     argsMemObj = clCreateBuffer(context,CL_MEM_READ_WRITE  | CL_MEM_USE_HOST_PTR ,21*sizeof(float),args,&ret);
     ret = clSetKernelArg(kernel,0, sizeof(argsMemObj),(void *)&argsMemObj);
 
@@ -387,7 +384,6 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     worksizes[0]= num_angle_steps;
     worksizes[1]= num_shift_steps;
     worksizes[2]= model_voxelized->size();
-
 
     std::cout<< "Number of steps "<< num_angle_steps<< " " << num_shift_steps<< " Number of items "<< worksizes[2]<< std::endl;
     workSizeMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE| CL_MEM_USE_HOST_PTR, sizeof(int)*3,worksizes,&ret);
@@ -415,11 +411,8 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
     std::cout<<std::endl<<"Time needed for 1. kernel method is : " <<elapsed_secs<<std::endl;
 
-    ret = clEnqueueReadBuffer(command_queue,inputTransformedMemObj,CL_TRUE,0,sizeof(float)*size_input_transformed_array, &input_transformed_as_array[0],0,NULL,NULL);
-    std::cout<<"Reading Buffer , code :" << ret << std::endl;
-
-
-
+   // ret = clEnqueueReadBuffer(command_queue,inputTransformedMemObj,CL_TRUE,0,sizeof(float)*size_input_transformed_array, &input_transformed_as_array[0],0,NULL,NULL);
+   // std::cout<<"Reading Buffer , code :" << ret << std::endl;
 
     /*
      *PART 2 : FIND CORRESPONDECES
@@ -523,18 +516,19 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
     ret = clEnqueueReadBuffer(command_queue,correspondenceRes,CL_TRUE,0,sizeof(float)*size_correspondence_result, &correspondence_result[0],0,NULL,NULL);
     std::cout<<"Reading Buffer , code :" << ret << std::endl;
-    for ( int i = 0; i <100; i++) {
-        std::cout<<correspindenceResultCount[i]<<"  ";
+    for ( int i = 0; i <121; i++) {
+        std::cout<<correspindenceResultCount[3*i]<<"  "<<correspindenceResultCount[3*i+1]<<"  "<<correspindenceResultCount[3*i+2]<<"  " <<std::endl;
     }
     elapsed_secs = double(end3 - end) / CLOCKS_PER_SEC;
     std::cout<<std::endl<<"Time needed for 3. kernel method is : " <<elapsed_secs<<std::endl;
 
 
     //testCreatingMatrix(args);
+    /*
     for (int i = 0 ;i< 121;i++) {
         std::cout <<input_transformed_as_array[6779*3*i]<<"  "<<input_transformed_as_array[6779*3*i+1]<<"  "<<input_transformed_as_array[6779*3*i+2]<<"  "<<std::endl;
     }
-
+    */
 }
 
 
