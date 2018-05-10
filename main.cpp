@@ -41,70 +41,6 @@ cl_uint ret_num_devices;
 cl_uint ret_num_platforms;
 
 
-void testCreatingMatrix(float *floatArgs) {
-
-     float angle_min = floatArgs[0];
-     float angle_max = floatArgs[1];
-
-     float angle_step = floatArgs[2];
-     float shift_min  = floatArgs[3];
-
-     float shift_max = floatArgs[4];
-     float shift_step = floatArgs[5];
-
-
-
-      //Space holder for shifted point Cloud
-      float rot[9] = {};
-      float source[9]= {};
-      float rotating[9]= {};
-
-
-      for (int m = 0 ; m<11 ; m++) {
-          for (int n = 0; n<11; n++) {
-              float transform[16]= {};
-
-              float angle_temp =(angle_min+m*angle_step)*(0.01745328888);
-              rotating[0] = cos(angle_temp);
-              rotating[1] = -sin(angle_temp);
-              rotating[2] = 0.0f;
-              rotating[3] = sin(angle_temp);
-              rotating[4] = cos(angle_temp);
-              rotating[5] = 0.0f;
-              rotating[6] = 0.0f;
-              rotating[7] = 0.0f;
-              rotating[8] = 1.0f;
-
-              transform[0]= floatArgs[12]*rotating[0]+floatArgs[13]*rotating[3]+floatArgs[14]*rotating[6];
-              transform[1]= floatArgs[12]*rotating[1]+floatArgs[13]*rotating[4]+floatArgs[14]*rotating[7];
-              transform[2]= floatArgs[12]*rotating[2]+floatArgs[13]*rotating[5]+floatArgs[14]*rotating[8];
-
-              transform[4]= floatArgs[15]*rotating[0]+floatArgs[16]*rotating[3]+floatArgs[17]*rotating[6];
-              transform[5]= floatArgs[15]*rotating[1]+floatArgs[16]*rotating[4]+floatArgs[17]*rotating[7];
-              transform[6]= floatArgs[15]*rotating[2]+floatArgs[16]*rotating[5]+floatArgs[17]*rotating[8];
-
-              transform[8]= floatArgs[18]*rotating[0]+floatArgs[19]*rotating[3]+floatArgs[20]*rotating[6];
-              transform[9]= floatArgs[18]*rotating[1]+floatArgs[19]*rotating[4]+floatArgs[20]*rotating[7];
-              transform[10]= floatArgs[18]*rotating[2]+floatArgs[19]*rotating[5]+floatArgs[20]*rotating[8];
-
-
-              float shift_temp = shift_min + n*shift_step;
-              transform[3] = floatArgs[6]+ floatArgs[9]*shift_temp/floatArgs[11];
-              transform[7] =floatArgs[7]+ floatArgs[10]*shift_temp/floatArgs[11];
-              transform[11] =floatArgs[8]+ floatArgs[11]*shift_temp/floatArgs[11];
-
-              transform[12] = 0;
-              transform[13] = 0;
-              transform[14] = 0;
-              transform[15] = 1;
-
-              for (int k =0; k<4 ; k++) {
-                  std::cout<<transform[k*4]<<" "<<transform[k*4+1]<<" "<<transform[k*4+2]<<" "<<transform[k*4+3]<<" "<<std::endl;
-              }
-          }
-      }
-
-}
 float computeTipX(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, std::pair<Eigen::Vector3f, Eigen::Vector3f> origin_and_direction_needle, float x_middle_OCT, float z_min_OCT) {
     pcl::PointXYZ min = getMinPoint(cloud);
     Eigen::VectorXf line1(6);
@@ -393,14 +329,9 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     size_t work_units[3] ={(size_t)num_angle_steps_s,(size_t)num_shift_steps_s, model_voxelized.get()->size()};
     ret =  clEnqueueNDRangeKernel(command_queue, kernel, 3 , NULL,work_units, NULL, 0, NULL, NULL);
 
-
     clFlush(command_queue);
     clFinish(command_queue);
     ret =  clEnqueueNDRangeKernel(command_queue, kernel, 3 , NULL,work_units, NULL, 0, NULL, NULL);
-
-    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-
-    std::cout<<std::endl<<"Time needed for 1. kernel method is : " <<elapsed_secs<<std::endl;
 
    // ret = clEnqueueReadBuffer(command_queue,inputTransformedMemObj,CL_TRUE,0,sizeof(float)*size_input_transformed_array, &input_transformed_as_array[0],0,NULL,NULL);
    // std::cout<<"Reading Buffer , code :" << ret << std::endl;
@@ -464,7 +395,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     */
 
     clock_t end2 = clock() ;
-    elapsed_secs = double(end2 - end) / CLOCKS_PER_SEC;
+    double elapsed_secs = double(end2 - end) / CLOCKS_PER_SEC;
     std::cout<<std::endl<<"Time needed for 2. kernel method is : " <<elapsed_secs<<std::endl;
 
     /*
@@ -473,42 +404,34 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
 
     kernel = clCreateKernel(program,"computeDifferencesForCorrespondence", &ret);
-    std::cout<<ret<<" Part 3.: "<<std::endl;
 
     ret = clSetKernelArg(kernel,0,sizeof(correspondenceRes),&correspondenceRes);
-    std::cout<<ret<<" Part 3.1: "<<std::endl;
-
     ret = clSetKernelArg(kernel,1, sizeof(argsMemObj),&argsMemObj);
-    std::cout<<ret<<" Part 3.1: "<<std::endl;
-
     ret = clSetKernelArg(kernel,2, sizeof(workSizeMemObj),&workSizeMemObj);
-    std::cout<<ret<<" Part 3.2: "<<std::endl;
+
 
     cl_mem correspondenceResultCountMem =NULL;
     int correspondenceResultCountSize =3*num_angle_steps*num_shift_steps;
     int* correspindenceResultCount = new int[correspondenceResultCountSize]();
     correspondenceResultCountMem = clCreateBuffer(context,CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR,sizeof(int)*correspondenceResultCountSize,correspindenceResultCount,&ret);
-    std::cout<<ret<< " Arg code 3.3 :"<<std::endl;
     ret= clSetKernelArg(kernel,3,sizeof(correspondenceResultCountMem),&correspondenceResultCountMem);
-    std::cout<<ret<< " Arg code 3.3:"<<std::endl;
+
 
     size_t work_units3[2] ={(size_t)num_angle_steps_s,(size_t)num_shift_steps_s};
-    std::cout<<"Work units :" << work_units3[0] << " "<< work_units3[1]<<std::endl;
 
     ret =  clEnqueueNDRangeKernel(command_queue, kernel, 2, NULL,work_units3,NULL, 0, NULL, NULL);
-    std::cout<<"Running Program part 3, code:" << ret <<std::endl;
 
-    ret = clEnqueueReadBuffer(command_queue,correspondenceResultCountMem,CL_TRUE,0,sizeof(int)*correspondenceResultCountSize, &correspindenceResultCount[0],0,NULL,NULL);
-    std::cout<<"Reading Buffer , code :" << ret << std::endl;
+    //ret = clEnqueueReadBuffer(command_queue,correspondenceResultCountMem,CL_TRUE,0,sizeof(int)*correspondenceResultCountSize, &correspindenceResultCount[0],0,NULL,NULL);
 
-    ret = clEnqueueReadBuffer(command_queue,correspondenceRes,CL_TRUE,0,sizeof(float)*size_correspondence_result, &correspondence_result[0],0,NULL,NULL);
-    std::cout<<"Reading Buffer , code :" << ret << std::endl;
+    //ret = clEnqueueReadBuffer(command_queue,correspondenceRes,CL_TRUE,0,sizeof(float)*size_correspondence_result, &correspondence_result[0],0,NULL,NULL);
+
 
     /*
     for ( int i = 0; i <121; i++) {
         std::cout<<correspindenceResultCount[3*i]<<"  "<<correspindenceResultCount[3*i+1]<<"  "<<correspindenceResultCount[3*i+2]<<"  " <<std::endl;
     }
     */
+
     clock_t end3 = clock() ;
 
     elapsed_secs = double(end3 - begin) / CLOCKS_PER_SEC;

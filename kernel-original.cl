@@ -1,14 +1,11 @@
 #pragma OPENCL EXTENSION cl_khr_fp64 : enable
-
 __kernel void find_correspondences(__global int *intArgs, __global float *point_cloud_ptr, __global float *correspondence_result, __global int *sources_size, __global float *input_transformed) {
-
   __private int i = get_global_id(0);
   __private int max_number_of_points = intArgs[1];
 
   if (i >= max_number_of_points) {
     return;
   }
-
   __private int point_cloud_ptr_size = sources_size[1];
 
   float a = 0.0;
@@ -23,8 +20,8 @@ __kernel void find_correspondences(__global int *intArgs, __global float *point_
     if (sqrt(a+b+c)<0.02f) {
       correspondence_result[3*i]= (float)i;
       correspondence_result[3*i+1] =(float)k;
-      correspondence_result[3*i+2] = a+b+c;
-      k=point_cloud_ptr_size;
+      correspondence_result[3*i+2] = sqrt(a+b+c);
+      k = point_cloud_ptr_size;
     }
   }
   //Subject to Change
@@ -61,69 +58,44 @@ __kernel void transforming_models(__global float *floatArgs,__global float *mode
   __private int point = get_global_id(2);
 
   __private float angle_min = floatArgs[0];
-  __private float angle_max = floatArgs[1];
-
   __private float angle_step = floatArgs[2];
   __private float shift_min  = floatArgs[3];
-
-  __private float shift_max = floatArgs[4];
   __private float shift_step = floatArgs[5];
-
 
   __private int number_angle_step = work_size_dimension[0];
   __private int number_shift_step = work_size_dimension[1];
   __private int model_voxelized_size = work_size_dimension[2];
 
-  //Space holder for shifted point Cloud
-  __private float rot[9] = {};
-  __private float source[9]= {};
   __private float rotating[9]= {};
-
   __private float transform[16]= {};
-
   __private int start_index = (number_shift_step*angle+shift)*model_voxelized_size*3;
-
-
   __private float angle_temp =(angle_min+angle*angle_step)*(0.01745328888);
+
   rotating[0] = cos(angle_temp);
   rotating[1] = -sin(angle_temp);
-  rotating[2] = 0.0f;
   rotating[3] = sin(angle_temp);
   rotating[4] = cos(angle_temp);
-  rotating[5] = 0.0f;
-  rotating[6] = 0.0f;
-  rotating[7] = 0.0f;
-  rotating[8] = 1.0f;
 
-  transform[0]= floatArgs[12]*rotating[0]+floatArgs[13]*rotating[3]+floatArgs[14]*rotating[6];
-  transform[1]= floatArgs[12]*rotating[1]+floatArgs[13]*rotating[4]+floatArgs[14]*rotating[7];
-  transform[2]= floatArgs[12]*rotating[2]+floatArgs[13]*rotating[5]+floatArgs[14]*rotating[8];
+  transform[0]= floatArgs[12]*rotating[0]+floatArgs[13]*rotating[3];
+  transform[1]= floatArgs[12]*rotating[1]+floatArgs[13]*rotating[4];
+  transform[2]= floatArgs[14];
 
-  transform[4]= floatArgs[15]*rotating[0]+floatArgs[16]*rotating[3]+floatArgs[17]*rotating[6];
-  transform[5]= floatArgs[15]*rotating[1]+floatArgs[16]*rotating[4]+floatArgs[17]*rotating[7];
-  transform[6]= floatArgs[15]*rotating[2]+floatArgs[16]*rotating[5]+floatArgs[17]*rotating[8];
+  transform[4]= floatArgs[15]*rotating[0]+floatArgs[16]*rotating[3];
+  transform[5]= floatArgs[15]*rotating[1]+floatArgs[16]*rotating[4];
+  transform[6]= floatArgs[17];
 
-  transform[8]= floatArgs[18]*rotating[0]+floatArgs[19]*rotating[3]+floatArgs[20]*rotating[6];
-  transform[9]= floatArgs[18]*rotating[1]+floatArgs[19]*rotating[4]+floatArgs[20]*rotating[7];
-  transform[10]= floatArgs[18]*rotating[2]+floatArgs[19]*rotating[5]+floatArgs[20]*rotating[8];
-
+  transform[8]= floatArgs[18]*rotating[0]+floatArgs[19]*rotating[3];
+  transform[9]= floatArgs[18]*rotating[1]+floatArgs[19]*rotating[4];
+  transform[10]=floatArgs[20];
 
   __private float shift_temp = shift_min + shift*shift_step;
   transform[3] = floatArgs[6]+ floatArgs[9]*shift_temp/floatArgs[11];
   transform[7] =floatArgs[7]+ floatArgs[10]*shift_temp/floatArgs[11];
   transform[11] =floatArgs[8]+ floatArgs[11]*shift_temp/floatArgs[11];
 
-  transform[12] = 0;
-  transform[13] = 0;
-  transform[14] = 0;
-  transform[15] = 1;
-
   __private bool ident = true;
-  __private int i = 0;
-  __private int k = 0;
-
-  for (i = 0 ; i < 4 ; i++) {
-    for (k = 0; k < 4 ; k++) {
+  for (int i = 0 ; i < 4 ; i++) {
+    for (int k = 0; k < 4 ; k++) {
       if (i == k ) {
         if (transform[i*4+k]!= 1.0f) {
           ident = false;
@@ -139,20 +111,17 @@ __kernel void transforming_models(__global float *floatArgs,__global float *mode
     }
   }
 
-  i = point;
+  int i = point;
   if (!ident) {
     input_transformed[start_index + 3*i] = model_voxelized[3*i]*transform[0] + model_voxelized[3*i+1]*transform[1] + model_voxelized[ 3*i+2]*transform[2]+transform[3];
     input_transformed[start_index + 3*i+1] = model_voxelized[3*i]*transform[4] + model_voxelized[3*i+1]*transform[5] + model_voxelized[3*i+2]*transform[6]+transform[7];
     input_transformed[start_index + 3*i+2] = model_voxelized[3*i]*transform[8] + model_voxelized[3*i+1]*transform[9] + model_voxelized[3*i+2]*transform[10]+transform[11];
-
   }
   else {
     input_transformed[start_index+3*i]=model_voxelized[3*i];
     input_transformed[start_index+3*i+1]=model_voxelized[3*i+1];
     input_transformed[start_index+3*i+2]=model_voxelized[3*i+2];
   }
-
-
 
 }
 
@@ -165,21 +134,7 @@ __kernel void computeDifferencesForCorrespondence(__global float *correspondence
     int num_angle_steps = work_sizes[0];
     int num_shift_steps = work_sizes[1];
 
-    //float angle_temp = correspondence_result[i];
-    //float shift_temp = correspondence_result[i+1];
-    //float count_temp = correspondence_result[i+2];
-
-    __private float angleStart = floatArgs[0];
-    __private float angleEnd = floatArgs[1];
-
-    __private float angleStep = floatArgs[2];
-    __private float shiftStart  = floatArgs[3];
-
-    __private float shiftEnd = floatArgs[4];
-    __private float shiftStep = floatArgs[5];
-
     __private int model_voxelized_size = work_sizes[2];
-
 
     int start_index = (num_shift_steps*i+k)*model_voxelized_size;
     int count = 0;
@@ -188,7 +143,6 @@ __kernel void computeDifferencesForCorrespondence(__global float *correspondence
         count++;
       }
     }
-
     correspondence_result_count[(num_shift_steps*i+k)*3] = i;
     correspondence_result_count[(num_shift_steps*i+k)*3+1] =k;
     correspondence_result_count[(num_shift_steps*i+k)*3+2] = count;
