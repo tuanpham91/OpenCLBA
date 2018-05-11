@@ -39,6 +39,7 @@ cl_kernel kernel = NULL;
 cl_platform_id platform_id = NULL;
 cl_uint ret_num_devices;
 cl_uint ret_num_platforms;
+cl_int ret;
 
 
 float computeTipX(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, std::pair<Eigen::Vector3f, Eigen::Vector3f> origin_and_direction_needle, float x_middle_OCT, float z_min_OCT) {
@@ -278,6 +279,10 @@ void printDeviceInfoWorkSize(cl_device_id device) {
     std::cout<< " Work sizes are  :" <<worksizes[0]<<" ,"<<worksizes[1]<<" ,"<<worksizes[2]<<std::endl;
 }
 
+void prepareOpenCLProgramm() {
+
+}
+
 void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float angle_step,
                                       float shift_min, float shift_max, float shift_step,
                                       std::vector<std::tuple<float, float, float>>& count,
@@ -291,12 +296,8 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     char fileName[] = "/home/tuan/Desktop/OpenCLBA-Local/OpenCLBA/kernel-original.cl";
     char *source_str;
     size_t source_size;
-    cl_int ret;
 
-    int num_angle_steps_s = std::round((angle_max - angle_min) / angle_step) + 1;
-    int num_shift_steps_s = std::round((shift_max - shift_min) / shift_step) + 1;
 
-    std::cout << "Number of Point clouds :  " << point_cloud_ptr->size()<< " " <<model_voxelized->size()<< std::endl;
 
     fp = fopen(fileName, "r");
     if (!fp) {
@@ -380,7 +381,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     inputTransformedMemObj = clCreateBuffer(context,CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR,sizeof(float)*size_input_transformed_array,input_transformed_as_array,&ret);
     ret= clSetKernelArg(kernel,3,sizeof(inputTransformedMemObj),&inputTransformedMemObj);
 
-    size_t work_units[3] ={(size_t)num_angle_steps_s,(size_t)num_shift_steps_s, model_voxelized.get()->size()};
+    size_t work_units[3] ={(size_t)num_angle_steps,(size_t)num_shift_steps, model_voxelized.get()->size()};
     ret =  clEnqueueNDRangeKernel(command_queue, kernel, 3 , NULL,work_units, NULL, 0, NULL, NULL);
 
     clFlush(command_queue);
@@ -469,7 +470,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     ret= clSetKernelArg(kernel,3,sizeof(correspondenceResultCountMem),&correspondenceResultCountMem);
 
 
-    size_t work_units3[2] ={(size_t)num_angle_steps_s,(size_t)num_shift_steps_s};
+    size_t work_units3[2] ={(size_t)num_angle_steps,(size_t)num_shift_steps};
 
     ret =  clEnqueueNDRangeKernel(command_queue, kernel, 2, NULL,work_units3,NULL, 0, NULL, NULL);
 
