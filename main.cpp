@@ -217,36 +217,40 @@ void findNextIteration(int *res, int numOfIteration, float *floatArgs) {
     //TODO : HERE JUST THE INDEX IS FOUND; HENCE ITS WRONG
 
     //find Max Angle,
-    float max_angle = 0;
+    int max_angle_index = 0;
     float temp =0 ;
     for (int i = 0; i<numOfIteration; i++) {
         if (res[3*i+2]>temp) {
             temp=res[3*i+2];
-            max_angle = res[3*i];
+            max_angle_index = res[3*i];
         }
     }
 
     //find Max Shift
-    float max_shift = 0;
+    int max_shift_index = 0;
     temp = 0;
     for (int i = 0; i<numOfIteration; i++) {
         if (res[3*i+2]>temp) {
             temp=res[3*i+2];
-            max_shift = res[3*i+1];
+            max_shift_index = res[3*i+1];
         }
     }
 
     //find Max Pair
-    float max_pair_angle =0;
-    float max_pair_shift =0;
+    int max_pair_angle_index =0;
+    int max_pair_shift_index =0;
     temp = 0;
     for (int i = 0; i<numOfIteration; i++) {
         if (res[3*i+2]>temp) {
             temp=res[3*i+2];
-            max_pair_shift = res[3*i+1];
-            max_pair_angle = res[3*i];
+            max_pair_shift_index = res[3*i+1];
+            max_pair_angle_index = res[3*i];
         }
     }
+
+    float max_angle = max_angle_index*floatArgs[2]+floatArgs[0];
+    float max_shift = max_shift_index*floatArgs[5]+floatArgs[3];
+
 
     //check min bound for values angle
     float angleStartNew = checkMinBoundsForValue(max_angle,floatArgs[0],floatArgs[2]);
@@ -452,9 +456,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
      *PART 3 : Sum Up Result
      */
 
-
     kernel = clCreateKernel(program,"computeDifferencesForCorrespondence", &ret);
-
     ret = clSetKernelArg(kernel,0,sizeof(correspondenceRes),&correspondenceRes);
     ret = clSetKernelArg(kernel,1, sizeof(argsMemObj),&argsMemObj);
     ret = clSetKernelArg(kernel,2, sizeof(workSizeMemObj),&workSizeMemObj);
@@ -589,4 +591,3 @@ int main()
 
     return 0;
 }
-
