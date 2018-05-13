@@ -146,7 +146,7 @@ __kernel void computeDifferencesForCorrespondence(__global float *correspondence
     int start_index = (num_shift_steps*i+k)*model_voxelized_size;
     int count = 0;
     for (int i = 0 ; i<model_voxelized_size; i++ ){
-      if (correspondence_result[3*(i+start_index)+2]!= 0&&correspondence_result[3*(i+start_index)+1]!= 0) {
+      if (correspondence_result[3*(i+start_index)+2]!= 0) {
         count++;
       }
     }

@@ -1,4 +1,14 @@
-input.cl:2:41: warning: double precision constant requires cl_khr_fp64, casting to single precision
-input.cl:88:26: error: variable length arrays are not supported in OpenCL
-input.cl:204:18: error: member reference base type '__global float *' is not a structure or union
-input.cl:217:18: error: member reference base type '__global float *' is not a structure or union
+Distance 0.02f:
+RX 460 AMD - Not a dedicated Device
+
+0.055113
+0.055385
+0.051969
+0.053477
+0.050725
+0.048285
+0.053853
+0.05853
+0.058105
+0.054014
+
