@@ -372,7 +372,6 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     convertPointCloudToCL(point_cloud_ptr,point_cloud_ptr_as_array,point_cloud_ptr_array_size/3);
     pointCloudPtrMemObj = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, sizeof(float)*point_cloud_ptr_array_size, point_cloud_ptr_as_array,&ret);
 
-
     /*
      *PART 1 : Transforming models
      */
@@ -381,21 +380,24 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
 
     //std::cout<<"variable 1, code:" << ret <<std::endl;
-
     int size_input_transformed_array =worksizes[2]*3*num_angle_steps*num_shift_steps;
     float* input_transformed_as_array = new float[size_input_transformed_array]();
     inputTransformedMemObj = clCreateBuffer(context,CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR,sizeof(float)*size_input_transformed_array,input_transformed_as_array,&ret);
+
 
     argsMemObj = clCreateBuffer(context,CL_MEM_READ_WRITE  | CL_MEM_USE_HOST_PTR ,21*sizeof(float),args,&ret);
 
     size_t work_units[3] ={(size_t)num_angle_steps,(size_t)num_shift_steps, model_voxelized.get()->size()};
     size_t work_units2[1]= {(size_t)determinNumWorkItems(worksizes[2]*num_angle_steps*num_shift_steps)};
 
+
     int size_correspondence_result = static_cast<int>(model_voxelized->size())*3*num_angle_steps*num_shift_steps;
     float* correspondence_result = new float[size_correspondence_result]();
     correspondenceRes = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, sizeof(float)*size_correspondence_result,correspondence_result,&ret);
 
+
     int correspondenceResultCountSize =3*num_angle_steps*num_shift_steps;
+
     int* correspondenceResultCount = new int[correspondenceResultCountSize]();
     correspondenceResultCountMem = clCreateBuffer(context,CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR,sizeof(int)*correspondenceResultCountSize,correspondenceResultCount,&ret);
 
@@ -449,11 +451,11 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     clFinish(command_queue);
     ret = clEnqueueReadBuffer(command_queue,correspondenceResultCountMem,CL_TRUE,0,sizeof(int)*correspondenceResultCountSize, &correspondenceResultCount[0],0,NULL,NULL);
 
-    /*
-        for ( int i = 0; i <121; i++) {
-            std::cout<<correspindenceResultCount[3*i]<<"  "<<correspindenceResultCount[3*i+1]<<"  "<<correspindenceResultCount[3*i+2]<<"  " <<std::endl;
+
+        for ( int i = 0; i <prod; i++) {
+            std::cout<<correspondenceResultCount[3*i]<<"  "<<correspondenceResultCount[3*i+1]<<"  "<<correspondenceResultCount[3*i+2]<<"  " <<std::endl;
         }
-    */
+
 
     findNextIteration(correspondenceResultCount,prod,args);
 
