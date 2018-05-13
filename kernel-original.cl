@@ -1,5 +1,3 @@
-#pragma OPENCL EXTENSION cl_khr_fp64 : enable
-
 /*
 TODO : work_size : 3 ;
 
