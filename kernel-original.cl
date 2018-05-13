@@ -1,12 +1,17 @@
 #pragma OPENCL EXTENSION cl_khr_fp64 : enable
-__kernel void find_correspondences(__global int *intArgs, __global float *point_cloud_ptr, __global float *correspondence_result, __global int *sources_size, __global float *input_transformed) {
+
+/*
+TODO : work_size : 3 ;
+
+*/
+__kernel void find_correspondences(__global int *intArgs, __global float *point_cloud_ptr, __global float *correspondence_result, __global float *input_transformed) {
   __private int i = get_global_id(0);
-  __private int max_number_of_points = intArgs[1];
+  __private int max_number_of_points = intArgs[3];
 
   if (i >= max_number_of_points) {
     return;
   }
-  __private int point_cloud_ptr_size = sources_size[1];
+  __private int point_cloud_ptr_size = intArgs[5];
 
   float a = 0.0;
   float b = 0.0;
@@ -51,6 +56,9 @@ __kernel void shiftAndRollWithoutSumLoop(__global float *floatArgs, __global flo
   initialTranslation : 6-8
   direction :  9-11
   rotation :12-20
+
+  TODO :
+  work_size_dimension = 0-2
 */
 __kernel void transforming_models(__global float *floatArgs,__global float *model_voxelized, __global int *work_size_dimension,  __global float *input_transformed) {
   __private int angle = get_global_id(0);
@@ -126,7 +134,7 @@ __kernel void transforming_models(__global float *floatArgs,__global float *mode
 
 }
 
-__kernel void computeDifferencesForCorrespondence(__global float *correspondence_result,__global float *floatArgs,  __global int *work_sizes,  __global int *correspondence_result_count) {
+__kernel void computeDifferencesForCorrespondence(__global float *correspondence_result, __global int *work_sizes,  __global int *correspondence_result_count) {
     //angle
     int i  = get_global_id(0);
     //shift
