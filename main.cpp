@@ -32,7 +32,7 @@ using namespace std;
 cl_device_id device_id = NULL;
 cl_context context = NULL;
 cl_command_queue command_queue = NULL;
-cl_mem workSizeMemObj,argsMemObj,modelVoxelizedMembObj, pointCloudPtrMemObj,inputTransformedMemObj,correspondenceRes,sourceSizesMemObj,correspondenceResultCountMem =NULL;
+cl_mem workSizeMemObj,argsMemObj,modelVoxelizedMembObj, pointCloudPtrMemObj,inputTransformedMemObj,correspondenceRes,correspondenceResultCountMem =NULL;
 
 
 
@@ -268,8 +268,8 @@ void findNextIteration(int *res, int numOfIteration, float *floatArgs) {
     floatArgs[2] /= 5.0f;
     floatArgs[5] /= 5.0f;
 
-    std::cout << "angle: " << max_angle_index << " Angle Start "<<angleStartNew<<" angle End " << angleEndNew<< " AngleStep " << floatArgs[2] <<std::endl;
-    std::cout << "shift: " << max_shift_index <<" Shift Start "<<shiftStartNew <<" Shift End " << shiftEndNew<< "  Shift Step " << floatArgs[5] <<std::endl;
+    std::cout << "angle: " << max_angle << " Angle Start "<<angleStartNew<<" angle End " << angleEndNew<< " AngleStep " << floatArgs[2] <<std::endl;
+    std::cout << "shift: " << max_shift <<" Shift Start "<<shiftStartNew <<" Shift End " << shiftEndNew<< "  Shift Step " << floatArgs[5] <<std::endl;
 
 
 
@@ -367,6 +367,17 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     pointCloudPtrMemObj = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, sizeof(float)*point_cloud_ptr_array_size, point_cloud_ptr_as_array,&ret);
 
 
+    int num_angle_steps= std::round((args[1] - args[0]) / args[2]) + 1;
+    int num_shift_steps = std::round((args[4] - args[3]) / args[5]) + 1;
+    int old_prod = num_angle_steps*num_shift_steps;
+
+    int size_input_transformed_array =worksizes[2]*3*num_angle_steps*num_shift_steps;
+    int correspondenceResultCountSize =3*num_angle_steps*num_shift_steps;
+
+    inputTransformedMemObj = clCreateBuffer(context,CL_MEM_READ_WRITE |CL_MEM_ALLOC_HOST_PTR ,sizeof(float)*size_input_transformed_array,NULL,&ret);
+    correspondenceResultCountMem = clCreateBuffer(context,CL_MEM_READ_WRITE |CL_MEM_ALLOC_HOST_PTR ,sizeof(int)*correspondenceResultCountSize,NULL,&ret);
+    correspondenceRes = clCreateBuffer(context, CL_MEM_READ_WRITE|CL_MEM_ALLOC_HOST_PTR , sizeof(float)*size_input_transformed_array,NULL,&ret);
+
     for (int i = 0 ; i<4 ; i++) {
         int num_angle_steps= std::round((args[1] - args[0]) / args[2]) + 1;
         int num_shift_steps = std::round((args[4] - args[3]) / args[5]) + 1;
@@ -380,6 +391,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
         int size_input_transformed_array =worksizes[2]*3*num_angle_steps*num_shift_steps;
         //float *input_transformed_as_array = new float[size_input_transformed_array]();
+        argsMemObj = clCreateBuffer(context,CL_MEM_READ_WRITE  | CL_MEM_USE_HOST_PTR ,21*sizeof(float),args,&ret);
 
         //float *correspondence_result = new float[size_input_transformed_array]();
 
@@ -392,11 +404,13 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
         /*
          *PART 1 : Transforming models
          */
-        inputTransformedMemObj = clCreateBuffer(context,CL_MEM_READ_WRITE |CL_MEM_ALLOC_HOST_PTR ,sizeof(float)*size_input_transformed_array,NULL,&ret);
-        argsMemObj = clCreateBuffer(context,CL_MEM_READ_WRITE  | CL_MEM_USE_HOST_PTR ,21*sizeof(float),args,&ret);
-        correspondenceResultCountMem = clCreateBuffer(context,CL_MEM_READ_WRITE |CL_MEM_ALLOC_HOST_PTR ,sizeof(int)*correspondenceResultCountSize,NULL,&ret);
-        correspondenceRes = clCreateBuffer(context, CL_MEM_READ_WRITE|CL_MEM_ALLOC_HOST_PTR , sizeof(float)*size_input_transformed_array,NULL,&ret);
-
+        if (prod!=old_prod)  {
+            std::cout<<"Change Buffer"<<std::endl;
+            inputTransformedMemObj = clCreateBuffer(context,CL_MEM_READ_WRITE |CL_MEM_ALLOC_HOST_PTR ,sizeof(float)*size_input_transformed_array,NULL,&ret);
+            correspondenceResultCountMem = clCreateBuffer(context,CL_MEM_READ_WRITE |CL_MEM_ALLOC_HOST_PTR ,sizeof(int)*correspondenceResultCountSize,NULL,&ret);
+            correspondenceRes = clCreateBuffer(context, CL_MEM_READ_WRITE|CL_MEM_ALLOC_HOST_PTR , sizeof(float)*size_input_transformed_array,NULL,&ret);
+            old_prod=prod;
+        }
         kernel = clCreateKernel(program,"transforming_models", &ret);
 
         ret = clSetKernelArg(kernel,0, sizeof(argsMemObj),&argsMemObj);
@@ -452,6 +466,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
             std::cout << correspondenceResultCount[3*m] << " "<< correspondenceResultCount[3*m+1] << " "<< correspondenceResultCount[3*m+2] << " "<< std::endl;
         }
         */
+
         clFlush(command_queue);
         clFinish(command_queue);
         findNextIteration(correspondenceResultCount,prod,args);
@@ -463,6 +478,14 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
     double elapsed_secs = double(end3 - end) / CLOCKS_PER_SEC;
     std::cout<<std::endl<<"Time needed for ALL  : " <<elapsed_secs<<std::endl;
+    clReleaseMemObject(modelVoxelizedMembObj);
+    clReleaseMemObject(pointCloudPtrMemObj);
+    clReleaseMemObject(inputTransformedMemObj);
+    clReleaseMemObject(correspondenceResultCountMem);
+    clReleaseMemObject(correspondenceRes);
+
+    clReleaseMemObject(workSizeMemObj);
+    clReleaseMemObject(argsMemObj);
 }
 
 
