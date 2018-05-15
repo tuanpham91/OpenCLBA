@@ -343,13 +343,12 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
                                       pcl::PointCloud<pcl::PointXYZ>::Ptr model_voxelized, pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud_ptr
 
                                       ) {
-
+    //DIAGRAMM Maker : https://live.amcharts.com/new/edit/
     //Initialize all variables
 
     clock_t end = clock();
 
     float args[21] ={angle_min, angle_max, angle_step, shift_min, shift_max, shift_step,initialTranslation[0],initialTranslation[1],initialTranslation[2],direction[0],direction[1],direction[2],rotation(0,0),rotation(0,1),rotation(0,2),rotation(1,0),rotation(1,1),rotation(1,2),rotation(2,0),rotation(2,1),rotation(2,2)};
-
 
     int* worksizes = new int[6]();
     worksizes[2]= model_voxelized->size();
@@ -382,7 +381,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
         int num_angle_steps= std::round((args[1] - args[0]) / args[2]) + 1;
         int num_shift_steps = std::round((args[4] - args[3]) / args[5]) + 1;
         int prod = num_angle_steps*num_shift_steps;
-        //std::cout<<"Number of steps taken "<<num_angle_steps<< " "<< num_shift_steps<<std::endl;
+        std::cout<<"Number of steps taken "<<num_angle_steps<< " "<< num_shift_steps<<std::endl;
 
         worksizes[0]= num_angle_steps;
         worksizes[1]= num_shift_steps;
@@ -390,10 +389,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
         workSizeMemObj = clCreateBuffer(context, CL_MEM_READ_WRITE| CL_MEM_USE_HOST_PTR, sizeof(int)*6,worksizes,&ret);
 
         int size_input_transformed_array =worksizes[2]*3*num_angle_steps*num_shift_steps;
-        //float *input_transformed_as_array = new float[size_input_transformed_array]();
         argsMemObj = clCreateBuffer(context,CL_MEM_READ_WRITE  | CL_MEM_USE_HOST_PTR ,21*sizeof(float),args,&ret);
-
-        //float *correspondence_result = new float[size_input_transformed_array]();
 
         int correspondenceResultCountSize =3*num_angle_steps*num_shift_steps;
         int* correspondenceResultCount = new int[correspondenceResultCountSize]();
@@ -404,13 +400,14 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
         /*
          *PART 1 : Transforming models
          */
-        if (prod!=old_prod)  {
+        if (prod>old_prod)  {
             std::cout<<"Change Buffer"<<std::endl;
             inputTransformedMemObj = clCreateBuffer(context,CL_MEM_READ_WRITE |CL_MEM_ALLOC_HOST_PTR ,sizeof(float)*size_input_transformed_array,NULL,&ret);
             correspondenceResultCountMem = clCreateBuffer(context,CL_MEM_READ_WRITE |CL_MEM_ALLOC_HOST_PTR ,sizeof(int)*correspondenceResultCountSize,NULL,&ret);
             correspondenceRes = clCreateBuffer(context, CL_MEM_READ_WRITE|CL_MEM_ALLOC_HOST_PTR , sizeof(float)*size_input_transformed_array,NULL,&ret);
             old_prod=prod;
         }
+
         kernel = clCreateKernel(program,"transforming_models", &ret);
 
         ret = clSetKernelArg(kernel,0, sizeof(argsMemObj),&argsMemObj);

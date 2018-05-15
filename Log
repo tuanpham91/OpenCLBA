@@ -1,51 +1,11 @@
-Process OCT images took 1675ms.
-DEBUG : getModelSize : 2.98004 Get MinZ Value : 0.960938
-origin:
-0.861663
-0.968085
- 2.12852
-direction:
--0.0972403
-  0.242812
-  0.965187
-rotation matrix:
-  0.994963  0.0243395 -0.0972403
-        -0   0.970074   0.242812
-   0.10024  -0.241589   0.965187
-euler angles:
-165.879
--174.42
-    180
-tangency point: 1.3125
-translation:
- 1.09399
-0.387955
--0.17752
-
-DEBUG : getModelSize : 2.98004 Get MinZ Value : 0.960938
-origin:
-0.861663
-0.968085
- 2.12852
-direction:
--0.0972403
-  0.242812
-  0.965187
-rotation matrix:
-  0.994963  0.0243395 -0.0972403
-        -0   0.970074   0.242812
-   0.10024  -0.241589   0.965187
-euler angles:
-165.879
--174.42
-    180
-tangency point: 1.3125
-translation:
- 1.09399
-0.387955
--0.17752
-Tip Approximation took 0ms.
-165.879
--174.42
-  178.5
-angle: 1.5
+AMD RX 460 , distance : 0,02f.
+0.021237
+0.024599
+0.023136
+0.023342
+0.022319
+0.024116
+0.025914
+0.021845
+0.025089
+0.022609
