@@ -152,7 +152,7 @@ boost::shared_ptr<std::vector<std::tuple<int, int, cv::Mat, cv::Mat>>> recognize
 	}
 
     //downsample pointcloud OCT
-	float VOXEL_SIZE_ICP_ = 0.02f;
+        float VOXEL_SIZE_ICP_ = 0.018f;
 	pcl::VoxelGrid<pcl::PointXYZ> voxel_grid_icp;
 	voxel_grid_icp.setInputCloud(point_cloud_ptr);
 	voxel_grid_icp.setLeafSize(VOXEL_SIZE_ICP_, VOXEL_SIZE_ICP_, VOXEL_SIZE_ICP_);

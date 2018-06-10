@@ -1,4 +1,8 @@
-AMD RX 460 , distance : 0,02f.
+AMD RX 460
+
+change in main.cpp , oct_processing.h, util.h
+4 Iterations:
+distance : 0,02f.
 0.021237
 0.024599
 0.023136
@@ -9,3 +13,41 @@ AMD RX 460 , distance : 0,02f.
 0.021845
 0.025089
 0.022609
+
+distance : 0,01 Size Model_voxelized : 25657, Point Cloud : 3189
+0.067039
+0.06647
+0.067845
+0.070248
+0.07469
+0.064347
+0.061901
+0.06355
+0.062071
+0.061044
+
+distance : 0,015 Size Model_voxelized : 11744, Point Cloud : 2377
+
+0.07032
+0.06689
+0.069437
+0.068957
+0.056363
+0.073301
+0.064102
+0.063392
+0.068939
+0.074726
+
+distance : 0,018 Size Model_voxelized : 7646, Point Cloud : 2061
+
+0.026149
+0.025617
+0.024505
+0.025816
+0.025121
+0.028219
+0.027799
+0.026404
+0.025557
+0.02619

@@ -207,7 +207,7 @@ boost::shared_ptr<std::vector<std::tuple<int, int, cv::Mat, cv::Mat>>> recognize
         }
 
     //downsample pointcloud OCT
-    float VOXEL_SIZE_ICP_ = 0.02f;
+    float VOXEL_SIZE_ICP_ = 0.018f;
     pcl::VoxelGrid<pcl::PointXYZ> voxel_grid_icp;
     voxel_grid_icp.setInputCloud(point_cloud_ptr);
     voxel_grid_icp.setLeafSize(VOXEL_SIZE_ICP_, VOXEL_SIZE_ICP_, VOXEL_SIZE_ICP_);
@@ -415,7 +415,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
         ret = clSetKernelArg(kernel,2,sizeof(workSizeMemObj),&workSizeMemObj);
         ret= clSetKernelArg(kernel,3,sizeof(inputTransformedMemObj),&inputTransformedMemObj);
 
-        std::cout<<"Read Buffer part 1, code:" << ret <<" Model size "<<model_voxelized.get()->size()<<std::endl;
+        std::cout<<"Read Buffer part 1, code:" << ret <<" Model size "<<model_voxelized.get()->size()<<"Point cloud "<<point_cloud_ptr.get()->size()<<std::endl;
 
         ret =  clEnqueueNDRangeKernel(command_queue, kernel, 3 , NULL,work_units, NULL, 0, NULL, NULL);
         //ret = clEnqueueReadBuffer(command_queue,inputTransformedMemObj,CL_TRUE,0,sizeof(float)*size_input_transformed_array, &input_transformed_as_array[0],0,NULL,NULL);
