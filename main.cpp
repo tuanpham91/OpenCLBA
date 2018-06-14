@@ -378,6 +378,8 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     correspondenceRes = clCreateBuffer(context, CL_MEM_READ_WRITE|CL_MEM_ALLOC_HOST_PTR , sizeof(float)*size_input_transformed_array,NULL,&ret);
 
     for (int i = 0 ; i<4 ; i++) {
+        clock_t end = clock();
+
         int num_angle_steps= std::round((args[1] - args[0]) / args[2]) + 1;
         int num_shift_steps = std::round((args[4] - args[3]) / args[5]) + 1;
         int prod = num_angle_steps*num_shift_steps;
@@ -424,7 +426,9 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
         clFlush(command_queue);
         clFinish(command_queue);
-
+        clock_t end1 = clock();
+        double elapsed_secs = double(end1 - end) / CLOCKS_PER_SEC;
+        std::cout<<std::endl<<"Time needed for Step 1  : " <<elapsed_secs<<std::endl;
 
         /*
          *PART 2 : FIND CORRESPONDECES
@@ -444,6 +448,9 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
         clFlush(command_queue);
         clFinish(command_queue);
+        clock_t end2 = clock();
+        elapsed_secs = double(end2 - end1) / CLOCKS_PER_SEC;
+        std::cout<<std::endl<<"Time needed for Step 2  : " <<elapsed_secs<<std::endl;
 
         /*
          *PART 3 : Sum Up Result
@@ -466,15 +473,19 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
         clFlush(command_queue);
         clFinish(command_queue);
+        clock_t end3 = clock();
+        elapsed_secs = double(end3 - end2) / CLOCKS_PER_SEC;
+
         findNextIteration(correspondenceResultCount,prod,args);
+        std::cout<<std::endl<<"Time needed for Step 3  : " <<elapsed_secs<<std::endl;
+
         std::cout<<"Running Program part 3, code:" << ret <<std::endl<<std::endl<<std::endl;
 
 
     }
-    clock_t end3 = clock() ;
 
-    double elapsed_secs = double(end3 - end) / CLOCKS_PER_SEC;
-    std::cout<<std::endl<<"Time needed for ALL  : " <<elapsed_secs<<std::endl;
+
+
     clReleaseMemObject(modelVoxelizedMembObj);
     clReleaseMemObject(pointCloudPtrMemObj);
     clReleaseMemObject(inputTransformedMemObj);
@@ -484,10 +495,31 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     clReleaseMemObject(workSizeMemObj);
     clReleaseMemObject(argsMemObj);
 }
-
-
-int main()
+void printHelp()
 {
+    pcl::console::print_error("Syntax is: .\oct_shift -models_dir -oct_dir -only_tip -shift -video <-video_dir>\n");
+    pcl::console::print_info("  where arguments are:\n");
+    pcl::console::print_info("                     -models_dir = directory where CAD model in .ply format is located, \n");
+    pcl::console::print_info("                     -oct_dir = directory where OCT images are located, \n");
+    pcl::console::print_info("                     -only_tip = 0 if whole OCT cloud should be used, 1 if only tip should be used, \n");
+    pcl::console::print_info("                     -video = 1 if screenshots of algorithm for video should be taken, 0 if not, \n");
+    pcl::console::print_info("                     -video_dir = necessary if video is set to 1. \n");
+}
+
+
+int main(int argc, char **argv)
+{
+    if (argc<2) {
+        printHelp();
+        return -1;
+    }
+
+    std::string path = "models/";
+    std::string oct_dir = "oct/";
+
+    pcl::console::parse_argument(argc, argv, "-models_dir", path);
+    pcl::console::parse_argument(argc, argv, "-oct_dir", oct_dir);
+
     //TODO : Parameterize this please
     std::string path= "/home/tuan/Desktop/Models";
     std::string oct_dir ="/home/tuan/Desktop/042801/";
@@ -563,14 +595,13 @@ int main()
 
 
     //https://streamhpc.com/blog/2013-04-28/opencl-error-codes /
-
     //https://stackoverflow.com/questions/26804153/opencl-work-group-concept
-
     //http://downloads.ti.com/mctools/esd/docs/opencl/execution/kernels-workgroups-workitems.html
+
     prepareOpenCLProgramm();
     shift_and_roll_without_sum_in_cl(angleStart,angleEnd, angleStep,shiftStart, shiftEnd, shiftStep, correspondence_count, rotation,initialTranslation, std::get<1>(direction), model_voxelized, point_cloud_ptr);
-    //shift_and_roll_without_sum_in_cl(-3.5,0.5, 0.2,0.3,0.5, 0.01, correspondence_count, rotation,initialTranslation, std::get<1>(direction), model_voxelized, point_cloud_ptr);
 
+    //shift_and_roll_without_sum_in_cl(-3.5,0.5, 0.2,0.3,0.5, 0.01, correspondence_count, rotation,initialTranslation, std::get<1>(direction), model_voxelized, point_cloud_ptr);
     //TEST 1 : Anglemin = angleStart
 
     return 0;

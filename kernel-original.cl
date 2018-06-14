@@ -82,6 +82,8 @@ __kernel void transforming_models(__global float *floatArgs,__global float *mode
   rotating[3] = sin(angle_temp);
   rotating[4] = cos(angle_temp);
 
+  __private float shift_temp = shift_min + shift*shift_step;
+
   transform[0]= floatArgs[12]*rotating[0]+floatArgs[13]*rotating[3];
   transform[1]= floatArgs[12]*rotating[1]+floatArgs[13]*rotating[4];
   transform[2]= floatArgs[14];
@@ -94,7 +96,7 @@ __kernel void transforming_models(__global float *floatArgs,__global float *mode
   transform[9]= floatArgs[18]*rotating[1]+floatArgs[19]*rotating[4];
   transform[10]=floatArgs[20];
 
-  __private float shift_temp = shift_min + shift*shift_step;
+
   transform[3] = floatArgs[6]+ floatArgs[9]*shift_temp/floatArgs[11];
   transform[7] =floatArgs[7]+ floatArgs[10]*shift_temp/floatArgs[11];
   transform[11] =floatArgs[8]+ floatArgs[11]*shift_temp/floatArgs[11];
