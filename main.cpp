@@ -19,7 +19,7 @@
 #include "transformations.h"
 
 
-#include <CL/cl2.hpp>
+#include <CL/cl.h>
 /* Programm to replicate OPENCV part, without shifting algorithmus */
 using namespace std;
 #define NUM_FRAMES 128
