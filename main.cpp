@@ -285,13 +285,14 @@ void printDeviceInfoWorkSize(cl_device_id device) {
     std::cout<< " Work sizes are  :" <<worksizes[0]<<" ,"<<worksizes[1]<<" ,"<<worksizes[2]<<std::endl;
 }
 
-void prepareOpenCLProgramm() {
+void prepareOpenCLProgramm(string kernel) {
     FILE *fp;
-    char fileName[] = "/home/tuan/Desktop/OpenCLBA-Local/OpenCLBA/kernel-original.cl";
+    //char fileName[] = "/home/tuan/Desktop/OpenCLBA-Local/OpenCLBA/kernel-original.cl";
+
     char *source_str;
     size_t source_size;
 
-    fp = fopen(fileName, "r");
+    fp = fopen(kernel.c_str(), "r");
     if (!fp) {
     fprintf(stderr, "Failed to load kernel\n");
     exit(1);
@@ -378,7 +379,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     correspondenceRes = clCreateBuffer(context, CL_MEM_READ_WRITE|CL_MEM_ALLOC_HOST_PTR , sizeof(float)*size_input_transformed_array,NULL,&ret);
 
     for (int i = 0 ; i<4 ; i++) {
-        clock_t end = clock();
+        //clock_t end = clock();
 
         int num_angle_steps= std::round((args[1] - args[0]) / args[2]) + 1;
         int num_shift_steps = std::round((args[4] - args[3]) / args[5]) + 1;
@@ -426,9 +427,9 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
         clFlush(command_queue);
         clFinish(command_queue);
-        clock_t end1 = clock();
-        double elapsed_secs = double(end1 - end) / CLOCKS_PER_SEC;
-        std::cout<<std::endl<<"Time needed for Step 1  : " <<elapsed_secs<<std::endl;
+        //clock_t end1 = clock();
+        //double elapsed_secs = double(end1 - end) / CLOCKS_PER_SEC;
+        //std::cout<<std::endl<<"Time needed for Step 1  : " <<elapsed_secs<<std::endl;
 
         /*
          *PART 2 : FIND CORRESPONDECES
@@ -448,9 +449,9 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
         clFlush(command_queue);
         clFinish(command_queue);
-        clock_t end2 = clock();
-        elapsed_secs = double(end2 - end1) / CLOCKS_PER_SEC;
-        std::cout<<std::endl<<"Time needed for Step 2  : " <<elapsed_secs<<std::endl;
+        //clock_t end2 = clock();
+        //elapsed_secs = double(end2 - end1) / CLOCKS_PER_SEC;
+        //std::cout<<std::endl<<"Time needed for Step 2  : " <<elapsed_secs<<std::endl;
 
         /*
          *PART 3 : Sum Up Result
@@ -473,18 +474,19 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
         clFlush(command_queue);
         clFinish(command_queue);
-        clock_t end3 = clock();
-        elapsed_secs = double(end3 - end2) / CLOCKS_PER_SEC;
+        //clock_t end3 = clock();
+        //elapsed_secs = double(end3 - end2) / CLOCKS_PER_SEC;
 
         findNextIteration(correspondenceResultCount,prod,args);
-        std::cout<<std::endl<<"Time needed for Step 3  : " <<elapsed_secs<<std::endl;
+        //std::cout<<std::endl<<"Time needed for Step 3  : " <<elapsed_secs<<std::endl;
 
         std::cout<<"Running Program part 3, code:" << ret <<std::endl<<std::endl<<std::endl;
 
 
     }
-
-
+    clock_t end3 = clock();
+    double elapsed_secs = double(end3 - end) / CLOCKS_PER_SEC;
+    std::cout<<std::endl<<"Time needed for Step 3  : " <<elapsed_secs<<std::endl;
 
     clReleaseMemObject(modelVoxelizedMembObj);
     clReleaseMemObject(pointCloudPtrMemObj);
@@ -514,15 +516,16 @@ int main(int argc, char **argv)
         return -1;
     }
 
-    std::string path = "models/";
-    std::string oct_dir = "oct/";
+    string path = argv[1];
+    string oct_dir = argv[2];
+    string kernel_path = argv[3];
 
-    pcl::console::parse_argument(argc, argv, "-models_dir", path);
-    pcl::console::parse_argument(argc, argv, "-oct_dir", oct_dir);
+    //pcl::console::parse_argument(argc, argv, "-models_dir", path);
+    //pcl::console::parse_argument(argc, argv, "-oct_dir", oct_dir);
 
     //TODO : Parameterize this please
-    std::string path= "/home/tuan/Desktop/Models";
-    std::string oct_dir ="/home/tuan/Desktop/042801/";
+    //std::string path= "/home/tuan/Desktop/Models";
+    //std::string oct_dir ="/home/tuan/Desktop/042801/";
 
     pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud_ptr(new pcl::PointCloud<pcl::PointXYZ>);
     pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud_not_cut(new pcl::PointCloud<pcl::PointXYZ>);
@@ -598,7 +601,7 @@ int main(int argc, char **argv)
     //https://stackoverflow.com/questions/26804153/opencl-work-group-concept
     //http://downloads.ti.com/mctools/esd/docs/opencl/execution/kernels-workgroups-workitems.html
 
-    prepareOpenCLProgramm();
+    prepareOpenCLProgramm(kernel_path);
     shift_and_roll_without_sum_in_cl(angleStart,angleEnd, angleStep,shiftStart, shiftEnd, shiftStep, correspondence_count, rotation,initialTranslation, std::get<1>(direction), model_voxelized, point_cloud_ptr);
 
     //shift_and_roll_without_sum_in_cl(-3.5,0.5, 0.2,0.3,0.5, 0.01, correspondence_count, rotation,initialTranslation, std::get<1>(direction), model_voxelized, point_cloud_ptr);
