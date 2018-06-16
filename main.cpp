@@ -537,6 +537,7 @@ int main(int argc, char **argv)
     }
     */
     //Copied Code
+    std::cout<<"Start to read models"<<std::endl;
 
     pcl::PointCloud<pcl::PointXYZ>::Ptr modelCloud(new pcl::PointCloud<pcl::PointXYZ>());
     pcl::PointCloud<pcl::PointXYZ>::Ptr model_voxelized(new pcl::PointCloud<pcl::PointXYZ>());
