@@ -287,19 +287,15 @@ void printDeviceInfoWorkSize(cl_device_id device) {
 }
 
 void prepareOpenCLProgramm(string kernel) {
-    FILE *fp;
-    char *source_str;
 
-    size_t source_size;
-
-    fp = fopen(kernel.c_str(), "r");
+    FILE *fp = fopen(kernel.c_str(), "r");
     if (!fp) {
     fprintf(stderr, "Failed to load kernel\n");
     exit(1);
     }
 
-    source_str = (char*)malloc(0x100000);
-    source_size = fread(source_str,1,0x100000, fp);
+    char *source_str = (char*)malloc(0x100000);
+    size_t source_size = fread(source_str,1,0x100000, fp);
     fclose(fp);
 
     ret = clGetPlatformIDs(1, &platform_id, &ret_num_platforms);
@@ -425,7 +421,6 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
         //std::cout<<"Running Program part 1, code:" << ret <<std::endl;
 
-        clFinish(command_queue);
         //clock_t end1 = clock();
         //double elapsed_secs = double(end1 - end) / CLOCKS_PER_SEC;
         //std::cout<<std::endl<<"Time needed for Step 1  : " <<elapsed_secs<<std::endl;
@@ -445,7 +440,6 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
         ret =  clEnqueueNDRangeKernel(command_queue, kernel2, 1, NULL,work_units2, local_work_size, 0, NULL, NULL);
         //std::cout<<"Running Program part 2, code:" << ret <<std::endl;
 
-        clFinish(command_queue);
         //clock_t end2 = clock();
         //elapsed_secs = double(end2 - end1) / CLOCKS_PER_SEC;
         //std::cout<<std::endl<<"Time needed for Step 2  : " <<elapsed_secs<<std::endl;
@@ -468,7 +462,6 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
         }
         */
 
-        clFinish(command_queue);
         //clock_t end3 = clock();
         //elapsed_secs = double(end3 - end2) / CLOCKS_PER_SEC;
 
@@ -509,7 +502,7 @@ void cleanProgramm() {
 }
 void printHelp()
 {
-    pcl::console::print_error("Syntax is: .\oct_shift -models_dir -oct_dir -only_tip -shift -video <-video_dir>\n");
+    pcl::console::print_error("Syntax is: -models_dir -oct_dir -only_tip -shift -video <-video_dir>\n");
     pcl::console::print_info("  where arguments are:\n");
     pcl::console::print_info("                     -models_dir = directory where CAD model in .ply format is located, \n");
     pcl::console::print_info("                     -oct_dir = directory where OCT images are located, \n");
@@ -555,7 +548,6 @@ int main(int argc, char **argv)
 
     generatePointCloudFromModel(modelCloud, model_voxelized, path);
 
-   // std::cout<<"DEBUG : getModelSize : "<< getModelSize(model_voxelized)<< " Get MinZ Value : " << getMinZValue(point_cloud_not_cut)<<std::endl;
     cutPartOfModel(point_cloud_not_cut, point_cloud_ptr, getModelSize(model_voxelized) - 0.1f + getMinZValue(point_cloud_not_cut));
 
     std::pair<Eigen::Vector3f, Eigen::Vector3f> direction = computeNeedleDirection(peak_points);
