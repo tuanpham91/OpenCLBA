@@ -1,4 +1,4 @@
-#define CL_HPP_TARGET_OPENCL_VERSION 200
+#define CL_HPP_TARGET_OPENCL_VERSION 120
 #include <opencv2/opencv.hpp>
 #include <pcl/pcl_macros.h>
 #include <pcl/visualization/pcl_visualizer.h>
@@ -37,11 +37,12 @@ cl_mem workSizeMemObj,argsMemObj,modelVoxelizedMembObj, pointCloudPtrMemObj,inpu
 
 
 cl_program  program = NULL;
-cl_kernel kernel = NULL;
+cl_kernel kernel1, kernel2, kernel3 = NULL;
 cl_platform_id platform_id = NULL;
 cl_uint ret_num_devices;
 cl_uint ret_num_platforms;
 cl_int ret;
+int* worksizes = new int[6]();
 
 
 float computeTipX(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, std::pair<Eigen::Vector3f, Eigen::Vector3f> origin_and_direction_needle, float x_middle_OCT, float z_min_OCT) {
@@ -287,9 +288,8 @@ void printDeviceInfoWorkSize(cl_device_id device) {
 
 void prepareOpenCLProgramm(string kernel) {
     FILE *fp;
-    //char fileName[] = "/home/tuan/Desktop/OpenCLBA-Local/OpenCLBA/kernel-original.cl";
-
     char *source_str;
+
     size_t source_size;
 
     fp = fopen(kernel.c_str(), "r");
@@ -308,20 +308,19 @@ void prepareOpenCLProgramm(string kernel) {
 
     context = clCreateContext(NULL, 1, &device_id, NULL, NULL, &ret);
 
-    cl_queue_properties props[] = {
-      CL_QUEUE_PROPERTIES,
-      CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE | CL_QUEUE_ON_DEVICE | CL_QUEUE_ON_DEVICE_DEFAULT,
-      0
-    };
-
-
     command_queue = clCreateCommandQueue(context, device_id, 0, &ret);
 
     program = clCreateProgramWithSource(context,1,(const char**)&source_str, (const size_t*)&source_size, &ret);
 
     ret = clBuildProgram(program, 1, &device_id, NULL, NULL, NULL);
 
+    kernel1 = clCreateKernel(program,"transforming_models", &ret);
+    kernel2 = clCreateKernel(program,"find_correspondences", &ret);
+    kernel3 = clCreateKernel(program,"computeDifferencesForCorrespondence", &ret);
+
+
     std::cout<<ret<<" 5. code"<<std::endl;
+    /*
     if (ret == CL_BUILD_PROGRAM_FAILURE) {
         // Determine the size of the log
         size_t log_size;
@@ -334,7 +333,11 @@ void prepareOpenCLProgramm(string kernel) {
 
         // Print the log
         printf("%s\n", log);
+        delete [] log;
     }
+    */
+
+    free(source_str);
 }
 
 void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float angle_step,
@@ -351,7 +354,6 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
     float args[21] ={angle_min, angle_max, angle_step, shift_min, shift_max, shift_step,initialTranslation[0],initialTranslation[1],initialTranslation[2],direction[0],direction[1],direction[2],rotation(0,0),rotation(0,1),rotation(0,2),rotation(1,0),rotation(1,1),rotation(1,2),rotation(2,0),rotation(2,1),rotation(2,2)};
 
-    int* worksizes = new int[6]();
     worksizes[2]= model_voxelized->size();
     worksizes[5]= point_cloud_ptr->size();
     worksizes[4]= point_cloud_ptr.get()->size();
@@ -380,7 +382,6 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
     for (int i = 0 ; i<4 ; i++) {
         //clock_t end = clock();
-
         int num_angle_steps= std::round((args[1] - args[0]) / args[2]) + 1;
         int num_shift_steps = std::round((args[4] - args[3]) / args[5]) + 1;
         int prod = num_angle_steps*num_shift_steps;
@@ -411,21 +412,19 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
             old_prod=prod;
         }
 
-        kernel = clCreateKernel(program,"transforming_models", &ret);
 
-        ret = clSetKernelArg(kernel,0, sizeof(argsMemObj),&argsMemObj);
-        ret = clSetKernelArg(kernel,1,sizeof(modelVoxelizedMembObj), &modelVoxelizedMembObj);
-        ret = clSetKernelArg(kernel,2,sizeof(workSizeMemObj),&workSizeMemObj);
-        ret= clSetKernelArg(kernel,3,sizeof(inputTransformedMemObj),&inputTransformedMemObj);
+        ret = clSetKernelArg(kernel1,0, sizeof(argsMemObj),&argsMemObj);
+        ret = clSetKernelArg(kernel1,1,sizeof(modelVoxelizedMembObj), &modelVoxelizedMembObj);
+        ret = clSetKernelArg(kernel1,2,sizeof(workSizeMemObj),&workSizeMemObj);
+        ret= clSetKernelArg(kernel1,3,sizeof(inputTransformedMemObj),&inputTransformedMemObj);
 
         std::cout<<"Read Buffer part 1, code:" << ret <<" Model size "<<model_voxelized.get()->size()<<"Point cloud "<<point_cloud_ptr.get()->size()<<std::endl;
 
-        ret =  clEnqueueNDRangeKernel(command_queue, kernel, 3 , NULL,work_units, NULL, 0, NULL, NULL);
+        ret =  clEnqueueNDRangeKernel(command_queue, kernel1, 3 , NULL,work_units, NULL, 0, NULL, NULL);
         //ret = clEnqueueReadBuffer(command_queue,inputTransformedMemObj,CL_TRUE,0,sizeof(float)*size_input_transformed_array, &input_transformed_as_array[0],0,NULL,NULL);
 
         //std::cout<<"Running Program part 1, code:" << ret <<std::endl;
 
-        clFlush(command_queue);
         clFinish(command_queue);
         //clock_t end1 = clock();
         //double elapsed_secs = double(end1 - end) / CLOCKS_PER_SEC;
@@ -435,19 +434,17 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
          *PART 2 : FIND CORRESPONDECES
          */
 
-        kernel = clCreateKernel(program,"find_correspondences", &ret);
 
-        ret = clSetKernelArg(kernel,0,sizeof(workSizeMemObj),&workSizeMemObj);
-        ret = clSetKernelArg(kernel,1,sizeof(pointCloudPtrMemObj),&pointCloudPtrMemObj);
-        ret = clSetKernelArg(kernel,2,sizeof(correspondenceRes), &correspondenceRes);
-        ret= clSetKernelArg(kernel,3,sizeof(inputTransformedMemObj),&inputTransformedMemObj);
+        ret = clSetKernelArg(kernel2,0,sizeof(workSizeMemObj),&workSizeMemObj);
+        ret = clSetKernelArg(kernel2,1,sizeof(pointCloudPtrMemObj),&pointCloudPtrMemObj);
+        ret = clSetKernelArg(kernel2,2,sizeof(correspondenceRes), &correspondenceRes);
+        ret= clSetKernelArg(kernel2,3,sizeof(inputTransformedMemObj),&inputTransformedMemObj);
 
         size_t local_work_size[1] = {(size_t) 64};
 
-        ret =  clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL,work_units2, local_work_size, 0, NULL, NULL);
+        ret =  clEnqueueNDRangeKernel(command_queue, kernel2, 1, NULL,work_units2, local_work_size, 0, NULL, NULL);
         //std::cout<<"Running Program part 2, code:" << ret <<std::endl;
 
-        clFlush(command_queue);
         clFinish(command_queue);
         //clock_t end2 = clock();
         //elapsed_secs = double(end2 - end1) / CLOCKS_PER_SEC;
@@ -456,14 +453,13 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
         /*
          *PART 3 : Sum Up Result
          */
-        kernel = clCreateKernel(program,"computeDifferencesForCorrespondence", &ret);
-        ret = clSetKernelArg(kernel,0,sizeof(correspondenceRes),&correspondenceRes);
-        ret = clSetKernelArg(kernel,1, sizeof(workSizeMemObj),&workSizeMemObj);
-        ret = clSetKernelArg(kernel,2,sizeof(correspondenceResultCountMem),&correspondenceResultCountMem);
+        ret = clSetKernelArg(kernel3,0,sizeof(correspondenceRes),&correspondenceRes);
+        ret = clSetKernelArg(kernel3,1, sizeof(workSizeMemObj),&workSizeMemObj);
+        ret = clSetKernelArg(kernel3,2,sizeof(correspondenceResultCountMem),&correspondenceResultCountMem);
 
         size_t work_units3[2] ={(size_t)num_angle_steps,(size_t)num_shift_steps};
 
-        ret =  clEnqueueNDRangeKernel(command_queue, kernel, 2, NULL,work_units3,NULL, 0, NULL, NULL);
+        ret =  clEnqueueNDRangeKernel(command_queue, kernel3, 2, NULL,work_units3,NULL, 0, NULL, NULL);
         ret = clEnqueueReadBuffer(command_queue,correspondenceResultCountMem,CL_TRUE,0,sizeof(int)*correspondenceResultCountSize, &correspondenceResultCount[0],0,NULL,NULL);
 
         /*
@@ -472,7 +468,6 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
         }
         */
 
-        clFlush(command_queue);
         clFinish(command_queue);
         //clock_t end3 = clock();
         //elapsed_secs = double(end3 - end2) / CLOCKS_PER_SEC;
@@ -480,22 +475,37 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
         findNextIteration(correspondenceResultCount,prod,args);
         //std::cout<<std::endl<<"Time needed for Step 3  : " <<elapsed_secs<<std::endl;
 
+
         std::cout<<"Running Program part 3, code:" << ret <<std::endl<<std::endl<<std::endl;
 
+        delete [] correspondenceResultCount;
 
     }
+
     clock_t end3 = clock();
     double elapsed_secs = double(end3 - end) / CLOCKS_PER_SEC;
     std::cout<<std::endl<<"Time needed for Step 3  : " <<elapsed_secs<<std::endl;
+    delete [] model_voxelized_as_array;
+    delete [] point_cloud_ptr_as_array;
 
+}
+void cleanProgramm() {
     clReleaseMemObject(modelVoxelizedMembObj);
     clReleaseMemObject(pointCloudPtrMemObj);
     clReleaseMemObject(inputTransformedMemObj);
     clReleaseMemObject(correspondenceResultCountMem);
     clReleaseMemObject(correspondenceRes);
-
     clReleaseMemObject(workSizeMemObj);
     clReleaseMemObject(argsMemObj);
+
+    clReleaseKernel(kernel1);
+    clReleaseKernel(kernel2);
+    clReleaseKernel(kernel3);
+
+    clReleaseCommandQueue(command_queue);
+    clReleaseContext(context);
+    clReleaseProgram(program);
+    delete [] worksizes;
 }
 void printHelp()
 {
@@ -507,6 +517,7 @@ void printHelp()
     pcl::console::print_info("                     -video = 1 if screenshots of algorithm for video should be taken, 0 if not, \n");
     pcl::console::print_info("                     -video_dir = necessary if video is set to 1. \n");
 }
+
 
 
 int main(int argc, char **argv)
@@ -607,6 +618,6 @@ int main(int argc, char **argv)
 
     //shift_and_roll_without_sum_in_cl(-3.5,0.5, 0.2,0.3,0.5, 0.01, correspondence_count, rotation,initialTranslation, std::get<1>(direction), model_voxelized, point_cloud_ptr);
     //TEST 1 : Anglemin = angleStart
-
+    cleanProgramm();
     return 0;
 }
