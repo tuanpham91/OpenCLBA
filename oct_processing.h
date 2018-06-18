@@ -54,6 +54,7 @@ void MatToPointXYZ(cv::Mat& OpencVPointCloud, cv::Mat& labelInfo, std::vector<cv
 //----------------------------------------------
 //process the OCT frame to get a labelled image
 //----------------------------------------------
+
 void processOCTFrame(cv::Mat imageGray, int number, boost::shared_ptr<std::vector<std::tuple<int, int, cv::Mat, cv::Mat>>>& needle_width) {
 	//flip and transpose the image
         cv::Mat transposedOCTimage = cv::Mat(1,1, CV_64F, double(0));
@@ -87,6 +88,8 @@ void processOCTFrame(cv::Mat imageGray, int number, boost::shared_ptr<std::vecto
 //-----------------------------------
 //setup oct point cloud for alignment
 //-----------------------------------
+//THIS CAUSES PROBLEM
+
 boost::shared_ptr<std::vector<std::tuple<int, int, cv::Mat, cv::Mat>>>
 recognizeOCT(pcl::PointCloud<pcl::PointXYZ>::Ptr& point_cloud_ptr, pcl::PointCloud<pcl::PointXYZ>::Ptr& peak_points, std::string oct_dir, bool only_tip) {
 
