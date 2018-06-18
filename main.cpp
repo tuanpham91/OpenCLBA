@@ -28,12 +28,10 @@ using namespace std;
 #define SCALE_Z 3.0
 
 
-
 cl_device_id device_id = NULL;
 cl_context context = NULL;
 cl_command_queue command_queue = NULL;
 cl_mem workSizeMemObj,argsMemObj,modelVoxelizedMembObj, pointCloudPtrMemObj,inputTransformedMemObj,correspondenceRes,correspondenceResultCountMem =NULL;
-
 
 
 cl_program  program = NULL;
@@ -45,181 +43,8 @@ cl_int ret;
 int* worksizes = new int[6]();
 
 
-float computeTipX(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, std::pair<Eigen::Vector3f, Eigen::Vector3f> origin_and_direction_needle, float x_middle_OCT, float z_min_OCT) {
-    pcl::PointXYZ min = getMinPoint(cloud);
-    Eigen::VectorXf line1(6);
-    line1 << x_middle_OCT, 0.0f, z_min_OCT, std::get<1>(origin_and_direction_needle)(0), 0.0f, std::get<1>(origin_and_direction_needle)(2);
-    Eigen::VectorXf line2(6);
-    line2 << min.x, 0.0f, min.z, std::get<1>(origin_and_direction_needle)(2), 0.0f, -std::get<1>(origin_and_direction_needle)(0);
-    Eigen::Vector4f point;
-    pcl::lineWithLineIntersection(line1, line2, point);
-    return point.x();
-}
-
-Eigen::Matrix4f tipApproximation(pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud_ptr, pcl::PointCloud<pcl::PointXYZ>::Ptr& modelTransformed,
-    pcl::PointCloud<pcl::PointXYZ>::Ptr model_voxelized, std::pair<Eigen::Vector3f, Eigen::Vector3f> direction, const Eigen::Matrix4f& transformation) {
-    Eigen::Matrix4f transform = transformation;
-    //compute middle of OCT
-    float z_min_OCT = getMinZValue(point_cloud_ptr);
-    float x_middle_OCT = computeMiddle(point_cloud_ptr, z_min_OCT);
-
-    //compute middle of CAD model
-    float z_min_model = getMinZValue(modelTransformed);
-    float x_middle_model = computeMiddle(modelTransformed, z_min_model);
-
-    Eigen::Vector3f OCT_point(x_middle_OCT, 0.0f, 0.0f);
-    //compute x-value which is the approximated tip
-    float x_in_direction = computeTipX(modelTransformed, direction, x_middle_OCT, z_min_OCT);
-
-
-    float angle_to_rotate = 0.5f;
-    float sign = 1.0f;
-    //rotate model until computed x-value is reached
-    {
-        pcl::ScopeTime t("Tip Approximation");
-        float first = 0.0f;
-        float second = 0.0f;
-        float r = 0.0f;
-        if (x_middle_model < x_in_direction) {
-            sign = -1.0f;
-            first = x_middle_model;
-            second = x_in_direction;
-        }
-        else if (x_middle_model > x_in_direction) {
-            sign = 1.0f;
-            first = x_in_direction;
-            second = x_middle_model;
-        }
-        while (r < 360.0f && first < second) {
-            transform = buildTransformationMatrix(rotateByAngle(sign * angle_to_rotate, transform.block(0, 0, 3, 3)), transform.block(0, 3, 3, 0));
-            pcl::transformPointCloud(*model_voxelized, *modelTransformed, transform);
-            if (sign < 0) {
-                first = computeMiddle(modelTransformed, getMinZValue(modelTransformed));
-            }
-            else {
-                second = computeMiddle(modelTransformed, getMinZValue(modelTransformed));
-            }
-            r += angle_to_rotate;
-        }
-    }
-    return transform;
-}
-std::pair<Eigen::Vector3f, Eigen::Vector3f> computeNeedleDirection(pcl::PointCloud<pcl::PointXYZ>::Ptr& peak_points) {
-    pcl::PointCloud<pcl::PointXYZ>::Ptr peak_inliers(new pcl::PointCloud<pcl::PointXYZ>);
-    std::vector<int> inliers = getInliers(peak_points);
-    for (int i = 0; i < inliers.size(); i++) {
-        peak_inliers->push_back(peak_points->at(inliers.at(i)));
-    }
-    std::vector<Eigen::Vector3f> peak_positions;
-    for (int i = 0; i < peak_inliers->points.size(); i++) {//for RANSAC use peak_inliers, else peak_points
-        pcl::PointXYZ point = peak_inliers->points.at(i); //for RANSAC use peak_inliers, else peak_points
-        Eigen::Vector3f eigenPoint(point.x, point.y, point.z);
-        peak_positions.push_back(eigenPoint);
-    }
-    peak_points = peak_inliers; //only when using RANSAC
-    return fitLine(peak_positions);
-}
-
-void processOTCFrame(cv::Mat imageGray,int number , boost::shared_ptr<std::vector<std::tuple<int,int, cv::Mat, cv::Mat>>> needle_width  ) {
-
-    cv::Mat transposedOCTimage;
-        cv::flip(imageGray, imageGray, 0);
-
-        //set a threshold (0.26)
-        cv::Mat thresholdedImage;
-        cv::threshold(imageGray, thresholdedImage, 0.26 * 255, 1, 0);
-
-        //use a median blur filter
-        cv::Mat filteredImage;
-        cv::medianBlur(thresholdedImage, filteredImage, 3);
-
-        //label the image
-        cv::Mat labelledImage;
-        cv::Mat labelStats;
-        cv::Mat labelCentroids;
-        int numLabels = cv::connectedComponentsWithStats(filteredImage, labelledImage, labelStats, labelCentroids);
-
-        //for every label with more than 400 points process it further for adding points to the cloud
-        for (int i = 1; i < numLabels; i++) {
-            //original threshold at 400
-            if (labelStats.at<int>(i, cv::CC_STAT_AREA) > 250) {
-                cv::Mat labelInfo = labelStats.row(i);
-                //save bounding box width for finding the point where needle gets smaller
-                needle_width->push_back(std::tuple<int, int, cv::Mat, cv::Mat>(number, labelStats.at<int>(i, cv::CC_STAT_WIDTH), filteredImage, labelInfo));
-            }
-        }
-}
-
-boost::shared_ptr<std::vector<std::tuple<int, int, cv::Mat, cv::Mat>>> recognizeOTC(pcl::PointCloud<pcl::PointXYZ>::Ptr& point_cloud_ptr, pcl::PointCloud<pcl::PointXYZ>::Ptr& peak_points, std::string oct_dir, bool only_tip ) {
-    std::string oct_directory = getDirectoryPath(oct_dir);
-    //count oct images
-    int fileCount = 128;
-    //countNumberOfFilesInDirectory(oct_directory, "%s*.bmp");
-    int minFrameNumber = 0;
-    int maxFrameNumber = fileCount;
-
-    //tuple with frame number, bounding box width, filteredImage, labelInfo
-    boost::shared_ptr<std::vector<std::tuple<int, int, cv::Mat, cv::Mat>>> needle_width(new std::vector<std::tuple<int, int, cv::Mat, cv::Mat>>);
-    cv::Mat imageGray;
-        {
-            pcl::ScopeTime t("Process OCT images");
-            //	go through all frames
-            for (int number = minFrameNumber; number < maxFrameNumber; number++)
-            {
-                //get the next frame
-                std::stringstream filename;
-                if (number < 100) {
-                    filename << "0";
-                }
-                if (number < 10) {
-                    filename << "0";
-                }
-                filename << number << ".bmp";
-                //read the image in grayscale
-                imageGray = cv::imread(oct_dir + filename.str(), CV_LOAD_IMAGE_GRAYSCALE);
-
-                processOCTFrame(imageGray, number, needle_width);
-
-                cv::waitKey(10);
-            }
-
-            //---------------------------------------------
-            //optionally cut needle tip off
-            //---------------------------------------------
-            int end_index = needle_width->size();
-            //regression to find cutting point where tip ends
-            if (only_tip) {
-                end_index = regression(needle_width);
-            }
-            //go through all frames
-            for (int w = 0; w < end_index; w++) {
-                std::tuple<int, int, cv::Mat, cv::Mat> tup = needle_width->at(w);
-                std::vector<cv::Point> elipsePoints;
-                MatToPointXYZ(std::get<2>(tup), std::get<3>(tup), elipsePoints, std::get<0>(tup), point_cloud_ptr, imageGray.rows, imageGray.cols);
-
-                //compute center point of needle frame for translation
-                if (elipsePoints.size() >= 50) { //to remove outliers, NOT RANSAC
-                    cv::RotatedRect elipse = cv::fitEllipse(cv::Mat(elipsePoints));
-                    pcl::PointXYZ peak;
-                    generatePoint(peak, elipse.center.x, elipse.center.y, std::get<0>(tup), imageGray.cols, imageGray.rows);
-                    peak_points->push_back(peak);
-                }
-            }
-        }
-
-    //downsample pointcloud OCT
-    float VOXEL_SIZE_ICP_ = 0.02f;
-    pcl::VoxelGrid<pcl::PointXYZ> voxel_grid_icp;
-    voxel_grid_icp.setInputCloud(point_cloud_ptr);
-    voxel_grid_icp.setLeafSize(VOXEL_SIZE_ICP_, VOXEL_SIZE_ICP_, VOXEL_SIZE_ICP_);
-    voxel_grid_icp.filter(*point_cloud_ptr);
-
-    return needle_width;
-}
-
 void findNextIteration(int *res, int numOfIteration, float *floatArgs) {
     //TODO : HERE JUST THE INDEX IS FOUND; HENCE ITS WRONG
-
     //find Max Angle,
     int max_angle_index = 0;
     float temp =0 ;
@@ -335,7 +160,82 @@ void prepareOpenCLProgramm(string kernel) {
 
     free(source_str);
 }
+float computeTipX(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, std::pair<Eigen::Vector3f, Eigen::Vector3f> origin_and_direction_needle, float x_middle_OCT, float z_min_OCT) {
+    pcl::PointXYZ min = getMinPoint(cloud);
+    Eigen::VectorXf line1(6);
+    line1 << x_middle_OCT, 0.0f, z_min_OCT, std::get<1>(origin_and_direction_needle)(0), 0.0f, std::get<1>(origin_and_direction_needle)(2);
+    Eigen::VectorXf line2(6);
+    line2 << min.x, 0.0f, min.z, std::get<1>(origin_and_direction_needle)(2), 0.0f, -std::get<1>(origin_and_direction_needle)(0);
+    Eigen::Vector4f point;
+    pcl::lineWithLineIntersection(line1, line2, point);
+    return point.x();
+}
 
+//----
+std::pair<Eigen::Vector3f, Eigen::Vector3f> computeNeedleDirection(pcl::PointCloud<pcl::PointXYZ>::Ptr& peak_points) {
+    pcl::PointCloud<pcl::PointXYZ>::Ptr peak_inliers(new pcl::PointCloud<pcl::PointXYZ>);
+    std::vector<int> inliers = getInliers(peak_points);
+    for (int i = 0; i < inliers.size(); i++) {
+        peak_inliers->push_back(peak_points->at(inliers.at(i)));
+    }
+    std::vector<Eigen::Vector3f> peak_positions;
+    for (int i = 0; i < peak_inliers->points.size(); i++) {//for RANSAC use peak_inliers, else peak_points
+        pcl::PointXYZ point = peak_inliers->points.at(i); //for RANSAC use peak_inliers, else peak_points
+        Eigen::Vector3f eigenPoint(point.x, point.y, point.z);
+        peak_positions.push_back(eigenPoint);
+    }
+    peak_points = peak_inliers; //only when using RANSAC
+    return fitLine(peak_positions);
+}
+
+Eigen::Matrix4f tipApproximation(pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud_ptr, pcl::PointCloud<pcl::PointXYZ>::Ptr& modelTransformed,
+    pcl::PointCloud<pcl::PointXYZ>::Ptr model_voxelized, std::pair<Eigen::Vector3f, Eigen::Vector3f> direction, const Eigen::Matrix4f& transformation) {
+    Eigen::Matrix4f transform = transformation;
+    //compute middle of OCT
+    float z_min_OCT = getMinZValue(point_cloud_ptr);
+    float x_middle_OCT = computeMiddle(point_cloud_ptr, z_min_OCT);
+
+    //compute middle of CAD model
+    float z_min_model = getMinZValue(modelTransformed);
+    float x_middle_model = computeMiddle(modelTransformed, z_min_model);
+
+    Eigen::Vector3f OCT_point(x_middle_OCT, 0.0f, 0.0f);
+    //compute x-value which is the approximated tip
+    float x_in_direction = computeTipX(modelTransformed, direction, x_middle_OCT, z_min_OCT);
+
+
+    float angle_to_rotate = 0.5f;
+    float sign = 1.0f;
+    //rotate model until computed x-value is reached
+    {
+        pcl::ScopeTime t("Tip Approximation");
+        float first = 0.0f;
+        float second = 0.0f;
+        float r = 0.0f;
+        if (x_middle_model < x_in_direction) {
+            sign = -1.0f;
+            first = x_middle_model;
+            second = x_in_direction;
+        }
+        else if (x_middle_model > x_in_direction) {
+            sign = 1.0f;
+            first = x_in_direction;
+            second = x_middle_model;
+        }
+        while (r < 360.0f && first < second) {
+            transform = buildTransformationMatrix(rotateByAngle(sign * angle_to_rotate, transform.block(0, 0, 3, 3)), transform.block(0, 3, 3, 0));
+            pcl::transformPointCloud(*model_voxelized, *modelTransformed, transform);
+            if (sign < 0) {
+                first = computeMiddle(modelTransformed, getMinZValue(modelTransformed));
+            }
+            else {
+                second = computeMiddle(modelTransformed, getMinZValue(modelTransformed));
+            }
+            r += angle_to_rotate;
+        }
+    }
+    return transform;
+}
 void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float angle_step,
                                       float shift_min, float shift_max, float shift_step,
                                       std::vector<std::tuple<float, float, float>>& count,
@@ -534,7 +434,8 @@ int main(int argc, char **argv)
     pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud_ptr(new pcl::PointCloud<pcl::PointXYZ>);
     pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud_not_cut(new pcl::PointCloud<pcl::PointXYZ>);
     pcl::PointCloud<pcl::PointXYZ>::Ptr peak_points(new pcl::PointCloud<pcl::PointXYZ>);
-    boost::shared_ptr<std::vector<std::tuple<int, int, cv::Mat, cv::Mat>>> needle_width = recognizeOTC(point_cloud_not_cut, peak_points, oct_dir, false);
+    boost::shared_ptr<std::vector<std::tuple<int, int, cv::Mat, cv::Mat>>> needle_width = recognizeOCT(point_cloud_not_cut, peak_points, oct_dir, false);
+
     /*
     viewer.showCloud(point_cloud_not_cut);
     while (!viewer.wasStopped ())   {

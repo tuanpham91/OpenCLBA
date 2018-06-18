@@ -94,11 +94,13 @@ void processOCTFrame(cv::Mat imageGray, int number, boost::shared_ptr<std::vecto
 //-----------------------------------
 //setup oct point cloud for alignment
 //-----------------------------------
-boost::shared_ptr<std::vector<std::tuple<int, int, cv::Mat, cv::Mat>>> recognizeOCT(pcl::PointCloud<pcl::PointXYZ>::Ptr& point_cloud_ptr, pcl::PointCloud<pcl::PointXYZ>::Ptr& peak_points, std::string oct_dir, bool only_tip) {
+boost::shared_ptr<std::vector<std::tuple<int, int, cv::Mat, cv::Mat>>>
+recognizeOCT(pcl::PointCloud<pcl::PointXYZ>::Ptr& point_cloud_ptr, pcl::PointCloud<pcl::PointXYZ>::Ptr& peak_points, std::string oct_dir, bool only_tip) {
+
 	std::string oct_directory = getDirectoryPath(oct_dir);
 	//count oct images
 	int fileCount = 128;
-    //countNumberOfFilesInDirectory(oct_directory, "%s*.bmp");
+//countNumberOfFilesInDirectory(oct_directory, "%s*.bmp");
 	int minFrameNumber = 0;
 	int maxFrameNumber = fileCount;
 
@@ -152,7 +154,7 @@ boost::shared_ptr<std::vector<std::tuple<int, int, cv::Mat, cv::Mat>>> recognize
 	}
 
     //downsample pointcloud OCT
-        float VOXEL_SIZE_ICP_ = 0.02f;
+	float VOXEL_SIZE_ICP_ = 0.02f;
 	pcl::VoxelGrid<pcl::PointXYZ> voxel_grid_icp;
 	voxel_grid_icp.setInputCloud(point_cloud_ptr);
 	voxel_grid_icp.setLeafSize(VOXEL_SIZE_ICP_, VOXEL_SIZE_ICP_, VOXEL_SIZE_ICP_);
