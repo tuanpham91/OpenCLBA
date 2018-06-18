@@ -56,21 +56,21 @@ void MatToPointXYZ(cv::Mat& OpencVPointCloud, cv::Mat& labelInfo, std::vector<cv
 //----------------------------------------------
 void processOCTFrame(cv::Mat imageGray, int number, boost::shared_ptr<std::vector<std::tuple<int, int, cv::Mat, cv::Mat>>>& needle_width) {
 	//flip and transpose the image
-	cv::Mat transposedOCTimage;
+        cv::Mat transposedOCTimage = cv::Mat(1,1, CV_64F, double(0));
 	cv::flip(imageGray, imageGray, 0);
 
 	//set a threshold (0.26)
-	cv::Mat thresholdedImage;
+        cv::Mat thresholdedImage   = cv::Mat(1,1, CV_64F, double(0));
 	cv::threshold(imageGray, thresholdedImage, 0.26 * 255, 1, 0);
 
 	//use a median blur filter
-	cv::Mat filteredImage;
+        cv::Mat filteredImage  = cv::Mat(1,1, CV_64F, double(0));
 	cv::medianBlur(thresholdedImage, filteredImage, 3);
 
 	//label the image
-	cv::Mat labelledImage;
-	cv::Mat labelStats;
-	cv::Mat labelCentroids;
+        cv::Mat labelledImage  = cv::Mat(1,1, CV_64F, double(0));
+        cv::Mat labelStats = cv::Mat(1,1, CV_64F, double(0));
+        cv::Mat labelCentroids = cv::Mat(1,1, CV_64F, double(0));
 	int numLabels = cv::connectedComponentsWithStats(filteredImage, labelledImage, labelStats, labelCentroids);
 
 	//for every label with more than 400 points process it further for adding points to the cloud
