@@ -63,4 +63,4 @@ else(WITH_VTK AND NOT ANDROID)
   set(HAVE_VTK OFF)
 endif(WITH_VTK AND NOT ANDROID)
 
-target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} ${PCL_LIBRARIES} ${OpenCL_LIBRARY})
+target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} ${PCL_LIBRARIES}${VTK_LIBRARIES} ${OpenCL_LIBRARY})
