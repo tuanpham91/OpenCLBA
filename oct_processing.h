@@ -99,7 +99,7 @@ recognizeOCT(pcl::PointCloud<pcl::PointXYZ>::Ptr& point_cloud_ptr, pcl::PointClo
 
 	//tuple with frame number, bounding box width, filteredImage, labelInfo
 	boost::shared_ptr<std::vector<std::tuple<int, int, cv::Mat, cv::Mat>>> needle_width(new std::vector<std::tuple<int, int, cv::Mat, cv::Mat>>);
-	cv::Mat imageGray;
+        cv::Mat imageGray= cv::Mat(1,1, CV_64F, double(0));
 	{
 		pcl::ScopeTime t("Process OCT images");
 		//	go through all frames
@@ -146,7 +146,7 @@ recognizeOCT(pcl::PointCloud<pcl::PointXYZ>::Ptr& point_cloud_ptr, pcl::PointClo
 		}
 	}
 
-    //downsample pointcloud OCT
+        //downsample pointcloud OCT
 	float VOXEL_SIZE_ICP_ = 0.02f;
 	pcl::VoxelGrid<pcl::PointXYZ> voxel_grid_icp;
 	voxel_grid_icp.setInputCloud(point_cloud_ptr);
