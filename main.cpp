@@ -11,7 +11,6 @@
 #include <pcl/filters/voxel_grid.h>
 #include <ctime>
 #include <tuple>
-#include "misc.h"
 #include "util.h"
 #include "regression.h"
 #include "oct_processing.h"
@@ -41,6 +40,36 @@ cl_uint ret_num_devices;
 cl_uint ret_num_platforms;
 cl_int ret;
 int* worksizes = new int[6]();
+
+void convertVector3fToCl(Eigen::Vector3f vector3f, float *res) {
+  res[0]=vector3f[0];
+  res[1]=vector3f[1];
+  res[2]=vector3f[2];
+}
+
+void convertPointXYZtoCL(pcl::PointXYZ point, float* result) {
+    result[0]= point.x;
+    result[1]= point.y;
+    result[2]= point.z;
+}
+
+void convertMatrix3fToCL(Eigen::Matrix3f matrix3f, float* result) {
+        for (int i = 0; i<3; i++) {//row
+            for (int k = 0; k<3; k++) { // colm
+                                result[i*3+k]=matrix3f(i,k);
+            }
+        }
+
+}
+
+void convertPointCloudToCL(pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud, float* res,int size) {
+    for (int i = 0 ; i <size ; i++) {
+        res[i*3]= pointCloud.get()->at(i).x;
+        res[i*3+1]= pointCloud.get()->at(i).y;
+        res[i*3+2]= pointCloud.get()->at(i).z;
+
+    }
+}
 
 
 void findNextIteration(int *res, int numOfIteration, float *floatArgs) {
@@ -97,8 +126,6 @@ void findNextIteration(int *res, int numOfIteration, float *floatArgs) {
     std::cout << "angle: " << max_angle << " Angle Start "<<angleStartNew<<" angle End " << angleEndNew<< " AngleStep " << floatArgs[2] <<std::endl;
     std::cout << "shift: " << max_shift <<" Shift Start "<<shiftStartNew <<" Shift End " << shiftEndNew<< "  Shift Step " << floatArgs[5] <<std::endl;
 
-
-
 }
 int determinNumWorkItems(int sizeOfProblem) {
     return ((sizeOfProblem+63)/64)*64;
@@ -141,22 +168,7 @@ void prepareOpenCLProgramm(string kernel) {
 
 
     std::cout<<ret<<" 5. code"<<std::endl;
-    /*
-    if (ret == CL_BUILD_PROGRAM_FAILURE) {
-        // Determine the size of the log
-        size_t log_size;
-         clGetProgramBuildInfo(program, device_id, CL_PROGRAM_BUILD_LOG, 0, NULL, &log_size);
-        // Allocate memory for the log
-        char *log = (char *) malloc(log_size);
 
-        // Get the log
-        clGetProgramBuildInfo(program, device_id, CL_PROGRAM_BUILD_LOG, log_size, log, NULL);
-
-        // Print the log
-        printf("%s\n", log);
-        delete [] log;
-    }
-    */
 
     free(source_str);
 }
@@ -171,7 +183,6 @@ float computeTipX(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, std::pair<Eigen::Ve
     return point.x();
 }
 
-//----
 std::pair<Eigen::Vector3f, Eigen::Vector3f> computeNeedleDirection(pcl::PointCloud<pcl::PointXYZ>::Ptr& peak_points) {
     pcl::PointCloud<pcl::PointXYZ>::Ptr peak_inliers(new pcl::PointCloud<pcl::PointXYZ>);
     std::vector<int> inliers = getInliers(peak_points);

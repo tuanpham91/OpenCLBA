@@ -1,5 +1,4 @@
 #pragma once
-
 #include <opencv2/opencv.hpp>
 #include <pcl/sample_consensus/ransac.h>
 #include <pcl/sample_consensus/sac_model_line.h>
@@ -76,10 +75,6 @@ std::vector<int> getInliers(pcl::PointCloud<pcl::PointXYZ>::Ptr& peak_points) {
 	return inliers;
 }
 
-// regress the variable t in the equation
-// y = m * x + t
-// when m is fixed
-// for the given input values
 double regress_t_with_fixed_m(std::vector<std::tuple<int, int>>& pos, double m)
 {
 	double n = pos.size();

@@ -1,17 +1,10 @@
-//fixed number of OCT images
-#define NUM_FRAMES 128
-//scale of OCT cube
-#define SCALE_X 2.7
-#define SCALE_Y 2.4
-#define SCALE_Z 3.0
-
 //-------------------------------------
 //helper method to generate a PointXYZ
 //-------------------------------------
 void generatePoint(pcl::PointXYZ& point, float x, float y, float z, float width, float height) {
-	point.x = (float)x / width * SCALE_X;
-	point.y = (float)y / height * SCALE_Y;
-	point.z = (float)z / NUM_FRAMES * SCALE_Z;
+        point.x = (float)x / width * 2.7;
+        point.y = (float)y / height * 2.4;
+        point.z = (float)z / 128 * 3.0;
 }
 
 //------------------------------------------------------------
