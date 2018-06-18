@@ -14,35 +14,10 @@ std::string getDirectoryPath(std::string path) {
 	std::replace(path.begin(), path.end(), '\\', '/');
 	int lastSlashIndex = path.find_last_of('/', (int)path.size());
 	if (lastSlashIndex < (int)path.size() - 1)
-		path += "/";
+                path += "/";
 	return path;
 }
 
-
-//count the number of files in a directory with a given ending
-//int countNumberOfFilesInDirectory(std::string inputDirectory, const char* fileExtension) {
-//	char search_path[300];
-//	WIN32_FIND_DATA fd;
-//	sprintf_s(search_path, fileExtension, inputDirectory.c_str());
-//	HANDLE hFind = ::FindFirstFile(search_path, &fd);
-
-//	//count the number of OCT frames in the folder
-//	int count = 0;
-//	if (hFind != INVALID_HANDLE_VALUE)
-//	{
-//		do
-//		{
-//			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-//			{
-
-//				count++;
-
-//			}
-//		} while (::FindNextFile(hFind, &fd));
-//		::FindClose(hFind);
-//	}
-//	return count;
-//}
 
 //get the path to all models in a directory
 void getModelsInDirectory(bf::path& dir, std::string & rel_path_so_far, std::vector<std::string> & relative_paths, std::string & ext) {

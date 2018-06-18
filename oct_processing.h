@@ -57,21 +57,21 @@ void MatToPointXYZ(cv::Mat& OpencVPointCloud, cv::Mat& labelInfo, std::vector<cv
 
 void processOCTFrame(cv::Mat imageGray, int number, boost::shared_ptr<std::vector<std::tuple<int, int, cv::Mat, cv::Mat>>>& needle_width) {
 	//flip and transpose the image
-        cv::Mat transposedOCTimage = cv::Mat(1,1, CV_64F, double(0));
+        cv::Mat transposedOCTimage ;
 	cv::flip(imageGray, imageGray, 0);
 
 	//set a threshold (0.26)
-        cv::Mat thresholdedImage   = cv::Mat(1,1, CV_64F, double(0));
+        cv::Mat thresholdedImage  ;
 	cv::threshold(imageGray, thresholdedImage, 0.26 * 255, 1, 0);
 
 	//use a median blur filter
-        cv::Mat filteredImage  = cv::Mat(1,1, CV_64F, double(0));
+        cv::Mat filteredImage;
 	cv::medianBlur(thresholdedImage, filteredImage, 3);
 
 	//label the image
-        cv::Mat labelledImage  = cv::Mat(1,1, CV_64F, double(0));
-        cv::Mat labelStats = cv::Mat(1,1, CV_64F, double(0));
-        cv::Mat labelCentroids = cv::Mat(1,1, CV_64F, double(0));
+        cv::Mat labelledImage;
+        cv::Mat labelStats ;
+        cv::Mat labelCentroids ;
 	int numLabels = cv::connectedComponentsWithStats(filteredImage, labelledImage, labelStats, labelCentroids);
 
 	//for every label with more than 400 points process it further for adding points to the cloud
@@ -103,13 +103,11 @@ recognizeOCT(pcl::PointCloud<pcl::PointXYZ>::Ptr& point_cloud_ptr, pcl::PointClo
 	//tuple with frame number, bounding box width, filteredImage, labelInfo
 	boost::shared_ptr<std::vector<std::tuple<int, int, cv::Mat, cv::Mat>>> needle_width(new std::vector<std::tuple<int, int, cv::Mat, cv::Mat>>);
         cv::Mat imageGray= cv::Mat(1,1, CV_64F, double(0));
-	{
-		pcl::ScopeTime t("Process OCT images");
-		//	go through all frames
-		for (int number = minFrameNumber; number < maxFrameNumber; number++)
+        pcl::ScopeTime t("Process OCT images");
+        for (int number = minFrameNumber; number < maxFrameNumber; number++)
 		{
 			//get the next frame
-			std::stringstream filename;
+                        std::stringstream filename;
 			if (number < 100) {
 				filename << "0";
 			}
@@ -119,10 +117,8 @@ recognizeOCT(pcl::PointCloud<pcl::PointXYZ>::Ptr& point_cloud_ptr, pcl::PointClo
 			filename << number << ".bmp";
 			//read the image in grayscale
 			imageGray = cv::imread(oct_dir + filename.str(), CV_LOAD_IMAGE_GRAYSCALE);
-
 			processOCTFrame(imageGray, number, needle_width);
 
-			cv::waitKey(10);
 		}
 
 		//---------------------------------------------
@@ -147,11 +143,11 @@ recognizeOCT(pcl::PointCloud<pcl::PointXYZ>::Ptr& point_cloud_ptr, pcl::PointClo
 				peak_points->push_back(peak);
 			}
 		}
-	}
+
 
         //downsample pointcloud OCT
 	float VOXEL_SIZE_ICP_ = 0.02f;
-	pcl::VoxelGrid<pcl::PointXYZ> voxel_grid_icp;
+        pcl::VoxelGrid<pcl::PointXYZ> voxel_grid_icp;
 	voxel_grid_icp.setInputCloud(point_cloud_ptr);
 	voxel_grid_icp.setLeafSize(VOXEL_SIZE_ICP_, VOXEL_SIZE_ICP_, VOXEL_SIZE_ICP_);
 	voxel_grid_icp.filter(*point_cloud_ptr);
