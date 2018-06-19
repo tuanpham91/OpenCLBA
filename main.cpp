@@ -139,7 +139,6 @@ void printDeviceInfoWorkSize(cl_device_id device) {
 }
 
 void prepareOpenCLProgramm(string kernel) {
-
     FILE *fp = fopen(kernel.c_str(), "r");
     if (!fp) {
     fprintf(stderr, "Failed to load kernel\n");
@@ -519,9 +518,6 @@ int main(int argc, char **argv)
 
     prepareOpenCLProgramm(kernel_path);
     shift_and_roll_without_sum_in_cl(angleStart,angleEnd, angleStep,shiftStart, shiftEnd, shiftStep, correspondence_count, rotation,initialTranslation, std::get<1>(direction), model_voxelized, point_cloud_ptr);
-
-    //shift_and_roll_without_sum_in_cl(-3.5,0.5, 0.2,0.3,0.5, 0.01, correspondence_count, rotation,initialTranslation, std::get<1>(direction), model_voxelized, point_cloud_ptr);
-    //TEST 1 : Anglemin = angleStart
     cleanProgramm();
     return 0;
 }
