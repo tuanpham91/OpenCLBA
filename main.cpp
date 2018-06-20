@@ -1,4 +1,4 @@
-#define CL_HPP_TARGET_OPENCL_VERSION 120
+#define CL_HPP_TARGET_OPENCL_VERSION 200
 #include <opencv2/opencv.hpp>
 #include <pcl/pcl_macros.h>
 #include <pcl/visualization/pcl_visualizer.h>
@@ -18,7 +18,7 @@
 #include "transformations.h"
 
 
-#include <CL/cl.h>
+#include <CL/cl2.hpp>
 /* Programm to replicate OPENCV part, without shifting algorithmus */
 using namespace std;
 #define NUM_FRAMES 128
@@ -128,7 +128,7 @@ void findNextIteration(int *res, int numOfIteration, float *floatArgs) {
 
 }
 int determinNumWorkItems(int sizeOfProblem) {
-    return ((sizeOfProblem+63)/64)*64;
+    return ((sizeOfProblem+31)/32)*32;
 }
 
 void printDeviceInfoWorkSize(cl_device_id device) {
@@ -139,6 +139,7 @@ void printDeviceInfoWorkSize(cl_device_id device) {
 }
 
 void prepareOpenCLProgramm(string kernel) {
+
     FILE *fp = fopen(kernel.c_str(), "r");
     if (!fp) {
     fprintf(stderr, "Failed to load kernel\n");
@@ -255,8 +256,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
                                       ) {
     //DIAGRAMM Maker : https://live.amcharts.com/new/edit/
     //Initialize all variables
-
-    clock_t end = clock();
+    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
     float args[21] ={angle_min, angle_max, angle_step, shift_min, shift_max, shift_step,initialTranslation[0],initialTranslation[1],initialTranslation[2],direction[0],direction[1],direction[2],rotation(0,0),rotation(0,1),rotation(0,2),rotation(1,0),rotation(1,1),rotation(1,2),rotation(2,0),rotation(2,1),rotation(2,2)};
 
@@ -287,6 +287,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     correspondenceRes = clCreateBuffer(context, CL_MEM_READ_WRITE|CL_MEM_ALLOC_HOST_PTR , sizeof(float)*size_input_transformed_array,NULL,&ret);
 
     for (int i = 0 ; i<4 ; i++) {
+
         //clock_t end = clock();
         int num_angle_steps= std::round((args[1] - args[0]) / args[2]) + 1;
         int num_shift_steps = std::round((args[4] - args[3]) / args[5]) + 1;
@@ -327,6 +328,9 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
         std::cout<<"Read Buffer part 1, code:" << ret <<" Model size "<<model_voxelized.get()->size()<<"Point cloud "<<point_cloud_ptr.get()->size()<<std::endl;
 
         ret =  clEnqueueNDRangeKernel(command_queue, kernel1, 3 , NULL,work_units, NULL, 0, NULL, NULL);
+        clFlush(command_queue);
+        clFinish(command_queue);
+
         //ret = clEnqueueReadBuffer(command_queue,inputTransformedMemObj,CL_TRUE,0,sizeof(float)*size_input_transformed_array, &input_transformed_as_array[0],0,NULL,NULL);
 
         //std::cout<<"Running Program part 1, code:" << ret <<std::endl;
@@ -345,9 +349,11 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
         ret = clSetKernelArg(kernel2,2,sizeof(correspondenceRes), &correspondenceRes);
         ret= clSetKernelArg(kernel2,3,sizeof(inputTransformedMemObj),&inputTransformedMemObj);
 
-        size_t local_work_size[1] = {(size_t) 64};
+        size_t local_work_size[1] = {(size_t) 32};
 
         ret =  clEnqueueNDRangeKernel(command_queue, kernel2, 1, NULL,work_units2, local_work_size, 0, NULL, NULL);
+        clFlush(command_queue);
+        clFinish(command_queue);
         //std::cout<<"Running Program part 2, code:" << ret <<std::endl;
 
         //clock_t end2 = clock();
@@ -364,6 +370,8 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
         size_t work_units3[2] ={(size_t)num_angle_steps,(size_t)num_shift_steps};
 
         ret =  clEnqueueNDRangeKernel(command_queue, kernel3, 2, NULL,work_units3,NULL, 0, NULL, NULL);
+        clFlush(command_queue);
+        clFinish(command_queue);
         ret = clEnqueueReadBuffer(command_queue,correspondenceResultCountMem,CL_TRUE,0,sizeof(int)*correspondenceResultCountSize, &correspondenceResultCount[0],0,NULL,NULL);
 
         /*
@@ -379,15 +387,16 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
         //std::cout<<std::endl<<"Time needed for Step 3  : " <<elapsed_secs<<std::endl;
 
 
-        std::cout<<"Running Program part 3, code:" << ret <<std::endl<<std::endl<<std::endl;
 
         delete [] correspondenceResultCount;
-
     }
 
-    clock_t end3 = clock();
-    double elapsed_secs = double(end3 - end) / CLOCKS_PER_SEC;
-    std::cout<<std::endl<<"Time needed for Step 3  : " <<elapsed_secs<<std::endl;
+    std::chrono::steady_clock::time_point end= std::chrono::steady_clock::now();
+    std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() <<std::endl;
+    //clock_t end3 = clock();
+    //double elapsed_secs = double(end3 - end) / CLOCKS_PER_SEC;
+
+    //std::cout<<std::endl<<"Time needed for Step 3  : " <<elapsed_secs<<std::endl;
     delete [] model_voxelized_as_array;
     delete [] point_cloud_ptr_as_array;
 
@@ -518,6 +527,9 @@ int main(int argc, char **argv)
 
     prepareOpenCLProgramm(kernel_path);
     shift_and_roll_without_sum_in_cl(angleStart,angleEnd, angleStep,shiftStart, shiftEnd, shiftStep, correspondence_count, rotation,initialTranslation, std::get<1>(direction), model_voxelized, point_cloud_ptr);
+
+    //shift_and_roll_without_sum_in_cl(-3.5,0.5, 0.2,0.3,0.5, 0.01, correspondence_count, rotation,initialTranslation, std::get<1>(direction), model_voxelized, point_cloud_ptr);
+    //TEST 1 : Anglemin = angleStart
     cleanProgramm();
     return 0;
 }
