@@ -256,7 +256,6 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
                                       ) {
     //DIAGRAMM Maker : https://live.amcharts.com/new/edit/
     //Initialize all variables
-    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
     float args[21] ={angle_min, angle_max, angle_step, shift_min, shift_max, shift_step,initialTranslation[0],initialTranslation[1],initialTranslation[2],direction[0],direction[1],direction[2],rotation(0,0),rotation(0,1),rotation(0,2),rotation(1,0),rotation(1,1),rotation(1,2),rotation(2,0),rotation(2,1),rotation(2,2)};
 
@@ -391,8 +390,6 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
         delete [] correspondenceResultCount;
     }
 
-    std::chrono::steady_clock::time_point end= std::chrono::steady_clock::now();
-    std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() <<std::endl;
     //clock_t end3 = clock();
     //double elapsed_secs = double(end3 - end) / CLOCKS_PER_SEC;
 
@@ -526,8 +523,11 @@ int main(int argc, char **argv)
     //http://downloads.ti.com/mctools/esd/docs/opencl/execution/kernels-workgroups-workitems.html
 
     prepareOpenCLProgramm(kernel_path);
+    clock_t end = clock();
     shift_and_roll_without_sum_in_cl(angleStart,angleEnd, angleStep,shiftStart, shiftEnd, shiftStep, correspondence_count, rotation,initialTranslation, std::get<1>(direction), model_voxelized, point_cloud_ptr);
-
+    clock_t end3 = clock();
+    double elapsed_secs = double(end3 - end) / CLOCKS_PER_SEC;
+    std::cout<<std::endl<<"Time needed for Step 3  : " <<elapsed_secs<<std::endl;
     //shift_and_roll_without_sum_in_cl(-3.5,0.5, 0.2,0.3,0.5, 0.01, correspondence_count, rotation,initialTranslation, std::get<1>(direction), model_voxelized, point_cloud_ptr);
     //TEST 1 : Anglemin = angleStart
     cleanProgramm();
