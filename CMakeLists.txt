@@ -5,7 +5,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set (CMAKE_CXX_STANDARD 14)
 
-find_package(VTK 8.1.0 REQUIRED)
+find_package(VTK REQUIRED)
 find_package(OpenCV REQUIRED )
 find_package(PCL 1.8 REQUIRED )
 find_package(OpenCL REQUIRED)

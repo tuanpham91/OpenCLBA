@@ -286,7 +286,6 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
     correspondenceRes = clCreateBuffer(context, CL_MEM_READ_WRITE|CL_MEM_ALLOC_HOST_PTR , sizeof(float)*size_input_transformed_array,NULL,&ret);
 
     for (int i = 0 ; i<4 ; i++) {
-
         //clock_t end = clock();
         int num_angle_steps= std::round((args[1] - args[0]) / args[2]) + 1;
         int num_shift_steps = std::round((args[4] - args[3]) / args[5]) + 1;
@@ -306,6 +305,9 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
 
         size_t work_units[3] ={(size_t)num_angle_steps,(size_t)num_shift_steps, model_voxelized.get()->size()};
         size_t work_units2[1]= {(size_t)determinNumWorkItems(worksizes[2]*num_angle_steps*num_shift_steps)};
+        {
+
+
 
         /*
          *PART 1 : Transforming models
@@ -319,16 +321,21 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
         }
 
 
-        ret = clSetKernelArg(kernel1,0, sizeof(argsMemObj),&argsMemObj);
-        ret = clSetKernelArg(kernel1,1,sizeof(modelVoxelizedMembObj), &modelVoxelizedMembObj);
-        ret = clSetKernelArg(kernel1,2,sizeof(workSizeMemObj),&workSizeMemObj);
-        ret= clSetKernelArg(kernel1,3,sizeof(inputTransformedMemObj),&inputTransformedMemObj);
+               pcl::ScopeTime t("1. Step");
 
-        std::cout<<"Read Buffer part 1, code:" << ret <<" Model size "<<model_voxelized.get()->size()<<"Point cloud "<<point_cloud_ptr.get()->size()<<std::endl;
+               ret = clSetKernelArg(kernel1,0, sizeof(argsMemObj),&argsMemObj);
+               ret = clSetKernelArg(kernel1,1,sizeof(modelVoxelizedMembObj), &modelVoxelizedMembObj);
+               ret = clSetKernelArg(kernel1,2,sizeof(workSizeMemObj),&workSizeMemObj);
+               ret= clSetKernelArg(kernel1,3,sizeof(inputTransformedMemObj),&inputTransformedMemObj);
+               ret =  clEnqueueNDRangeKernel(command_queue, kernel1, 3 , NULL,work_units, NULL, 0, NULL, NULL);
+               clFlush(command_queue);
+               clFinish(command_queue);
 
-        ret =  clEnqueueNDRangeKernel(command_queue, kernel1, 3 , NULL,work_units, NULL, 0, NULL, NULL);
-        clFlush(command_queue);
-        clFinish(command_queue);
+               std::cout<<"Read Buffer part 1, code:" << ret <<" Model size "<<model_voxelized.get()->size()<<"Point cloud "<<point_cloud_ptr.get()->size()<<std::endl;
+        }
+
+
+
 
         //ret = clEnqueueReadBuffer(command_queue,inputTransformedMemObj,CL_TRUE,0,sizeof(float)*size_input_transformed_array, &input_transformed_as_array[0],0,NULL,NULL);
 
@@ -341,6 +348,8 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
         /*
          *PART 2 : FIND CORRESPONDECES
          */
+        {
+        pcl::ScopeTime t("2. Step");
 
 
         ret = clSetKernelArg(kernel2,0,sizeof(workSizeMemObj),&workSizeMemObj);
@@ -354,7 +363,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
         clFlush(command_queue);
         clFinish(command_queue);
         //std::cout<<"Running Program part 2, code:" << ret <<std::endl;
-
+        }
         //clock_t end2 = clock();
         //elapsed_secs = double(end2 - end1) / CLOCKS_PER_SEC;
         //std::cout<<std::endl<<"Time needed for Step 2  : " <<elapsed_secs<<std::endl;
@@ -362,6 +371,8 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
         /*
          *PART 3 : Sum Up Result
          */
+        {
+        pcl::ScopeTime t("3. Step");
         ret = clSetKernelArg(kernel3,0,sizeof(correspondenceRes),&correspondenceRes);
         ret = clSetKernelArg(kernel3,1, sizeof(workSizeMemObj),&workSizeMemObj);
         ret = clSetKernelArg(kernel3,2,sizeof(correspondenceResultCountMem),&correspondenceResultCountMem);
@@ -385,7 +396,7 @@ void shift_and_roll_without_sum_in_cl(float angle_min, float angle_max, float an
         findNextIteration(correspondenceResultCount,prod,args);
         //std::cout<<std::endl<<"Time needed for Step 3  : " <<elapsed_secs<<std::endl;
 
-
+        }
 
         delete [] correspondenceResultCount;
     }
@@ -528,8 +539,6 @@ int main(int argc, char **argv)
            pcl::ScopeTime t("Run 4 iteration");
            shift_and_roll_without_sum_in_cl(angleStart,angleEnd, angleStep,shiftStart, shiftEnd, shiftStep, correspondence_count, rotation,initialTranslation, std::get<1>(direction), model_voxelized, point_cloud_ptr);
     }
-
-
 
     //clock_t end3 = clock();
     //shift_and_roll_without_sum_in_cl(-3.5,0.5, 0.2,0.3,0.5, 0.01, correspondence_count, rotation,initialTranslation, std::get<1>(direction), model_voxelized, point_cloud_ptr);
