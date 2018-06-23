@@ -61,7 +61,7 @@ void generatePointCloudFromModel(pcl::PointCloud<pcl::PointXYZ>::Ptr& modelCloud
 	//sample points on surface of model
 	uniform_sampling(path_model, 100000, *modelCloud, 1.f);
     //downsample points CAD
-	float VOXEL_SIZE_ICP_ = 0.02f;
+        float VOXEL_SIZE_ICP_ = 0.05f;
 	pcl::VoxelGrid<pcl::PointXYZ> voxel_grid_icp;
 	voxel_grid_icp.setInputCloud(modelCloud);
 	voxel_grid_icp.setLeafSize(VOXEL_SIZE_ICP_, VOXEL_SIZE_ICP_, VOXEL_SIZE_ICP_);

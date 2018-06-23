@@ -146,7 +146,7 @@ recognizeOCT(pcl::PointCloud<pcl::PointXYZ>::Ptr& point_cloud_ptr, pcl::PointClo
 
 
         //downsample pointcloud OCT
-	float VOXEL_SIZE_ICP_ = 0.02f;
+        float VOXEL_SIZE_ICP_ = 0.05f;
         pcl::VoxelGrid<pcl::PointXYZ> voxel_grid_icp;
 	voxel_grid_icp.setInputCloud(point_cloud_ptr);
 	voxel_grid_icp.setLeafSize(VOXEL_SIZE_ICP_, VOXEL_SIZE_ICP_, VOXEL_SIZE_ICP_);

@@ -524,14 +524,14 @@ int main(int argc, char **argv)
 
     prepareOpenCLProgramm(kernel_path);
     //clock_t end = clock();
-    auto wcts = std::chrono::system_clock::now();
-    shift_and_roll_without_sum_in_cl(angleStart,angleEnd, angleStep,shiftStart, shiftEnd, shiftStep, correspondence_count, rotation,initialTranslation, std::get<1>(direction), model_voxelized, point_cloud_ptr);
+    {
+           pcl::ScopeTime t("Run 4 iteration");
+           shift_and_roll_without_sum_in_cl(angleStart,angleEnd, angleStep,shiftStart, shiftEnd, shiftStep, correspondence_count, rotation,initialTranslation, std::get<1>(direction), model_voxelized, point_cloud_ptr);
+    }
+
 
 
     //clock_t end3 = clock();
-
-    std::chrono::duration<double> wctduration = (std::chrono::system_clock::now() - wcts);
-    std::cout << "Finished in " << wctduration.count() << " seconds [Wall Clock]" << std::endl;
     //shift_and_roll_without_sum_in_cl(-3.5,0.5, 0.2,0.3,0.5, 0.01, correspondence_count, rotation,initialTranslation, std::get<1>(direction), model_voxelized, point_cloud_ptr);
     //TEST 1 : Anglemin = angleStart
     cleanProgramm();
