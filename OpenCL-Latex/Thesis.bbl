@@ -1,0 +1,41 @@
+\begin{thebibliography}{1}
+
+\bibitem{wikipedia}
+Graphics processing unit.
+\newblock \url{https://en.wikipedia.org/wiki/Graphics_processing_unit}.
+
+\bibitem{aldoma}
+A.~Aldoma, M.~Vincze, N.~Blodow, D.~Gossow, S.~Gedikli, R.~B. Rusu, and
+  G.~Bradski.
+\newblock Cad-model recognition and 6dof pose estimation using 3d cues.
+\newblock In {\em 2011 IEEE International Conference on Computer Vision
+  Workshops (ICCV Workshops)}, pages 585--592, Nov 2011.
+
+\bibitem{amdopencl}
+AMD.
+\newblock Amd accelerated parallel processing opencl programming guide.
+
+\bibitem{openclplatform}
+Khronos Group.
+\newblock Opencl memory model.
+\newblock
+  \url{https://www.khronos.org/assets/uploads/developers/library/2012-pan-pacific-road-show-June/OpenCL-Details-Taiwan_June-2012.pdf}.
+
+\bibitem{nvidiaopencl}
+NVIDIA.
+\newblock Opencl programming guide for the cuda architecture.
+\newblock
+  \url{http://www.nvidia.com/content/cudazone/download/OpenCL/NVIDIA_OpenCL_ProgrammingGuide.pdf}.
+
+\bibitem{ramona}
+Ramona Schneider.
+\newblock Modified iterative closest point algorithm design for needle pose and
+  position estimation using optical coherence tomography images.
+\newblock TU Munich, 2017.
+
+\bibitem{opencl}
+Jonathan Tompson and Kristofer Schlachter.
+\newblock Introduction to the opencl programming model.
+\newblock 2012.
+
+\end{thebibliography}

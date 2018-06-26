@@ -1,0 +1,59 @@
+This is BibTeX, Version 0.99d (TeX Live 2015/Debian)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: Thesis.aux
+The style file: plain.bst
+Database file #1: references.bib.bib
+Warning--to sort, need author or key in wikipedia
+Warning--empty author in wikipedia
+Warning--empty booktitle in wikipedia
+Warning--empty year in wikipedia
+Warning--empty booktitle in amdopencl
+Warning--empty year in amdopencl
+Warning--empty booktitle in openclplatform
+Warning--empty year in openclplatform
+Warning--empty booktitle in nvidiaopencl
+Warning--empty year in nvidiaopencl
+Warning--empty booktitle in ramona
+Warning--empty booktitle in opencl
+You've used 7 entries,
+            2118 wiz_defined-function locations,
+            528 strings with 5148 characters,
+and the built_in function-call counts, 1999 in all, are:
+= -- 167
+> -- 80
+< -- 1
++ -- 33
+- -- 26
+* -- 116
+:= -- 315
+add.period$ -- 19
+call.type$ -- 7
+change.case$ -- 34
+chr.to.int$ -- 0
+cite$ -- 19
+duplicate$ -- 101
+empty$ -- 199
+format.name$ -- 26
+if$ -- 428
+int.to.chr$ -- 0
+int.to.str$ -- 7
+missing$ -- 7
+newline$ -- 36
+num.names$ -- 12
+pop$ -- 73
+preamble$ -- 1
+purify$ -- 27
+quote$ -- 0
+skip$ -- 58
+stack$ -- 0
+substring$ -- 63
+swap$ -- 17
+text.length$ -- 1
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 28
+warning$ -- 12
+while$ -- 14
+width$ -- 8
+write$ -- 64
+(There were 12 warnings)

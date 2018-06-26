@@ -8,10 +8,10 @@ Drug injections in eye surgeries could be a very challenging task for human surg
 
 The main goal of Ramona’s work is to develop a reliable method to compute the position and rotation of a beveled needle. The needle can be digitally reconstructed as a point cloud by utilizing the obtained OCT images. By matching the point cloud with the CAD model, an accurate determination of rotation and position can be achieved.
 
-Two different approaches were implemented and taken into consideration. Which are (Source1):
+Two different approaches were implemented and taken into consideration. Which are \cite{ramona}:
 
 \begin{itemize}
-	\item A developed approach for object recognition and pose estimation for rigid objects using Clustered Viewpoint Feature Histograms (CVFH) and camera roll histograms described in a paper by Aldoma et al. [5].
+	\item A developed approach for object recognition and pose estimation for rigid objects using Clustered Viewpoint Feature Histograms (CVFH) and camera roll histograms described in a paper by Aldoma et al \cite{aldoma}.
 
 	\item A new approach similar to the Iterative Closest Point (ICP) algorithm which calculates and utilizes the direction of the needle, and then finds the rotation-shift combination along the direction with the best matched points.
 \end{itemize} 

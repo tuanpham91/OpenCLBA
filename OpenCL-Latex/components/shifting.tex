@@ -76,10 +76,10 @@ rotating[4] = cos(angle\_temp);
 
 Whereas rotating is an array of float with size 9 (represents 3*3 matrix) and angle\_temp is the angle of current combination, which is:
 \begin{lstlisting}
-angle\_temp=    (angle\_min+angle*angle\_step)*(0.01745328888);
+angle\_temp = (angle\_min+angle*angle\_step)*(0.01745328888);
 \end{lstlisting}
 Then the first elements of transformation matrix can be calculated as follow :
-\begin{lstlisting}
+\begin{lstlisting}[language=C]
 transform[0]= floatArgs[12]*rotating[0]+floatArgs[13]*rotating[3];
 transform[1]= floatArgs[12]*rotating[1]+floatArgs[13]*rotating[4];
 transform[2]= floatArgs[14];
@@ -90,16 +90,16 @@ transform[6]= floatArgs[17];
 
 transform[8]= floatArgs[18]*rotating[0]+floatArgs[19]*rotating[3];
 transform[9]= floatArgs[18]*rotating[1]+floatArgs[19]*rotating[4];
-transform[10]=floatArgs[20];
+transform[10]= floatArgs[20];
 \end{lstlisting}
 
 It is worth noting that the default values of a float array is 0.0f, it is the reason why all others indexes do not have value assignment. Furthermore, with the knowledge of constant array values, some arithmetic operations can be neglected without changing the end result, for example multiplication with 0.0f. Reducing these redundant assignment and operation has a significant impact on the performance, since the clock speed of each unit is not very high in comparison to CPU cores. 
 
 Applying the translation vector with consideration of the shift step:
-\begin{lstlisting}
+\begin{lstlisting}[language=C]
 transform[3] = floatArgs[6]+ floatArgs[9]*shift_temp/floatArgs[11];
-transform[7] =floatArgs[7]+ floatArgs[10]*shift_temp/floatArgs[11];
-transform[11] =floatArgs[8]+ floatArgs[11]*shift_temp/floatArgs[11];
+transform[7] = floatArgs[7]+ floatArgs[10]*shift_temp/floatArgs[11];
+transform[11] = floatArgs[8]+ floatArgs[11]*shift_temp/floatArgs[11];
 \end{lstlisting}
 Because the last row of this matrix will always be (0,0,0,1), the assignment step is therefore neglected and these default values will be automatically applied to further calculation. After these two steps a concrete transformation matrix is created completely.
 
@@ -135,16 +135,16 @@ The initial approach was to parallelize the transformation of each combination, 
 
 Note that the number of work items which are still available is very high and unused. This fact opens up an opportunity to create a “pipeline” to feed data sets  to the GPU and processes multiple different frames at the same time. Within the scope of this thesis, this aspect will not be discussed further. 
 The result of this step is a buffer object containing all the transformed points of all combinations. For each point in this large array, the combination  of rotation, shift and index the point can be calculated with this function, first with the index and corresponding combination of the point  :
-\begin{lstlisting}
+\begin{lstlisting}[language=C]
  	index = global_index%size_of_point_cloud;
  	combination_index = global_index/size_of_point_cloud;
 \end{lstlisting}
 
 
 From the number of the iteration, the shift step and angle step are determined as following:
-\begin{lstlisting}
+\begin{lstlisting}[language=C]
 	shift_step = index/max_rotation_step;
-    rotation_step = idex\%max_rotation_step;    
+    	rotation_step = idex\%max_rotation_step;    
 \end{lstlisting}    
 
     
@@ -155,12 +155,11 @@ Given the array of transformed point clouds, the next step would be finding the 
 \subsection{Correspondence matching}
 The algorithm behind the correspondence match is simple: For each point of the original point cloud (also called “source”), an iteration through the model point cloud (called “target”) is executed to find a point in the target that has a distance to the source point smaller than a certain threshold, in this thesis the threshold was set at 0.2f. The program stops iterating once a correspondence is found and written into the result array. The distance between two points can be calculated as following:
 \begin{lstlisting}
-	if (sqrt(a+b+c)<0.02f) {       
-        correspondence_result[3*i]= (float)i;
-      	correspondence_result[3*i+1] =(float)k;
-	    correspondence_result[3*i+2] = sqrt(a+b+c);
-		..
-    }
+if (sqrt(a+b+c)<0.02f) {       
+    correspondence_result[3*i]= (float)i;
+    correspondence_result[3*i+1] =(float)k;
+    correspondence_result[3*i+2] = sqrt(a+b+c);
+}
    
 \end{lstlisting}  
 
@@ -179,7 +178,7 @@ A closer look to the algorithm helped solving this problem: For each point in th
 
 It is inevitable that the array allocated is much bigger than the size needed for all correspondences found in all combinations. This issue can not be resolved efficiently in a OpenCL context. A certain size can be set, in proportion to the size of  the source point cloud as a rule of thumb, but it is not waterproof and therefore not recommended. The redundant memory reservation call can be reduced using a size checker as the first step.
 
-Another mechanism is also used in this kernel function to improve the performance: An optimization on local work size and global work size. The system used in this thesis has an AMD graphic card, therefore the prefered local work size should be a nature multiple of 64. As mentioned before, there is a requirement to fulfill a this step: The global work size needs to be a multiple of local work size. This condition is in real life not easy to fulfill, since the number of work units needed can not always be a multiple of 64 ( or 32 for NVIDIA graphic cards). For example, in this iteration of ICP, the number of work units needed is 148225 , which is certainly not a multiple of 64 and can not be defined as global work size since the local work size is set.
+Another mechanism is also used in this kernel function to improve the performance: An optimization on local work size and global work size. The system used in this thesis has an AMD graphic card, therefore the prefered local work size should be a nature multiple of 64\cite{amdopencl}. As mentioned before, there is a requirement to fulfill a this step: The global work size needs to be a multiple of local work size. This condition is in real life not easy to fulfill, since the number of work units needed can not always be a multiple of 64 (or 32 for NVIDIA graphic cards\cite{nvidiaopencl}). For example, in this iteration of ICP, the number of work units needed is 148225 , which is certainly not a multiple of 64 and can not be defined as global work size since the local work size is set.
 
  A simple tweak could solve this problem without creating too much redundant code. A multiple of 64, which is the next number that greater than the number of work units, will be set as global work size. There is no need to reserve more memory for each array just because of the new global work size, the problem with array index overflow can be overcome with a simple check :
 
@@ -187,7 +186,7 @@ Another mechanism is also used in this kernel function to improve the performanc
 	__private int i = get_global_id(0);
 	__private int max_number_of_points = intArgs[3];
 	if (i >= max_number_of_points) {
-        return;
+    return;
 	}
 \end{lstlisting}
 

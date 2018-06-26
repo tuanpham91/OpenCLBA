@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2018.6.24)  25 JUN 2018 21:44
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2018.6.24)  26 JUN 2018 18:15
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -6110,11 +6110,23 @@ Type  H <return>  for immediate help.
  ...                                              
                                                   
 l.82 \begin{lstlisting}
-                       
+                       [language=C]
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
 or  <return>  to continue without it.
 
+Missing character: There is no [ in font nullfont!
+Missing character: There is no l in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no n in font nullfont!
+Missing character: There is no g in font nullfont!
+Missing character: There is no u in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no g in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no = in font nullfont!
+Missing character: There is no C in font nullfont!
+Missing character: There is no ] in font nullfont!
 Missing character: There is no t in font nullfont!
 Missing character: There is no r in font nullfont!
 Missing character: There is no a in font nullfont!
@@ -7095,11 +7107,23 @@ Type  H <return>  for immediate help.
  ...                                              
                                                   
 l.99 \begin{lstlisting}
-                       
+                       [language=C]
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
 or  <return>  to continue without it.
 
+Missing character: There is no [ in font nullfont!
+Missing character: There is no l in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no n in font nullfont!
+Missing character: There is no g in font nullfont!
+Missing character: There is no u in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no g in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no = in font nullfont!
+Missing character: There is no C in font nullfont!
+Missing character: There is no ] in font nullfont!
 Missing character: There is no t in font nullfont!
 Missing character: There is no r in font nullfont!
 Missing character: There is no a in font nullfont!
@@ -11705,11 +11729,23 @@ Type  H <return>  for immediate help.
  ...                                              
                                                   
 l.138 \begin{lstlisting}
-                        
+                        [language=C]
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
 or  <return>  to continue without it.
 
+Missing character: There is no [ in font nullfont!
+Missing character: There is no l in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no n in font nullfont!
+Missing character: There is no g in font nullfont!
+Missing character: There is no u in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no g in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no = in font nullfont!
+Missing character: There is no C in font nullfont!
+Missing character: There is no ] in font nullfont!
 Missing character: There is no i in font nullfont!
 Missing character: There is no n in font nullfont!
 Missing character: There is no d in font nullfont!
@@ -11854,11 +11890,23 @@ Type  H <return>  for immediate help.
  ...                                              
                                                   
 l.145 \begin{lstlisting}
-                        
+                        [language=C]
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
 or  <return>  to continue without it.
 
+Missing character: There is no [ in font nullfont!
+Missing character: There is no l in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no n in font nullfont!
+Missing character: There is no g in font nullfont!
+Missing character: There is no u in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no g in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no = in font nullfont!
+Missing character: There is no C in font nullfont!
+Missing character: There is no ] in font nullfont!
 Missing character: There is no s in font nullfont!
 Missing character: There is no h in font nullfont!
 Missing character: There is no i in font nullfont!
@@ -13189,14 +13237,14 @@ Missing character: There is no e in font nullfont!
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.159         correspondence_
-                             result[3*i]= (float)i;
+l.159     correspondence_
+                         result[3*i]= (float)i;
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 ! Extra }, or forgotten $.
-l.163     }
-           
+l.162 }
+       
 I've deleted a group-closing symbol because it seems to be
 spurious, as in `$x}$'. But perhaps the } is legitimate and
 you forgot something else, as in `\hbox{$x}'. In such cases
@@ -13206,73 +13254,73 @@ deleted material, e.g., by typing `I$}'.
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.164 
+l.163 
       
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 153--164
+Overfull \hbox (20.0pt too wide) in paragraph at lines 153--163
 []
  []
 
 
-Overfull \hbox (39.0661pt too wide) in paragraph at lines 153--164
+Overfull \hbox (39.0661pt too wide) in paragraph at lines 153--163
 []\OML/cmm/m/it/10 esult\OT1/cmr/m/n/10 [3 \OMS/cmsy/m/n/10 ^^C
  []
 
 
-Overfull \hbox (16.77843pt too wide) in paragraph at lines 153--164
+Overfull \hbox (16.77843pt too wide) in paragraph at lines 153--163
 \OML/cmm/m/it/10 i\OT1/cmr/m/n/10 ] =
  []
 
 
-Overfull \hbox (146.45593pt too wide) in paragraph at lines 153--164
+Overfull \hbox (146.45593pt too wide) in paragraph at lines 153--163
 \OT1/cmr/m/n/10 (\OML/cmm/m/it/10 float\OT1/cmr/m/n/10 )\OML/cmm/m/it/10 i\OT1/
 cmr/m/n/10 ; \OML/cmm/m/it/10 correspondence[]esult\OT1/cmr/m/n/10 [3 \OMS/cmsy
 /m/n/10 ^^C
  []
 
 
-Overfull \hbox (11.22293pt too wide) in paragraph at lines 153--164
+Overfull \hbox (11.22293pt too wide) in paragraph at lines 153--163
 \OML/cmm/m/it/10 i \OT1/cmr/m/n/10 +
  []
 
 
-Overfull \hbox (18.33331pt too wide) in paragraph at lines 153--164
+Overfull \hbox (18.33331pt too wide) in paragraph at lines 153--163
 \OT1/cmr/m/n/10 1] =
  []
 
 
-Overfull \hbox (148.53165pt too wide) in paragraph at lines 153--164
+Overfull \hbox (148.53165pt too wide) in paragraph at lines 153--163
 \OT1/cmr/m/n/10 (\OML/cmm/m/it/10 float\OT1/cmr/m/n/10 )\OML/cmm/m/it/10 k\OT1/
 cmr/m/n/10 ; \OML/cmm/m/it/10 correspondence[]esult\OT1/cmr/m/n/10 [3 \OMS/cmsy
 /m/n/10 ^^C
  []
 
 
-Overfull \hbox (11.22293pt too wide) in paragraph at lines 153--164
+Overfull \hbox (11.22293pt too wide) in paragraph at lines 153--163
 \OML/cmm/m/it/10 i \OT1/cmr/m/n/10 +
  []
 
 
-Overfull \hbox (18.33331pt too wide) in paragraph at lines 153--164
+Overfull \hbox (18.33331pt too wide) in paragraph at lines 153--163
 \OT1/cmr/m/n/10 2] =
  []
 
 
-Overfull \hbox (34.86348pt too wide) in paragraph at lines 153--164
+Overfull \hbox (34.86348pt too wide) in paragraph at lines 153--163
 \OML/cmm/m/it/10 sqrt\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 a \OT1/cmr/m/n/10 +
  []
 
 
-Overfull \hbox (12.06946pt too wide) in paragraph at lines 153--164
+Overfull \hbox (12.06946pt too wide) in paragraph at lines 153--163
 \OML/cmm/m/it/10 b \OT1/cmr/m/n/10 +
  []
 
 
-Overfull \hbox (18.21645pt too wide) in paragraph at lines 153--164
-\OML/cmm/m/it/10 c\OT1/cmr/m/n/10 ); \OML/cmm/m/it/10 ::$ 
+Overfull \hbox (10.99425pt too wide) in paragraph at lines 153--163
+\OML/cmm/m/it/10 c\OT1/cmr/m/n/10 );$ 
  []
 
 
@@ -13282,7 +13330,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.165 \end{lstlisting}
+l.164 \end{lstlisting}
                       
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
@@ -13291,7 +13339,7 @@ or  <return>  to continue without it.
 ! Missing } inserted.
 <inserted text> 
                 }
-l.165 \end{lstlisting}
+l.164 \end{lstlisting}
                       
 I've inserted something that you may have forgotten.
 (See the <inserted text> above.)
@@ -13639,7 +13687,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.168 \begin{lstlisting}
+l.167 \begin{lstlisting}
                         
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
@@ -13654,7 +13702,7 @@ Missing character: There is no x in font nullfont!
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.169        (index_
+l.168        (index_
                     source, index_matched, distance)
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
@@ -13666,7 +13714,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.170 \end{lstlisting}
+l.169 \end{lstlisting}
                       
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
@@ -13675,7 +13723,7 @@ or  <return>  to continue without it.
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.170 \end{lstlisting}
+l.169 \end{lstlisting}
                       
 I've inserted something that you may have forgotten.
 (See the <inserted text> above.)
@@ -13684,12 +13732,12 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 167--171
+Overfull \hbox (20.0pt too wide) in paragraph at lines 166--170
 []
  []
 
 
-Overfull \hbox (140.08499pt too wide) in paragraph at lines 167--171
+Overfull \hbox (140.08499pt too wide) in paragraph at lines 166--170
 []\OML/cmm/m/it/10 ource; index[]atched; distance\OT1/cmr/m/n/10 )$ 
  []
 
@@ -14294,7 +14342,7 @@ Missing character: There is no u in font nullfont!
 Missing character: There is no d in font nullfont!
 Missing character: There is no . in font nullfont!
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 172--173
+Overfull \hbox (20.0pt too wide) in paragraph at lines 171--172
 []
  []
 
@@ -14629,7 +14677,7 @@ Missing character: There is no o in font nullfont!
 Missing character: There is no f in font nullfont!
 Missing character: There is no : in font nullfont!
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 174--175
+Overfull \hbox (20.0pt too wide) in paragraph at lines 173--174
 []
  []
 
@@ -14640,7 +14688,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.176 \begin{lstlisting}
+l.175 \begin{lstlisting}
                         
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
@@ -14696,14 +14744,14 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.178 \end{lstlisting}
+l.177 \end{lstlisting}
                       
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
 or  <return>  to continue without it.
 
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 177--179
+Overfull \hbox (20.0pt too wide) in paragraph at lines 176--178
 []
  []
 
@@ -15071,7 +15119,7 @@ Missing character: There is no e in font nullfont!
 Missing character: There is no p in font nullfont!
 Missing character: There is no . in font nullfont!
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 180--181
+Overfull \hbox (20.0pt too wide) in paragraph at lines 179--180
 []
  []
 
@@ -15297,6 +15345,23 @@ Missing character: There is no o in font nullfont!
 Missing character: There is no f in font nullfont!
 Missing character: There is no 6 in font nullfont!
 Missing character: There is no 4 in font nullfont!
+Missing character: There is no [ in font nullfont!
+\citation{amdopencl}
+! Undefined control sequence.
+<write> ...: Citation `\@citeb ' on page \thepage 
+                                                  \space undefined\on@line .
+l.181 ...e a nature multiple of 64\cite{amdopencl}
+                                                  . As mentioned before, the...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+LaTeX Warning: Citation `amdopencl' on page  undefined on input line 181.
+
+Missing character: There is no ] in font nullfont!
 Missing character: There is no . in font nullfont!
 Missing character: There is no A in font nullfont!
 Missing character: There is no s in font nullfont!
@@ -15694,7 +15759,12 @@ Missing character: There is no e in font nullfont!
 Missing character: There is no t in font nullfont!
 Missing character: There is no . in font nullfont!
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 182--183
+Overfull \hbox (20.0pt too wide) in paragraph at lines 181--182
+[]
+ []
+
+
+Overfull \hbox (5.43053pt too wide) in paragraph at lines 181--182
 []
  []
 
@@ -16004,7 +16074,7 @@ Missing character: There is no c in font nullfont!
 Missing character: There is no k in font nullfont!
 Missing character: There is no : in font nullfont!
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 184--185
+Overfull \hbox (20.0pt too wide) in paragraph at lines 183--184
 []
  []
 
@@ -16015,7 +16085,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.186 \begin{lstlisting}
+l.185 \begin{lstlisting}
                         
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
@@ -16024,7 +16094,7 @@ or  <return>  to continue without it.
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.187 	_
+l.186 	_
         _private int i = get_global_id(0);
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
@@ -16032,7 +16102,7 @@ you left one out. Proceed, with fingers crossed.
 ! Missing { inserted.
 <to be read again> 
                    _
-l.187 	__
+l.186 	__
          private int i = get_global_id(0);
 A left brace was mandatory here, so I've put one in.
 You might want to delete and/or insert some corrections
@@ -16042,7 +16112,7 @@ so that I will find a matching right brace soon.
 ! Missing { inserted.
 <to be read again> 
                    _
-l.188 	__
+l.187 	__
          private int max_number_of_points = intArgs[3];
 A left brace was mandatory here, so I've put one in.
 You might want to delete and/or insert some corrections
@@ -16056,7 +16126,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.192 \end{lstlisting}
+l.191 \end{lstlisting}
                       
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
@@ -16065,7 +16135,7 @@ or  <return>  to continue without it.
 ! Missing } inserted.
 <inserted text> 
                 }
-l.192 \end{lstlisting}
+l.191 \end{lstlisting}
                       
 I've inserted something that you may have forgotten.
 (See the <inserted text> above.)
@@ -16076,7 +16146,7 @@ my insertion and my current dilemma will both disappear.
 ! Missing } inserted.
 <inserted text> 
                 }
-l.192 \end{lstlisting}
+l.191 \end{lstlisting}
                       
 I've inserted something that you may have forgotten.
 (See the <inserted text> above.)
@@ -16087,7 +16157,7 @@ my insertion and my current dilemma will both disappear.
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.192 \end{lstlisting}
+l.191 \end{lstlisting}
                       
 I've inserted something that you may have forgotten.
 (See the <inserted text> above.)
@@ -16096,7 +16166,7 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-Overfull \hbox (377.6845pt too wide) in paragraph at lines 187--193
+Overfull \hbox (377.6845pt too wide) in paragraph at lines 186--192
 []$[]$ 
  []
 
@@ -16326,7 +16396,7 @@ Missing character: There is no a in font nullfont!
 Missing character: There is no y in font nullfont!
 Missing character: There is no . in font nullfont!
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 194--195
+Overfull \hbox (20.0pt too wide) in paragraph at lines 193--194
 []
  []
 
@@ -16874,12 +16944,12 @@ Missing character: There is no l in font nullfont!
 Missing character: There is no t in font nullfont!
 Missing character: There is no . in font nullfont!
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 196--197
+Overfull \hbox (20.0pt too wide) in paragraph at lines 195--196
 []
  []
 
 ! Undefined control sequence.
-l.198 \subsection
+l.197 \subsection
                  {Count Result}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -17144,7 +17214,7 @@ Missing character: There is no l in font nullfont!
 Missing character: There is no t in font nullfont!
 Missing character: There is no . in font nullfont!
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 198--200
+Overfull \hbox (20.0pt too wide) in paragraph at lines 197--199
 []
  []
 
@@ -17508,7 +17578,7 @@ Missing character: There is no l in font nullfont!
 Missing character: There is no e in font nullfont!
 Missing character: There is no : in font nullfont!
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 201--202
+Overfull \hbox (20.0pt too wide) in paragraph at lines 200--201
 []
  []
 
@@ -17519,7 +17589,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.203 \begin{lstlisting}
+l.202 \begin{lstlisting}
                         
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
@@ -17539,14 +17609,14 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.205 \end{lstlisting}
+l.204 \end{lstlisting}
                       
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
 or  <return>  to continue without it.
 
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 204--206
+Overfull \hbox (20.0pt too wide) in paragraph at lines 203--205
 []
  []
 
@@ -18001,7 +18071,7 @@ Missing character: There is no e in font nullfont!
 Missing character: There is no s in font nullfont!
 Missing character: There is no . in font nullfont!
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 207--208
+Overfull \hbox (20.0pt too wide) in paragraph at lines 206--207
 []
  []
 
@@ -18826,12 +18896,12 @@ Missing character: There is no e in font nullfont!
 Missing character: There is no d in font nullfont!
 Missing character: There is no . in font nullfont!
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 209--210
+Overfull \hbox (20.0pt too wide) in paragraph at lines 208--209
 []
  []
 
 ! Undefined control sequence.
-l.211 \subsection
+l.210 \subsection
                  {Analyse result}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -18853,7 +18923,7 @@ Missing character: There is no u in font nullfont!
 Missing character: There is no l in font nullfont!
 Missing character: There is no t in font nullfont!
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 211--212
+Overfull \hbox (20.0pt too wide) in paragraph at lines 210--211
 []
  []
 
@@ -19395,12 +19465,12 @@ Missing character: There is no e in font nullfont!
 Missing character: There is no d in font nullfont!
 Missing character: There is no . in font nullfont!
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 213--214
+Overfull \hbox (20.0pt too wide) in paragraph at lines 212--213
 []
  []
 
 ! Undefined control sequence.
-l.215 \subsection
+l.214 \subsection
                  {Optimization possibilities}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -19678,7 +19748,7 @@ Missing character: There is no e in font nullfont!
 Missing character: There is no d in font nullfont!
 Missing character: There is no : in font nullfont!
 
-Overfull \hbox (20.0pt too wide) in paragraph at lines 215--217
+Overfull \hbox (20.0pt too wide) in paragraph at lines 214--216
 []
  []
 
@@ -20548,11 +20618,11 @@ Missing character: There is no . in font nullfont!
 
  
 Here is how much of TeX's memory you used:
- 17 strings out of 493029
- 267 string characters out of 6136234
+ 20 strings out of 493029
+ 299 string characters out of 6136234
  58067 words of memory out of 5000000
- 3651 multiletter control sequences out of 15000+600000
- 3640 words of font info for 14 fonts, out of 8000000 for 9000
+ 3653 multiletter control sequences out of 15000+600000
+ 3948 words of font info for 15 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 19i,4n,14p,992b,113s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 19i,4n,21p,992b,113s stack positions out of 5000i,500n,10000p,200000b,80000s
 !  ==> Fatal error occurred, no output PDF file produced!
