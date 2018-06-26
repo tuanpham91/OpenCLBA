@@ -1,0 +1,18 @@
+
+\cleardoublepage
+
+\vspace*{2cm}
+\begin{center}
+{\Large \textbf{Abstract}}
+\end{center}
+\vspace{1cm}
+In the recent years the medical world has witnessed a growing popularity of robot aided surgeries in various operations. This technical development has shown very promising results: Robot-aided operations are being done with better precision, miniaturization, decreased blood loss, less pain, and quicker healing time (?). 
+
+Up to pace with the development, a robot with focus on eye surgeries is being developed by the Department of Robotics, TU Munich. The robot is designed to provide assistance in drug injections into the eye vessels, which is currently carried out by human surgeons. The complex nature of the human anatomy makes a needle penetration a challenging procedure. It requires a very high level of precision, whereas a small mistake could cause very costly damages to the eyes. Humans are not immune to errors, a tremor in the hands or a slightly suboptimal needle pose could not be totally prevented, and therefore a robot is particularly advantageous in this scenario.
+
+One important part of robot development is to calculate the position and rotation of the needle at real-time, as accurately as possible. This task could demand a lot of effort. Ramona Schneider had successfully developed a robust algorithm in her master thesis to execute the calculation. The key element of this approach is to use Optical Coherence Tomography (OCT) images to compute the direction, x- and y-rotation of the needle. The remaining parameters, z-rotation and shift, are computed by defining intervals and combining values inside them. The combination with the most corresponding points is used for the transformation of the CAD model.
+
+While the thesis showed great results, the execution still requires a lot of CPU resources and requires too much time for a real time system. Depending on the CPU used, the execution could take from 2 up to 3 seconds for each frame. The goal of this thesis is to find another approach to optimize the execution of the same algorithm, to reach a fastest execution time as possible.
+
+Based on the nature of this algorithm, which is executing a lot of matrix calculations, a Graphic Processing Unit with far more superior number of threads available is more suitable for the task. In this thesis all of the calculations are executed parallelly on a GPU device with the help of OpenCL. Therefore the code was re-implemented in adjustment and optimization for GPU programming practice. The result is quite encouraging: for the same input and number of combinations, the optimized approach showed a 10x faster execution time, which is 20-30 milliseconds a frame without the best equipments. 
+

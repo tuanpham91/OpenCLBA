@@ -1,11 +1,11 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=latex 2018.6.13)  24 JUN 2018 11:40
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2018.6.24)  24 JUN 2018 13:02
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **titlepage.tex
 (./titlepage.tex
 LaTeX2e <2016/02/01>
-Babel <3.9q> and hyphenation patterns for 5 language(s) loaded.
+Babel <3.9q> and hyphenation patterns for 81 language(s) loaded.
 
 ! LaTeX Error: Missing \begin{document}.
 
@@ -189,7 +189,7 @@ Missing character: There is no c in font nullfont!
 Missing character: There is no e in font nullfont!
 ! Undefined control sequence.
 l.31   {\LARGE
-               \textbf{TEST TEST TESt}}\\
+               \textbf{The Needle Detection and Reconstruction Based on OCT ...
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
 misspelled it (e.g., `\hobx'), type `I' and the correct
@@ -197,99 +197,147 @@ spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
 
-Overfull \hbox (29.94427pt too wide) in paragraph at lines 31--31
- []\OT1/cmr/bx/n/10 TEST 
+Overfull \hbox (19.65962pt too wide) in paragraph at lines 31--31
+ []\OT1/cmr/bx/n/10 The 
  []
 
 
-Overfull \hbox (29.94427pt too wide) in paragraph at lines 31--31
- \OT1/cmr/bx/n/10 TEST 
+Overfull \hbox (23.3749pt too wide) in paragraph at lines 31--31
+ \OT1/cmr/bx/n/10 Nee- 
  []
 
 
-Overfull \hbox (26.41652pt too wide) in paragraph at lines 31--31
- \OT1/cmr/bx/n/10 TESt 
+Overfull \hbox (14.8541pt too wide) in paragraph at lines 31--31
+ \OT1/cmr/bx/n/10 dle 
+ []
+
+
+Overfull \hbox (17.92352pt too wide) in paragraph at lines 31--31
+ \OT1/cmr/bx/n/10 De- 
+ []
+
+
+Overfull \hbox (18.68741pt too wide) in paragraph at lines 31--31
+ \OT1/cmr/bx/n/10 tec- 
+ []
+
+
+Overfull \hbox (19.80545pt too wide) in paragraph at lines 31--31
+ \OT1/cmr/bx/n/10 tion 
+ []
+
+
+Overfull \hbox (18.36794pt too wide) in paragraph at lines 31--31
+ \OT1/cmr/bx/n/10 and 
+ []
+
+
+Overfull \hbox (17.72908pt too wide) in paragraph at lines 31--31
+ \OT1/cmr/bx/n/10 Re- 
+ []
+
+
+Overfull \hbox (21.08322pt too wide) in paragraph at lines 31--31
+ \OT1/cmr/bx/n/10 con- 
+ []
+
+
+Overfull \hbox (29.07762pt too wide) in paragraph at lines 31--31
+ \OT1/cmr/bx/n/10 struc- 
+ []
+
+
+Overfull \hbox (19.80545pt too wide) in paragraph at lines 31--31
+ \OT1/cmr/bx/n/10 tion 
+ []
+
+
+Overfull \hbox (29.96648pt too wide) in paragraph at lines 31--31
+ \OT1/cmr/bx/n/10 Based 
+ []
+
+
+Overfull \hbox (12.13882pt too wide) in paragraph at lines 31--31
+ \OT1/cmr/bx/n/10 on 
+ []
+
+
+Overfull \hbox (24.9443pt too wide) in paragraph at lines 31--31
+ \OT1/cmr/bx/n/10 OCT 
+ []
+
+
+Overfull \hbox (16.61102pt too wide) in paragraph at lines 31--31
+ \OT1/cmr/bx/n/10 im- 
+ []
+
+
+Overfull \hbox (16.61101pt too wide) in paragraph at lines 31--31
+ \OT1/cmr/bx/n/10 age 
+ []
+
+
+Overfull \hbox (22.361pt too wide) in paragraph at lines 31--31
+ \OT1/cmr/bx/n/10 with 
+ []
+
+
+Overfull \hbox (25.74985pt too wide) in paragraph at lines 31--31
+ \OT1/cmr/bx/n/10 GPU 
+ []
+
+
+Overfull \hbox (17.6388pt too wide) in paragraph at lines 31--31
+ \OT1/cmr/bx/n/10 Ac- 
+ []
+
+
+Overfull \hbox (17.40964pt too wide) in paragraph at lines 31--31
+ \OT1/cmr/bx/n/10 cel- 
+ []
+
+
+Overfull \hbox (13.84023pt too wide) in paragraph at lines 31--31
+ \OT1/cmr/bx/n/10 er- 
+ []
+
+
+Overfull \hbox (9.42354pt too wide) in paragraph at lines 31--31
+ \OT1/cmr/bx/n/10 a- 
+ []
+
+
+Overfull \hbox (19.80545pt too wide) in paragraph at lines 31--31
+ \OT1/cmr/bx/n/10 tion 
  []
 
 ! Undefined control sequence.
 l.35   {\LARGE
-                	\textbf{Pfadplanung f√ºr einen Assistenzroboter in der Auge...
+                	\textbf{GERMAN NAME PENDING}}\\
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
 misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-Missing character: There is no √ in font cmbx10!
-Missing character: There is no º in font cmbx10!
 
-Overfull \hbox (63.12462pt too wide) in paragraph at lines 35--35
- []\OT1/cmr/bx/n/10 Pfadplanung 
+Overfull \hbox (53.83304pt too wide) in paragraph at lines 35--35
+ []\OT1/cmr/bx/n/10 GERMAN 
  []
 
 
-Overfull \hbox (8.24997pt too wide) in paragraph at lines 35--35
- \OT1/cmr/bx/n/10 fr 
+Overfull \hbox (36.16647pt too wide) in paragraph at lines 35--35
+ \OT1/cmr/bx/n/10 NAME 
  []
 
 
-Overfull \hbox (26.51376pt too wide) in paragraph at lines 35--35
- \OT1/cmr/bx/n/10 einen 
+Overfull \hbox (37.06924pt too wide) in paragraph at lines 35--35
+ \OT1/cmr/bx/n/10 PEND- 
  []
 
 
-Overfull \hbox (17.06378pt too wide) in paragraph at lines 35--35
- \OT1/cmr/bx/n/10 As- 
- []
-
-
-Overfull \hbox (16.09988pt too wide) in paragraph at lines 35--35
- \OT1/cmr/bx/n/10 sis- 
- []
-
-
-Overfull \hbox (19.96518pt too wide) in paragraph at lines 35--35
- \OT1/cmr/bx/n/10 ten- 
- []
-
-
-Overfull \hbox (42.53453pt too wide) in paragraph at lines 35--35
- \OT1/cmr/bx/n/10 zroboter 
- []
-
-
-Overfull \hbox (9.58328pt too wide) in paragraph at lines 35--35
- \OT1/cmr/bx/n/10 in 
- []
-
-
-Overfull \hbox (16.39577pt too wide) in paragraph at lines 35--35
- \OT1/cmr/bx/n/10 der 
- []
-
-
-Overfull \hbox (18.91656pt too wide) in paragraph at lines 35--35
- \OT1/cmr/bx/n/10 Au- 
- []
-
-
-Overfull \hbox (61.86082pt too wide) in paragraph at lines 35--35
- \OT1/cmr/bx/n/10 genchirurgie 
- []
-
-
-Overfull \hbox (17.24991pt too wide) in paragraph at lines 35--35
- \OT1/cmr/bx/n/10 mit 
- []
-
-
-Overfull \hbox (12.52771pt too wide) in paragraph at lines 35--35
- \OT1/cmr/bx/n/10 V- 
- []
-
-
-Overfull \hbox (24.04153pt too wide) in paragraph at lines 35--35
- \OT1/cmr/bx/n/10 REP 
+Overfull \hbox (22.40265pt too wide) in paragraph at lines 35--35
+ \OT1/cmr/bx/n/10 ING 
  []
 
 LaTeX Font Info:    External font `cmex10' loaded for size
@@ -298,7 +346,7 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <5> on input line 40.
 ! Undefined control sequence.
 l.41     \Large
-                Author:     & \Large Anna Baumeister \\[2mm]
+                Author:     & \Large Anh Tuan Pham \\[2mm]
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
 misspelled it (e.g., `\hobx'), type `I' and the correct
@@ -314,7 +362,7 @@ Missing character: There is no r in font nullfont!
 Missing character: There is no : in font nullfont!
 ! Undefined control sequence.
 l.41     \Large Author:     & \Large
-                                     Anna Baumeister \\[2mm]
+                                     Anh Tuan Pham \\[2mm]
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
 misspelled it (e.g., `\hobx'), type `I' and the correct
@@ -323,18 +371,15 @@ and I'll forget about whatever was undefined.
 
 Missing character: There is no A in font nullfont!
 Missing character: There is no n in font nullfont!
-Missing character: There is no n in font nullfont!
-Missing character: There is no a in font nullfont!
-Missing character: There is no B in font nullfont!
-Missing character: There is no a in font nullfont!
+Missing character: There is no h in font nullfont!
+Missing character: There is no T in font nullfont!
 Missing character: There is no u in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no n in font nullfont!
+Missing character: There is no P in font nullfont!
+Missing character: There is no h in font nullfont!
+Missing character: There is no a in font nullfont!
 Missing character: There is no m in font nullfont!
-Missing character: There is no e in font nullfont!
-Missing character: There is no i in font nullfont!
-Missing character: There is no s in font nullfont!
-Missing character: There is no t in font nullfont!
-Missing character: There is no e in font nullfont!
-Missing character: There is no r in font nullfont!
 ! Undefined control sequence.
 l.42     \Large
                 Supervisor:    & \Large Prof. Dr.-Ing. habil. Alois Knoll\\[...
@@ -547,11 +592,11 @@ or  <return>  to continue without it.
 
  
 Here is how much of TeX's memory you used:
- 21 strings out of 494911
- 273 string characters out of 6179862
- 46439 words of memory out of 5000000
- 3411 multiletter control sequences out of 15000+600000
+ 21 strings out of 493029
+ 273 string characters out of 6136234
+ 55067 words of memory out of 5000000
+ 3655 multiletter control sequences out of 15000+600000
  3948 words of font info for 15 fonts, out of 8000000 for 9000
- 36 hyphenation exceptions out of 8191
- 19i,6n,16p,127b,141s stack positions out of 5000i,500n,10000p,200000b,80000s
-No pages of output.
+ 1141 hyphenation exceptions out of 8191
+ 19i,6n,16p,134b,141s stack positions out of 5000i,500n,10000p,200000b,80000s
+!  ==> Fatal error occurred, no output PDF file produced!

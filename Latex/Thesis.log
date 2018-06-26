@@ -1,11 +1,11 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=latex 2018.6.13)  13 JUN 2018 22:45
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=latex 2018.6.24)  24 JUN 2018 12:26
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **Thesis.tex
 (./Thesis.tex
 LaTeX2e <2016/02/01>
-Babel <3.9q> and hyphenation patterns for 5 language(s) loaded.
+Babel <3.9q> and hyphenation patterns for 81 language(s) loaded.
 (/usr/share/texlive/texmf-dist/tex/latex/koma-script/scrbook.cls
 Document Class: scrbook 2015/10/03 v3.19a KOMA-Script document class (book)
 (/usr/share/texlive/texmf-dist/tex/latex/koma-script/scrkbase.sty
@@ -438,22 +438,17 @@ File: babel.def 2016/02/24 3.9q Babel common definitions
 \l@australian = a dialect from \language\l@british 
 \l@newzealand = a dialect from \language\l@british 
 )
+(/usr/share/texlive/texmf-dist/tex/generic/babel-german/german.ldf
+Language: german 2014/10/10 v2.7b German support for babel (traditional orthogr
+aphy)
 
-! Package babel Error: Unknown option `german'. Either you misspelled it
-(babel)                or the language definition file german.ldf was not found
-.
-
-See the babel package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.310 \ProcessOptions*
-                      
-Valid options are: shorthands=, KeepShorthandsActive,
-activeacute, activegrave, noconfigs, safe=, main=, math=
-headfoot=, strings=, config=, hyphenmap=, or a language name.
-
-) (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsmath.sty
+(/usr/share/texlive/texmf-dist/tex/generic/babel-german/germanb.ldf
+Language: germanb 2014/10/10 v2.7b German support for babel (traditional orthog
+raphy)
+\l@austrian = a dialect from \language\l@german 
+Package babel Info: Making " an active character on input line 110.
+)))
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsmath.sty
 Package: amsmath 2016/03/03 v2.15a AMS math features
 \@mathmargin=\skip48
 
@@ -542,27 +537,2319 @@ File: dvips.def 2015/12/30 v3.0k Driver-dependent file (DPC,SPQR)
 \Gin@req@width=\dimen114
 )
 (./styles/tumlogo.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/algorithms/algorithm.sty
+Package: algorithm 2009/08/24 v0.1 Document Style `algorithm' - floating enviro
+nment
 
-! LaTeX Error: File `algorithm.sty' not found.
+(/usr/share/texlive/texmf-dist/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count102
+\float@exts=\toks22
+\float@box=\box29
+\@float@everytoks=\toks23
+\@floatcapt=\box30
+)
+(/usr/share/texlive/texmf-dist/tex/latex/base/ifthen.sty
+Package: ifthen 2014/09/29 v1.1c Standard LaTeX ifthen package (DPC)
+)
+\@float@every@algorithm=\toks24
+\c@algorithm=\count103
+)
+(/usr/share/texlive/texmf-dist/tex/latex/algorithms/algorithmic.sty
+Package: algorithmic 2009/08/24 v0.1 Document Style `algorithmic'
+\c@ALC@unique=\count104
+\c@ALC@line=\count105
+\c@ALC@rem=\count106
+\c@ALC@depth=\count107
+\ALC@tlm=\skip51
+\algorithmicindent=\skip52
+)
+(/usr/share/texlive/texmf-dist/tex/latex/url/url.sty
+\Urlmuskip=\muskip11
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref.sty
+Package: hyperref 2012/11/06 v6.83m Hypertext links for LaTeX
 
-Type X to quit or <RETURN> to proceed,
-or enter new name. (Default extension: sty)
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/hobsub-hyperref.sty
+Package: hobsub-hyperref 2012/05/28 v1.13 Bundle oberdiek, subset hyperref (HO)
 
-Enter file name: 
-! Emergency stop.
-<read *> 
-         
-l.11 \usepackage
-                {url}^^M
-*** (cannot \read from terminal in nonstop modes)
 
- 
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/hobsub-generic.sty
+Package: hobsub-generic 2012/05/28 v1.13 Bundle oberdiek, subset generic (HO)
+Package: hobsub 2012/05/28 v1.13 Construct package bundles (HO)
+Package: infwarerr 2010/04/08 v1.3 Providing info/warning/error messages (HO)
+Package: ltxcmds 2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
+Package: ifluatex 2010/03/01 v1.3 Provides the ifluatex switch (HO)
+Package ifluatex Info: LuaTeX not detected.
+Package: ifvtex 2010/03/01 v1.5 Detect VTeX and its facilities (HO)
+Package ifvtex Info: VTeX not detected.
+Package: intcalc 2007/09/27 v1.1 Expandable calculations with integers (HO)
+Package: ifpdf 2011/01/30 v2.3 Provides the ifpdf switch (HO)
+Package ifpdf Info: pdfTeX in PDF mode is not detected.
+Package: etexcmds 2011/02/16 v1.5 Avoid name clashes with e-TeX commands (HO)
+Package etexcmds Info: Could not find \expanded.
+(etexcmds)             That can mean that you are not using pdfTeX 1.50 or
+(etexcmds)             that some package has redefined \expanded.
+(etexcmds)             In the latter case, load this package earlier.
+Package: kvsetkeys 2012/04/25 v1.16 Key value parser (HO)
+Package: kvdefinekeys 2011/04/07 v1.3 Define keys (HO)
+Package: pdftexcmds 2011/11/29 v0.20 Utility functions of pdfTeX for LuaTeX (HO
+)
+Package pdftexcmds Info: LuaTeX not detected.
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode is ignored in DVI mode.
+Package: pdfescape 2011/11/25 v1.13 Implements pdfTeX's escape features (HO)
+Package: bigintcalc 2012/04/08 v1.3 Expandable calculations on big integers (HO
+)
+Package: bitset 2011/01/30 v1.1 Handle bit-vector datatype (HO)
+Package: uniquecounter 2011/01/30 v1.2 Provide unlimited unique counter (HO)
+)
+Package hobsub Info: Skipping package `hobsub' (already loaded).
+Package: letltxmacro 2010/09/02 v1.4 Let assignment for LaTeX macros (HO)
+Package: hopatch 2012/05/28 v1.2 Wrapper for package hooks (HO)
+Package: xcolor-patch 2011/01/30 xcolor patch
+Package: atveryend 2011/06/30 v1.8 Hooks at the very end of document (HO)
+Package atveryend Info: \enddocument detected (standard20110627).
+Package: atbegshi 2011/10/05 v1.16 At begin shipout hook (HO)
+Package: refcount 2011/10/16 v3.4 Data extraction from label references (HO)
+Package: hycolor 2011/01/30 v1.7 Color options for hyperref/bookmark (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/generic/ifxetex/ifxetex.sty
+Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
+)
+(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/auxhook.sty
+Package: auxhook 2011/03/04 v1.3 Hooks for auxiliary files (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/kvoptions.sty
+Package: kvoptions 2011/06/30 v3.11 Key value format for package options (HO)
+)
+\@linkdim=\dimen115
+\Hy@linkcounter=\count108
+\Hy@pagecounter=\count109
+
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/pd1enc.def
+File: pd1enc.def 2012/11/06 v6.83m Hyperref: PDFDocEncoding definition (HO)
+Now handling font encoding PD1 ...
+... no UTF-8 mapping file for font encoding PD1
+)
+\Hy@SavedSpaceFactor=\count110
+
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/hyperref.cfg
+File: hyperref.cfg 2002/06/06 v1.2 hyperref configuration of TeXLive
+)
+Package hyperref Info: Hyper figures OFF on input line 4443.
+Package hyperref Info: Link nesting OFF on input line 4448.
+Package hyperref Info: Hyper index ON on input line 4451.
+Package hyperref Info: Plain pages OFF on input line 4458.
+Package hyperref Info: Backreferencing OFF on input line 4463.
+Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
+Package hyperref Info: Bookmarks ON on input line 4688.
+\c@Hy@tempcnt=\count111
+LaTeX Info: Redefining \url on input line 5041.
+\XeTeXLinkMargin=\dimen116
+\Fld@menulength=\count112
+\Field@Width=\dimen117
+\Fld@charsize=\dimen118
+Package hyperref Info: Hyper figures OFF on input line 6295.
+Package hyperref Info: Link nesting OFF on input line 6300.
+Package hyperref Info: Hyper index ON on input line 6303.
+Package hyperref Info: backreferencing OFF on input line 6310.
+Package hyperref Info: Link coloring OFF on input line 6315.
+Package hyperref Info: Link coloring with OCG OFF on input line 6320.
+Package hyperref Info: PDF/A mode OFF on input line 6325.
+LaTeX Info: Redefining \ref on input line 6365.
+LaTeX Info: Redefining \pageref on input line 6369.
+\Hy@abspage=\count113
+\c@Item=\count114
+\c@Hfootnote=\count115
+)
+
+Package hyperref Message: Driver (default): hdvips.
+
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hdvips.def
+File: hdvips.def 2012/11/06 v6.83m Hyperref driver for dvips
+
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/pdfmark.def
+File: pdfmark.def 2012/11/06 v6.83m Hyperref definitions for pdfmark specials
+\pdf@docset=\toks25
+\pdf@box=\box31
+\pdf@toks=\toks26
+\pdf@defaulttoks=\toks27
+\HyField@AnnotCount=\count116
+\Fld@listcount=\count117
+\c@bookmark@seq@number=\count118
+
+(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/rerunfilecheck.sty
+Package: rerunfilecheck 2011/04/15 v1.7 Rerun checks for auxiliary files (HO)
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
+82.
+)
+\Hy@SectionHShift=\skip53
+))
+(/usr/share/texlive/texmf-dist/tex/latex/todo/todo.sty
+Package: todo 2010/03/31 v2.4142 To-do list (Federico Garcia)
+\@todotoks=\toks28
+\c@todo=\count119
+)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/bm.sty
+Package: bm 2014/10/28 v1.1c Bold Symbol Support (DPC/FMi)
+\symboldoperators=\mathgroup6
+\symboldletters=\mathgroup7
+\symboldsymbols=\mathgroup8
+LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 141.
+LaTeX Info: Redefining \bm on input line 207.
+)
+(/usr/share/texlive/texmf-dist/tex/latex/mathtools/mathtools.sty
+Package: mathtools 2015/11/12 v1.18 mathematical typesetting tools
+
+(/usr/share/texlive/texmf-dist/tex/latex/tools/calc.sty
+Package: calc 2014/10/28 v4.3 Infix arithmetic (KKT,FJ)
+\calc@Acount=\count120
+\calc@Bcount=\count121
+\calc@Adimen=\dimen119
+\calc@Bdimen=\dimen120
+\calc@Askip=\skip54
+\calc@Bskip=\skip55
+LaTeX Info: Redefining \setlength on input line 80.
+LaTeX Info: Redefining \addtolength on input line 81.
+\calc@Ccount=\count122
+\calc@Cskip=\skip56
+)
+(/usr/share/texlive/texmf-dist/tex/latex/mathtools/mhsetup.sty
+Package: mhsetup 2010/01/21 v1.2a programming setup (MH)
+)
+LaTeX Info: Thecontrolsequence`\('isalreadyrobust on input line 129.
+LaTeX Info: Thecontrolsequence`\)'isalreadyrobust on input line 129.
+LaTeX Info: Thecontrolsequence`\['isalreadyrobust on input line 129.
+LaTeX Info: Thecontrolsequence`\]'isalreadyrobust on input line 129.
+\g_MT_multlinerow_int=\count123
+\l_MT_multwidth_dim=\dimen121
+\origjot=\skip57
+\l_MT_shortvdotswithinadjustabove_dim=\dimen122
+\l_MT_shortvdotswithinadjustbelow_dim=\dimen123
+\l_MT_above_intertext_sep=\dimen124
+\l_MT_below_intertext_sep=\dimen125
+\l_MT_above_shortintertext_sep=\dimen126
+\l_MT_below_shortintertext_sep=\dimen127
+)
+(/usr/share/texlive/texmf-dist/tex/latex/rotating/rotating.sty
+Package: rotating 2009/03/28 v2.16a rotated objects in LaTeX
+\c@r@tfl@t=\count124
+\rotFPtop=\skip58
+\rotFPbot=\skip59
+\rot@float@box=\box32
+\rot@mess@toks=\toks29
+)
+(/usr/share/texlive/texmf-dist/tex/latex/import/import.sty
+Package: import 2009/03/23  v 5.1
+)
+(/usr/share/texlive/texmf-dist/tex/latex/xcolor/xcolor.sty
+Package: xcolor 2007/01/21 v2.11 LaTeX color extensions (UK)
+
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/color.cfg
+File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
+)
+Package xcolor Info: Driver file: dvips.def on input line 225.
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1337.
+Package xcolor Info: Model `RGB' extended on input line 1353.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1355.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1356.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1357.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1358.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1359.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1360.
+) (./Thesis.aux)
+\openout1 = `Thesis.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 44.
+LaTeX Font Info:    ... okay on input line 44.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 44.
+LaTeX Font Info:    ... okay on input line 44.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 44.
+LaTeX Font Info:    ... okay on input line 44.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 44.
+LaTeX Font Info:    ... okay on input line 44.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 44.
+LaTeX Font Info:    ... okay on input line 44.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 44.
+LaTeX Font Info:    ... okay on input line 44.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 44.
+LaTeX Font Info:    ... okay on input line 44.
+\AtBeginShipoutBox=\box33
+Package hyperref Info: Link coloring OFF on input line 44.
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
+Package: nameref 2012/10/27 v2.43 Cross-referencing by name of section
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/gettitlestring.sty
+Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
+)
+\c@section@level=\count125
+)
+LaTeX Info: Redefining \ref on input line 44.
+LaTeX Info: Redefining \pageref on input line 44.
+LaTeX Info: Redefining \nameref on input line 44.
+
+(./Thesis.out) (./Thesis.out)
+\@outlinefile=\write3
+\openout3 = `Thesis.out'.
+
+ (./components/cover.tex
+
+! LaTeX Error: Cannot determine size of graphic in styles/informat.png (no Boun
+dingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.38 ...degraphics[width=4cm]{styles/informat.png}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: styles/informat.png Graphic file (type eps)
+<styles/informat.png>)
+Package babel Info: Redefining german shorthand "f
+(babel)             in language  on input line 47.
+Package babel Info: Redefining german shorthand "|
+(babel)             in language  on input line 47.
+Package babel Info: Redefining german shorthand "~
+(babel)             in language  on input line 47.
+Package babel Info: Redefining german shorthand "f
+(babel)             in language  on input line 47.
+Package babel Info: Redefining german shorthand "|
+(babel)             in language  on input line 47.
+Package babel Info: Redefining german shorthand "~
+(babel)             in language  on input line 47.
+ [1
+
+]
+Package babel Info: Redefining german shorthand "f
+(babel)             in language  on input line 47.
+Package babel Info: Redefining german shorthand "|
+(babel)             in language  on input line 47.
+Package babel Info: Redefining german shorthand "~
+(babel)             in language  on input line 47.
+Package babel Info: Redefining german shorthand "f
+(babel)             in language  on input line 47.
+Package babel Info: Redefining german shorthand "|
+(babel)             in language  on input line 47.
+Package babel Info: Redefining german shorthand "~
+(babel)             in language  on input line 47.
+ [2
+
+
+] (./components/titlepage.tex
+LaTeX Font Info:    Try loading font information for U+msa on input line 40.
+
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Try loading font information for U+msb on input line 40.
+
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+)
+
+! LaTeX Error: Cannot determine size of graphic in styles/informat.png (no Boun
+dingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.51 ...degraphics[width=4cm]{styles/informat.png}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: styles/informat.png Graphic file (type eps)
+<styles/informat.png>) (./components/disclaimer.tex
+Package babel Info: Redefining german shorthand "f
+(babel)             in language  on input line 1.
+Package babel Info: Redefining german shorthand "|
+(babel)             in language  on input line 1.
+Package babel Info: Redefining german shorthand "~
+(babel)             in language  on input line 1.
+Package babel Info: Redefining german shorthand "f
+(babel)             in language  on input line 1.
+Package babel Info: Redefining german shorthand "|
+(babel)             in language  on input line 1.
+Package babel Info: Redefining german shorthand "~
+(babel)             in language  on input line 1.
+ [3]
+Package babel Info: Redefining german shorthand "f
+(babel)             in language  on input line 1.
+Package babel Info: Redefining german shorthand "|
+(babel)             in language  on input line 1.
+Package babel Info: Redefining german shorthand "~
+(babel)             in language  on input line 1.
+Package babel Info: Redefining german shorthand "f
+(babel)             in language  on input line 1.
+Package babel Info: Redefining german shorthand "|
+(babel)             in language  on input line 1.
+Package babel Info: Redefining german shorthand "~
+(babel)             in language  on input line 1.
+ [4
+
+
+]
+Package babel Info: Redefining german shorthand "f
+(babel)             in language  on input line 25.
+Package babel Info: Redefining german shorthand "|
+(babel)             in language  on input line 25.
+Package babel Info: Redefining german shorthand "~
+(babel)             in language  on input line 25.
+Package babel Info: Redefining german shorthand "f
+(babel)             in language  on input line 25.
+Package babel Info: Redefining german shorthand "|
+(babel)             in language  on input line 25.
+Package babel Info: Redefining german shorthand "~
+(babel)             in language  on input line 25.
+ [5])
+(./components/acknowledgements.tex) (./components/abstract.tex [6]) [7
+
+
+]
+[8
+
+
+] (./Thesis.toc)
+\tf@toc=\write4
+\openout4 = `Thesis.toc'.
+
+ (./components/Introduction.tex [9] [10
+
+
+]
+chapter 1.
+
+Class scrbook Warning: \float@addtolists detected!
+(scrbook)              Implementation of \float@addtolist became
+(scrbook)              deprecated in KOMA-Script v3.01 2008/11/14 and
+(scrbook)              has been replaced by several more flexible
+(scrbook)              features of package `tocbasic`.
+(scrbook)              Since Version 3.12 support for deprecated
+(scrbook)              \float@addtolist interface has been
+(scrbook)              restricted to only some of the KOMA-Script
+(scrbook)              features and been removed from others.
+(scrbook)              Loading of package `scrhack' may help to
+(scrbook)              avoid this warning, if you are using a
+(scrbook)              a package that still implements the
+(scrbook)              deprecated \float@addtolist interface .
+
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 7.
+(/usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd
+File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10.95> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 7.
+ [11]
+
+! LaTeX Error: File `mechRCM' not found.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.19 	\includegraphics[width=6cm]{mechRCM}
+                                          
+I could not locate the file with any of these extensions:
+.eps,.ps,.eps.gz,.ps.gz,.eps.Z,.mps
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: File `Ueta2017_robot' not found.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.25 	\includegraphics[width=7cm]{Ueta2017_robot}
+                                                 
+I could not locate the file with any of these extensions:
+.eps,.ps,.eps.gz,.ps.gz,.eps.Z,.mps
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: File `iRAM!S' not found.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.40 	\includegraphics[width=12cm]{iRAM!S}
+                                          
+I could not locate the file with any of these extensions:
+.eps,.ps,.eps.gz,.ps.gz,.eps.Z,.mps
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+[12]) (./components/Background.tex [13] [14
+
+
+]
+chapter 2.
+(./images/manipulator_overview_refactored_tex.pdf_tex
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.52 ...{manipulator_overview_refactored_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/manipulator_overview_
+refactored_tex.pdf (no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.52 ...{manipulator_overview_refactored_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/manipulator_overview_refactored_tex.pdf Graphic file (type eps)
+<images/manipulator_overview_refactored_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.56 ...{manipulator_overview_refactored_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/manipulator_overview_
+refactored_tex.pdf (no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.56 ...{manipulator_overview_refactored_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/manipulator_overview_refactored_tex.pdf Graphic file (type eps)
+<images/manipulator_overview_refactored_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.59 ...{manipulator_overview_refactored_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/manipulator_overview_
+refactored_tex.pdf (no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.59 ...{manipulator_overview_refactored_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/manipulator_overview_refactored_tex.pdf Graphic file (type eps)
+<images/manipulator_overview_refactored_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.66 ...{manipulator_overview_refactored_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/manipulator_overview_
+refactored_tex.pdf (no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.66 ...{manipulator_overview_refactored_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/manipulator_overview_refactored_tex.pdf Graphic file (type eps)
+<images/manipulator_overview_refactored_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.73 ...{manipulator_overview_refactored_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/manipulator_overview_
+refactored_tex.pdf (no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.73 ...{manipulator_overview_refactored_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/manipulator_overview_refactored_tex.pdf Graphic file (type eps)
+<images/manipulator_overview_refactored_tex.pdf>)
+(./images/pcjm_refactored_tex.pdf_tex
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.52 ...itlength,page=1]{pcjm_refactored_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/pcjm_refactored_tex.p
+df (no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.52 ...itlength,page=1]{pcjm_refactored_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/pcjm_refactored_tex.pdf Graphic file (type eps)
+<images/pcjm_refactored_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.56 ...itlength,page=2]{pcjm_refactored_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/pcjm_refactored_tex.p
+df (no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.56 ...itlength,page=2]{pcjm_refactored_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/pcjm_refactored_tex.pdf Graphic file (type eps)
+<images/pcjm_refactored_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.58 ...itlength,page=3]{pcjm_refactored_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/pcjm_refactored_tex.p
+df (no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.58 ...itlength,page=3]{pcjm_refactored_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/pcjm_refactored_tex.pdf Graphic file (type eps)
+<images/pcjm_refactored_tex.pdf>) [15] [16] [17] [18] [19] [20] [21])
+(./components/Method.tex [22]
+chapter 3.
+[23
+
+
+] (./images/lambda_refactored_tex.pdf_tex
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.52 ...length,page=1]{lambda_refactored_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/lambda_refactored_tex
+.pdf (no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.52 ...length,page=1]{lambda_refactored_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/lambda_refactored_tex.pdf Graphic file (type eps)
+<images/lambda_refactored_tex.pdf>) [24] [25]
+Underfull \hbox (badness 10000) in paragraph at lines 134--136
+
+ []
+
+[26]
+Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
+put line 165.
+ (./images/injection_illustration_refactored_tex.pdf_tex
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.52 ...njection_illustration_refactored_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/injection_illustratio
+n_refactored_tex.pdf (no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.52 ...njection_illustration_refactored_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/injection_illustration_refactored_tex.pdf Graphic file (type eps)
+<images/injection_illustration_refactored_tex.pdf>)
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[27] (./images/vrep_model_1_tex.pdf_tex
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.52 ...\unitlength,page=1]{vrep_model_1_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/vrep_model_1_tex.pdf 
+(no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.52 ...\unitlength,page=1]{vrep_model_1_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/vrep_model_1_tex.pdf Graphic file (type eps)
+<images/vrep_model_1_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.54 ...\unitlength,page=2]{vrep_model_1_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/vrep_model_1_tex.pdf 
+(no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.54 ...\unitlength,page=2]{vrep_model_1_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/vrep_model_1_tex.pdf Graphic file (type eps)
+<images/vrep_model_1_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.56 ...\unitlength,page=3]{vrep_model_1_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/vrep_model_1_tex.pdf 
+(no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.56 ...\unitlength,page=3]{vrep_model_1_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/vrep_model_1_tex.pdf Graphic file (type eps)
+<images/vrep_model_1_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.58 ...\unitlength,page=4]{vrep_model_1_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/vrep_model_1_tex.pdf 
+(no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.58 ...\unitlength,page=4]{vrep_model_1_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/vrep_model_1_tex.pdf Graphic file (type eps)
+<images/vrep_model_1_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.60 ...\unitlength,page=5]{vrep_model_1_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/vrep_model_1_tex.pdf 
+(no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.60 ...\unitlength,page=5]{vrep_model_1_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/vrep_model_1_tex.pdf Graphic file (type eps)
+<images/vrep_model_1_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.62 ...\unitlength,page=6]{vrep_model_1_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/vrep_model_1_tex.pdf 
+(no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.62 ...\unitlength,page=6]{vrep_model_1_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/vrep_model_1_tex.pdf Graphic file (type eps)
+<images/vrep_model_1_tex.pdf>) [28]
+
+! LaTeX Error: File `vrep_hierarchy' not found.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.200 	\includegraphics[width=8cm]{vrep_hierarchy}
+                                                  
+I could not locate the file with any of these extensions:
+.eps,.ps,.eps.gz,.ps.gz,.eps.Z,.mps
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+(./images/IK_refactored_2.pdf_tex
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.52 ...=\unitlength,page=1]{IK_refactored_2.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/IK_refactored_2.pdf (
+no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.52 ...=\unitlength,page=1]{IK_refactored_2.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/IK_refactored_2.pdf Graphic file (type eps)
+<images/IK_refactored_2.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.101 ...\unitlength,page=2]{IK_refactored_2.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/IK_refactored_2.pdf (
+no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.101 ...\unitlength,page=2]{IK_refactored_2.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/IK_refactored_2.pdf Graphic file (type eps)
+<images/IK_refactored_2.pdf>)
+Overfull \hbox (1.26633pt too wide) in paragraph at lines 104--211
+[][] 
+ []
+
+[29]
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+) (./components/Results.tex [30] [31] [32
+
+
+]
+chapter 4.
+[33] (./images/large_step_tex.pdf_tex
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.52 ...h=\unitlength,page=1]{large_step_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/large_step_tex.pdf (n
+o BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.52 ...h=\unitlength,page=1]{large_step_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/large_step_tex.pdf Graphic file (type eps)
+<images/large_step_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.65 ...h=\unitlength,page=2]{large_step_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/large_step_tex.pdf (n
+o BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.65 ...h=\unitlength,page=2]{large_step_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/large_step_tex.pdf Graphic file (type eps)
+<images/large_step_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.74 ...h=\unitlength,page=3]{large_step_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/large_step_tex.pdf (n
+o BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.74 ...h=\unitlength,page=3]{large_step_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/large_step_tex.pdf Graphic file (type eps)
+<images/large_step_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.76 ...h=\unitlength,page=4]{large_step_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/large_step_tex.pdf (n
+o BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.76 ...h=\unitlength,page=4]{large_step_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/large_step_tex.pdf Graphic file (type eps)
+<images/large_step_tex.pdf>) [34]
+(./images/alignment_error_section_refactored.pdf_tex
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.52 ...]{alignment_error_section_refactored.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/alignment_error_secti
+on_refactored.pdf (no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.52 ...]{alignment_error_section_refactored.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/alignment_error_section_refactored.pdf Graphic file (type eps)
+<images/alignment_error_section_refactored.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.60 ...]{alignment_error_section_refactored.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/alignment_error_secti
+on_refactored.pdf (no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.60 ...]{alignment_error_section_refactored.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/alignment_error_section_refactored.pdf Graphic file (type eps)
+<images/alignment_error_section_refactored.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.72 ...]{alignment_error_section_refactored.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/alignment_error_secti
+on_refactored.pdf (no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.72 ...]{alignment_error_section_refactored.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/alignment_error_section_refactored.pdf Graphic file (type eps)
+<images/alignment_error_section_refactored.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.74 ...]{alignment_error_section_refactored.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/alignment_error_secti
+on_refactored.pdf (no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.74 ...]{alignment_error_section_refactored.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/alignment_error_section_refactored.pdf Graphic file (type eps)
+<images/alignment_error_section_refactored.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.76 ...]{alignment_error_section_refactored.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/alignment_error_secti
+on_refactored.pdf (no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.76 ...]{alignment_error_section_refactored.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/alignment_error_section_refactored.pdf Graphic file (type eps)
+<images/alignment_error_section_refactored.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.78 ...]{alignment_error_section_refactored.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/alignment_error_secti
+on_refactored.pdf (no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.78 ...]{alignment_error_section_refactored.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/alignment_error_section_refactored.pdf Graphic file (type eps)
+<images/alignment_error_section_refactored.pdf>) [35]
+(./images/drift_tex.pdf_tex
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.52 ...[width=\unitlength,page=1]{drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/drift_tex.pdf (no Bou
+ndingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.52 ...[width=\unitlength,page=1]{drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/drift_tex.pdf Graphic file (type eps)
+<images/drift_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.60 ...[width=\unitlength,page=2]{drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/drift_tex.pdf (no Bou
+ndingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.60 ...[width=\unitlength,page=2]{drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/drift_tex.pdf Graphic file (type eps)
+<images/drift_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.68 ...[width=\unitlength,page=3]{drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/drift_tex.pdf (no Bou
+ndingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.68 ...[width=\unitlength,page=3]{drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/drift_tex.pdf Graphic file (type eps)
+<images/drift_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.70 ...[width=\unitlength,page=4]{drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/drift_tex.pdf (no Bou
+ndingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.70 ...[width=\unitlength,page=4]{drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/drift_tex.pdf Graphic file (type eps)
+<images/drift_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.72 ...[width=\unitlength,page=5]{drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/drift_tex.pdf (no Bou
+ndingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.72 ...[width=\unitlength,page=5]{drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/drift_tex.pdf Graphic file (type eps)
+<images/drift_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.74 ...[width=\unitlength,page=6]{drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/drift_tex.pdf (no Bou
+ndingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.74 ...[width=\unitlength,page=6]{drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/drift_tex.pdf Graphic file (type eps)
+<images/drift_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.76 ...[width=\unitlength,page=7]{drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/drift_tex.pdf (no Bou
+ndingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.76 ...[width=\unitlength,page=7]{drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/drift_tex.pdf Graphic file (type eps)
+<images/drift_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.78 ...[width=\unitlength,page=8]{drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/drift_tex.pdf (no Bou
+ndingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.78 ...[width=\unitlength,page=8]{drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/drift_tex.pdf Graphic file (type eps)
+<images/drift_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.80 ...[width=\unitlength,page=9]{drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/drift_tex.pdf (no Bou
+ndingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.80 ...[width=\unitlength,page=9]{drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/drift_tex.pdf Graphic file (type eps)
+<images/drift_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.82 ...width=\unitlength,page=10]{drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/drift_tex.pdf (no Bou
+ndingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.82 ...width=\unitlength,page=10]{drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/drift_tex.pdf Graphic file (type eps)
+<images/drift_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.84 ...width=\unitlength,page=11]{drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/drift_tex.pdf (no Bou
+ndingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.84 ...width=\unitlength,page=11]{drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/drift_tex.pdf Graphic file (type eps)
+<images/drift_tex.pdf>) [36] (./images/3_7_tex.pdf_tex
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.52 ...cs[width=\unitlength,page=1]{3_7_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/3_7_tex.pdf (no Bound
+ingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.52 ...cs[width=\unitlength,page=1]{3_7_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/3_7_tex.pdf Graphic file (type eps)
+<images/3_7_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.60 ...cs[width=\unitlength,page=2]{3_7_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/3_7_tex.pdf (no Bound
+ingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.60 ...cs[width=\unitlength,page=2]{3_7_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/3_7_tex.pdf Graphic file (type eps)
+<images/3_7_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.72 ...cs[width=\unitlength,page=3]{3_7_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/3_7_tex.pdf (no Bound
+ingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.72 ...cs[width=\unitlength,page=3]{3_7_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/3_7_tex.pdf Graphic file (type eps)
+<images/3_7_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.74 ...cs[width=\unitlength,page=4]{3_7_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/3_7_tex.pdf (no Bound
+ingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.74 ...cs[width=\unitlength,page=4]{3_7_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/3_7_tex.pdf Graphic file (type eps)
+<images/3_7_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.76 ...cs[width=\unitlength,page=5]{3_7_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/3_7_tex.pdf (no Bound
+ingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.76 ...cs[width=\unitlength,page=5]{3_7_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/3_7_tex.pdf Graphic file (type eps)
+<images/3_7_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.78 ...cs[width=\unitlength,page=6]{3_7_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/3_7_tex.pdf (no Bound
+ingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.78 ...cs[width=\unitlength,page=6]{3_7_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/3_7_tex.pdf Graphic file (type eps)
+<images/3_7_tex.pdf>) (./images/3_7_drift_tex.pdf_tex
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.52 ...th=\unitlength,page=1]{3_7_drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/3_7_drift_tex.pdf (no
+ BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.52 ...th=\unitlength,page=1]{3_7_drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/3_7_drift_tex.pdf Graphic file (type eps)
+<images/3_7_drift_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.61 ...th=\unitlength,page=2]{3_7_drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/3_7_drift_tex.pdf (no
+ BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.61 ...th=\unitlength,page=2]{3_7_drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/3_7_drift_tex.pdf Graphic file (type eps)
+<images/3_7_drift_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.67 ...th=\unitlength,page=3]{3_7_drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/3_7_drift_tex.pdf (no
+ BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.67 ...th=\unitlength,page=3]{3_7_drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/3_7_drift_tex.pdf Graphic file (type eps)
+<images/3_7_drift_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.69 ...th=\unitlength,page=4]{3_7_drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/3_7_drift_tex.pdf (no
+ BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.69 ...th=\unitlength,page=4]{3_7_drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/3_7_drift_tex.pdf Graphic file (type eps)
+<images/3_7_drift_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.71 ...th=\unitlength,page=5]{3_7_drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/3_7_drift_tex.pdf (no
+ BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.71 ...th=\unitlength,page=5]{3_7_drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/3_7_drift_tex.pdf Graphic file (type eps)
+<images/3_7_drift_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.80 ...th=\unitlength,page=6]{3_7_drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/3_7_drift_tex.pdf (no
+ BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.80 ...th=\unitlength,page=6]{3_7_drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/3_7_drift_tex.pdf Graphic file (type eps)
+<images/3_7_drift_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.85 ...th=\unitlength,page=7]{3_7_drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/3_7_drift_tex.pdf (no
+ BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.85 ...th=\unitlength,page=7]{3_7_drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/3_7_drift_tex.pdf Graphic file (type eps)
+<images/3_7_drift_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.87 ...th=\unitlength,page=8]{3_7_drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/3_7_drift_tex.pdf (no
+ BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.87 ...th=\unitlength,page=8]{3_7_drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/3_7_drift_tex.pdf Graphic file (type eps)
+<images/3_7_drift_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.89 ...th=\unitlength,page=9]{3_7_drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/3_7_drift_tex.pdf (no
+ BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.89 ...th=\unitlength,page=9]{3_7_drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/3_7_drift_tex.pdf Graphic file (type eps)
+<images/3_7_drift_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.99 ...h=\unitlength,page=10]{3_7_drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/3_7_drift_tex.pdf (no
+ BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.99 ...h=\unitlength,page=10]{3_7_drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/3_7_drift_tex.pdf Graphic file (type eps)
+<images/3_7_drift_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.104 ...=\unitlength,page=11]{3_7_drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/3_7_drift_tex.pdf (no
+ BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.104 ...=\unitlength,page=11]{3_7_drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/3_7_drift_tex.pdf Graphic file (type eps)
+<images/3_7_drift_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.106 ...=\unitlength,page=12]{3_7_drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/3_7_drift_tex.pdf (no
+ BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.106 ...=\unitlength,page=12]{3_7_drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/3_7_drift_tex.pdf Graphic file (type eps)
+<images/3_7_drift_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.108 ...=\unitlength,page=13]{3_7_drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/3_7_drift_tex.pdf (no
+ BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.108 ...=\unitlength,page=13]{3_7_drift_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/3_7_drift_tex.pdf Graphic file (type eps)
+<images/3_7_drift_tex.pdf>) [37] [38]
+
+! LaTeX Error: File `vrep-benchmark' not found.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.99 ...ncludegraphics[width=15cm]{vrep-benchmark}
+                                                  
+I could not locate the file with any of these extensions:
+.eps,.ps,.eps.gz,.ps.gz,.eps.Z,.mps
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+(./images/IK_solution_tex.pdf_tex
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.52 ...=\unitlength,page=1]{IK_solution_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/IK_solution_tex.pdf (
+no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.52 ...=\unitlength,page=1]{IK_solution_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/IK_solution_tex.pdf Graphic file (type eps)
+<images/IK_solution_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.59 ...=\unitlength,page=2]{IK_solution_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/IK_solution_tex.pdf (
+no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.59 ...=\unitlength,page=2]{IK_solution_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/IK_solution_tex.pdf Graphic file (type eps)
+<images/IK_solution_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.65 ...=\unitlength,page=3]{IK_solution_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/IK_solution_tex.pdf (
+no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.65 ...=\unitlength,page=3]{IK_solution_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/IK_solution_tex.pdf Graphic file (type eps)
+<images/IK_solution_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.67 ...=\unitlength,page=4]{IK_solution_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/IK_solution_tex.pdf (
+no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.67 ...=\unitlength,page=4]{IK_solution_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/IK_solution_tex.pdf Graphic file (type eps)
+<images/IK_solution_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.75 ...=\unitlength,page=5]{IK_solution_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/IK_solution_tex.pdf (
+no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.75 ...=\unitlength,page=5]{IK_solution_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/IK_solution_tex.pdf Graphic file (type eps)
+<images/IK_solution_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.82 ...=\unitlength,page=6]{IK_solution_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/IK_solution_tex.pdf (
+no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.82 ...=\unitlength,page=6]{IK_solution_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/IK_solution_tex.pdf Graphic file (type eps)
+<images/IK_solution_tex.pdf>
+
+! Package keyval Error: page undefined.
+
+See the keyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.84 ...=\unitlength,page=7]{IK_solution_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Cannot determine size of graphic in images/IK_solution_tex.pdf (
+no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.84 ...=\unitlength,page=7]{IK_solution_tex.pdf}}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: images/IK_solution_tex.pdf Graphic file (type eps)
+<images/IK_solution_tex.pdf>)) (./components/FutureWork.tex [39] [40]
+chapter 5.
+[41
+
+
+]) (./components/Appendix.tex [42]
+chapter 6.
+) (./Thesis.bbl [43
+
+
+] [44]
+Overfull \hbox (193.35535pt too wide) in paragraph at lines 14--19
+[]\OT1/cmr/m/n/10.95 V-rep re-mote api func-tions (mat-lab).  [][][][].
+ []
+
+[45
+
+
+])
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 67.
+ [46]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 67.
+ (./Thesis.aux)
+Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 67.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 67.
+Package rerunfilecheck Info: File `Thesis.out' has not changed.
+(rerunfilecheck)             Checksum: 2E08DC8F8187C3016189AA6DAF1C1C68;1860.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 67.
+ ) 
 Here is how much of TeX's memory you used:
- 3695 strings out of 494911
- 52228 string characters out of 6179862
- 175726 words of memory out of 5000000
- 6983 multiletter control sequences out of 15000+600000
- 3940 words of font info for 15 fonts, out of 8000000 for 9000
- 36 hyphenation exceptions out of 8191
- 43i,1n,66p,247b,45s stack positions out of 5000i,500n,10000p,200000b,80000s
-No pages of output.
+ 9813 strings out of 493030
+ 146584 string characters out of 6136260
+ 324944 words of memory out of 5000000
+ 13099 multiletter control sequences out of 15000+600000
+ 16521 words of font info for 59 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 43i,15n,66p,3436b,514s stack positions out of 5000i,500n,10000p,200000b,80000s
+
+Output written on Thesis.dvi (46 pages, 204408 bytes).

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2018.6.24)  24 JUN 2018 12:49
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2018.6.24)  24 JUN 2018 12:59
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -194,7 +194,7 @@ Missing character: There is no c in font nullfont!
 Missing character: There is no e in font nullfont!
 ! Undefined control sequence.
 l.23   {\huge
-             \textbf{Path Planning for an Ophthalmic Surgical Robot using V-...
+             \textbf{The Needle Detection and Reconstruction Based on OCT im...
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
 misspelled it (e.g., `\hobx'), type `I' and the correct
@@ -202,78 +202,118 @@ spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
 
-Overfull \hbox (23.9929pt too wide) in paragraph at lines 23--23
- []\OT1/cmr/bx/n/10 Path 
+Overfull \hbox (19.65962pt too wide) in paragraph at lines 23--23
+ []\OT1/cmr/bx/n/10 The 
  []
 
 
-Overfull \hbox (26.86789pt too wide) in paragraph at lines 23--23
- \OT1/cmr/bx/n/10 Plan- 
+Overfull \hbox (23.3749pt too wide) in paragraph at lines 23--23
+ \OT1/cmr/bx/n/10 Nee- 
  []
 
 
-Overfull \hbox (21.7221pt too wide) in paragraph at lines 23--23
- \OT1/cmr/bx/n/10 ning 
+Overfull \hbox (14.8541pt too wide) in paragraph at lines 23--23
+ \OT1/cmr/bx/n/10 dle 
  []
 
 
-Overfull \hbox (13.99994pt too wide) in paragraph at lines 23--23
- \OT1/cmr/bx/n/10 for 
+Overfull \hbox (17.92352pt too wide) in paragraph at lines 23--23
+ \OT1/cmr/bx/n/10 De- 
  []
 
 
-Overfull \hbox (11.97908pt too wide) in paragraph at lines 23--23
- \OT1/cmr/bx/n/10 an 
+Overfull \hbox (18.68741pt too wide) in paragraph at lines 23--23
+ \OT1/cmr/bx/n/10 tec- 
  []
 
 
-Overfull \hbox (25.24986pt too wide) in paragraph at lines 23--23
- \OT1/cmr/bx/n/10 Oph- 
+Overfull \hbox (19.80545pt too wide) in paragraph at lines 23--23
+ \OT1/cmr/bx/n/10 tion 
  []
 
 
-Overfull \hbox (37.5345pt too wide) in paragraph at lines 23--23
- \OT1/cmr/bx/n/10 thalmic 
+Overfull \hbox (18.36794pt too wide) in paragraph at lines 23--23
+ \OT1/cmr/bx/n/10 and 
  []
 
 
-Overfull \hbox (21.34712pt too wide) in paragraph at lines 23--23
- \OT1/cmr/bx/n/10 Sur- 
+Overfull \hbox (17.72908pt too wide) in paragraph at lines 23--23
+ \OT1/cmr/bx/n/10 Re- 
  []
 
 
-Overfull \hbox (12.77771pt too wide) in paragraph at lines 23--23
- \OT1/cmr/bx/n/10 gi- 
+Overfull \hbox (21.08322pt too wide) in paragraph at lines 23--23
+ \OT1/cmr/bx/n/10 con- 
  []
 
 
-Overfull \hbox (13.89574pt too wide) in paragraph at lines 23--23
- \OT1/cmr/bx/n/10 cal 
+Overfull \hbox (29.07762pt too wide) in paragraph at lines 23--23
+ \OT1/cmr/bx/n/10 struc- 
  []
 
 
-Overfull \hbox (31.30539pt too wide) in paragraph at lines 23--23
- \OT1/cmr/bx/n/10 Robot 
+Overfull \hbox (19.80545pt too wide) in paragraph at lines 23--23
+ \OT1/cmr/bx/n/10 tion 
  []
 
 
-Overfull \hbox (14.75824pt too wide) in paragraph at lines 23--23
- \OT1/cmr/bx/n/10 us- 
+Overfull \hbox (29.96648pt too wide) in paragraph at lines 23--23
+ \OT1/cmr/bx/n/10 Based 
  []
 
 
-Overfull \hbox (15.33325pt too wide) in paragraph at lines 23--23
- \OT1/cmr/bx/n/10 ing 
+Overfull \hbox (12.13882pt too wide) in paragraph at lines 23--23
+ \OT1/cmr/bx/n/10 on 
  []
 
 
-Overfull \hbox (12.52771pt too wide) in paragraph at lines 23--23
- \OT1/cmr/bx/n/10 V- 
+Overfull \hbox (24.9443pt too wide) in paragraph at lines 23--23
+ \OT1/cmr/bx/n/10 OCT 
  []
 
 
-Overfull \hbox (24.04153pt too wide) in paragraph at lines 23--23
- \OT1/cmr/bx/n/10 REP 
+Overfull \hbox (16.61102pt too wide) in paragraph at lines 23--23
+ \OT1/cmr/bx/n/10 im- 
+ []
+
+
+Overfull \hbox (16.61101pt too wide) in paragraph at lines 23--23
+ \OT1/cmr/bx/n/10 age 
+ []
+
+
+Overfull \hbox (22.361pt too wide) in paragraph at lines 23--23
+ \OT1/cmr/bx/n/10 with 
+ []
+
+
+Overfull \hbox (25.74985pt too wide) in paragraph at lines 23--23
+ \OT1/cmr/bx/n/10 GPU 
+ []
+
+
+Overfull \hbox (17.6388pt too wide) in paragraph at lines 23--23
+ \OT1/cmr/bx/n/10 Ac- 
+ []
+
+
+Overfull \hbox (17.40964pt too wide) in paragraph at lines 23--23
+ \OT1/cmr/bx/n/10 cel- 
+ []
+
+
+Overfull \hbox (13.84023pt too wide) in paragraph at lines 23--23
+ \OT1/cmr/bx/n/10 er- 
+ []
+
+
+Overfull \hbox (9.42354pt too wide) in paragraph at lines 23--23
+ \OT1/cmr/bx/n/10 a- 
+ []
+
+
+Overfull \hbox (19.80545pt too wide) in paragraph at lines 23--23
+ \OT1/cmr/bx/n/10 tion 
  []
 
 ! Undefined control sequence.
@@ -379,5 +419,5 @@ Here is how much of TeX's memory you used:
  3652 multiletter control sequences out of 15000+600000
  3948 words of font info for 15 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 16i,1n,16p,112b,136s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 16i,1n,16p,134b,136s stack positions out of 5000i,500n,10000p,200000b,80000s
 !  ==> Fatal error occurred, no output PDF file produced!

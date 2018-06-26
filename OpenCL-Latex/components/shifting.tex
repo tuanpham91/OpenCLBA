@@ -1,0 +1,221 @@
+\chapter{Shifting Algorithm with OpenCL}
+This chapter focuses on the mentioned shifting algorithm, the hardware used, inputs, the result and optimization techniques. After understanding the fundamentals of OpenCL, it is important to choose a strategy to divide into smaller tasks and implement it in OpenCL. The shifting algorithm will be repeated in four iterations with adjustments after each iteration to reach the best results. 
+
+\section{Hardware}
+This chapter focuses on the mentioned shifting algorithm, the hardware used, inputs, the result and optimization techniques. After understanding the fundamentals of OpenCL, it is important to choose a strategy to divide into smaller tasks and implement it in OpenCL. The shifting algorithm will be repeated in four iterations with adjustments after each iteration to reach the best results. In this thesis, two sets of hardware are used for running the application:
+
+\begin{lstlisting}
+	Set 1    
+    CPU : AMD Ryzen 5 1600X
+    Graphic card : AMD RX 460
+    PCI Express 3
+    Memory : 16 GB
+
+\end{lstlisting}
+
+\begin{lstlisting}
+	Set 2    
+    CPU : Intel Core i7 7700K
+    Graphic Card : NVIDIA TITAN X
+    PCI Express 3
+    Memory : 16 GB
+
+\end{lstlisting}
+
+The components in set 1 are not the best components in the market. A better combination of high end components (set 2) can improve the component significantly. 
+
+\newpage
+\section{Program Input}
+Adopting results from the first part from Ramonas work, the shifting algorithm is responsible to find a shift-rotation combination with the highest number of matching points. As input there are the original point cloud, the CAD model point cloud and initial guess transformations and specifications of shift-rotation combinations. These specifications are: angle interval, shift interval, step length in two dimensions (shift and rotation). These information are deciding factors for the amount of possible combinations and therefore workload.
+
+In the thesis a data set is used as a test set for the program. The two point clouds, a CAD model and a constructed model (from OCT Images), consisting of 2289 and 1225 points respectively. As discussed before, a point cloud data structure can not be used in the context of kernel code, so a conversion is needed to make data transfer possible: For each point cloud, an array of float is thrice the size of the mentioned point cloud is created to store the coordination of the points included. In this case the arrays are created with the sizes of 6867 (2289*3) and 3675 (1225*3). Because of the rather big sizes, the memories are allocated in dynamic memory to avoid segmentation fault error.
+
+The initial values of the interval length, step length, and initial angles and shift, are adopted from the first part of the thesis. After each iteration these values are adjusted to the best result to move on to the next iteration. Initially the angle interval of 10.0 grad with a step length of 1.0f and a shift interval of 0.5f with step length 0.05f were chosen. From these specifications we have a number of angle steps, calculated as following:
+
+\begin{equation*}
+Num\_angle\_step = 10/1 +1 = 11;
+\end{equation*}
+And a number of shift steps:
+\begin{equation*}
+Num\_shift\_step = 0.5/0.05 +1 = 11;
+\end{equation*}
+With 11 angle steps and 11 shift steps, the total number of all combination is the production of the two, which results in 121 combinations. In the first round of four iterations, there are 121 of combinations to be transformed, calculated and served as candidates for the best result. These basic information are critical for the implementation, the reasons behind will be discussed later.
+\newpage
+\section{Process}
+
+Given the point clouds and the initial translation, one iteration of Iterative Closest Point can be processed in roughly four steps, which will be repeated for each combination of shift-rotation:
+
+\begin{itemize}
+\item Computation of transformation matrix using the initial translation and rotation based on the shift and angle step of the combination.
+\item Translate the model point cloud with the new transformation matrix. 
+\item Calculating the number of matching points between the transformed point cloud and OCT generated point clouds. A matching point is found if the distance between that matched point and the source point is closer than a certain threshold. In the thesis the threshold was defined as 0.02f.
+\item Analyzing the results to determine the combination with highest number of matching points. Using the newly found combination as pivot to calculate the next interval for shift and rotation and applying these intervals for the next iteration.
+\end{itemize}
+
+The results of the described process is an array of combination index - number of matching points.  The next step is to find the combination which holds the highest number of matching points and retrieve the corresponding angle step and shift step with the combination. The new found angle step and shift step will be used as pivot to compute the angle and shift interval for the next iteration. The step lengths are also reduced after each iteration to improve the approximation. Unconstant shift and angle intervals and changing step lengths account to unpredictable number of combinations in the next iterations. 
+
+After four iterations the best combination is considered as the end result which converges to the actual position, a corresponding rotation and translation is computed and the process is therefore finished.
+
+\section{Concrete implementation}
+In GPU Programming, it is important to choose a strategy which part to parallelize. Understanding the difference and device specification, in this chapter we will take a closer look of how the previously described steps are executed.
+
+In the OpenCL implementation, the steps are differently grouped but the fundamentals stay the same. The first and second step, which are responsible for calculating the transformation and transform the point cloud. The second step can not take place without the first being finished, hence the reason why these two steps are not parallelized. For an intuitive demonstration of the algorithm, the numbers used in the next chapter are based on the test data set.
+
+\subsection{Transformation matrix calculation and apply to point cloud
+}
+Adopting the method used in Ramonas work, the transformation matrix can be calculated knowing the shift and the angle step. The 4x4  matrix consists of one 3x3 rotation matrix and a 3x1 translation vector, the last row is always defined with a (0,0,0,1) vector, regardless of the angle and shift step. 
+
+The rotation matrix can be calculated as follow:
+
+\begin{lstlisting}
+rotating[0] = cos(angle\_temp);
+rotating[1] = -sin(angle\_temp);
+rotating[3] = sin(angle\_temp);
+rotating[4] = cos(angle\_temp);
+\end{lstlisting}
+
+Whereas rotating is an array of float with size 9 (represents 3*3 matrix) and angle\_temp is the angle of current combination, which is:
+\begin{lstlisting}
+angle\_temp=    (angle\_min+angle*angle\_step)*(0.01745328888);
+\end{lstlisting}
+Then the first elements of transformation matrix can be calculated as follow :
+\begin{lstlisting}
+transform[0]= floatArgs[12]*rotating[0]+floatArgs[13]*rotating[3];
+transform[1]= floatArgs[12]*rotating[1]+floatArgs[13]*rotating[4];
+transform[2]= floatArgs[14];
+
+transform[4]= floatArgs[15]*rotating[0]+floatArgs[16]*rotating[3];
+transform[5]= floatArgs[15]*rotating[1]+floatArgs[16]*rotating[4];
+transform[6]= floatArgs[17];
+
+transform[8]= floatArgs[18]*rotating[0]+floatArgs[19]*rotating[3];
+transform[9]= floatArgs[18]*rotating[1]+floatArgs[19]*rotating[4];
+transform[10]=floatArgs[20];
+\end{lstlisting}
+
+It is worth noting that the default values of a float array is 0.0f, it is the reason why all others indexes do not have value assignment. Furthermore, with the knowledge of constant array values, some arithmetic operations can be neglected without changing the end result, for example multiplication with 0.0f. Reducing these redundant assignment and operation has a significant impact on the performance, since the clock speed of each unit is not very high in comparison to CPU cores. 
+
+Applying the translation vector with consideration of the shift step:
+\begin{lstlisting}
+transform[3] = floatArgs[6]+ floatArgs[9]*shift_temp/floatArgs[11];
+transform[7] =floatArgs[7]+ floatArgs[10]*shift_temp/floatArgs[11];
+transform[11] =floatArgs[8]+ floatArgs[11]*shift_temp/floatArgs[11];
+\end{lstlisting}
+Because the last row of this matrix will always be (0,0,0,1), the assignment step is therefore neglected and these default values will be automatically applied to further calculation. After these two steps a concrete transformation matrix is created completely.
+
+In the next step, the point cloud should be transformed with the newly computed matrix. The ultimate goal is to compare the transformed point cloud with the original one, that means the transformed point cloud must be saved somewhere in the accessible memory. This task raised concern of defining a good strategy to preserve the transformed matrix.
+
+As discussed before, the private memory of each computing unit is quite limited. The size of the memory needed can be much higher than the one that is available. Using the example provided, a transformed array will have the physical size of:
+\begin{equation*}
+    1225*3*sizeof(float)
+\end{equation*}
+This is not a small array, explains why saving the array in private memory is not plausible. Besides, using private memory is possible for later usage (see memory model) and very hard for management. Local memory also has the same disadvantages, and is therefore not usable in this process. The only solution is to use the global memory, which unfortunately has the slowest access speed.
+
+Using the global memory the right way could be a challenging task. The nature of parallelism does not encourage a piece of memory to be written by multiple threads at a time, because when all the threads are writing parallely to the same memory, the result will not be what is expected. There is no certain solution to know which process has written to the memory in the execution and the values can easily be overwritten by another thread. 
+
+The solution is to use the global memory, with a little trick. A very large array will be allocated in the global memory, with the size (of float values) that can be calculated as follow:
+\begin{equation*}
+    1225*3*sizeof(float)
+\end{equation*}
+
+Floats are created to save the transformed matrix of all iterations. The array is subsetted into many smaller sub-array assigned to each combination. For further functions concerning the transformed arrays, the function will be given a start and end index of the subset, which is quite easy to compute.
+
+Reserving such a large array can take a lot of time in the context of real life application. It is a common mistake of allocating such a big array with 0 values in host memory and transfer the values into to device memory. This practice has a lot of disadvantages:
+\begin{itemize}
+\item Allocating memory at host can be time-consuming, no matter how fast it is, it still adds up in overall performance.
+\item It also takes time to transfer such a large number of floats into the memory.
+\item Risk of memory leak due to not dereferenced memory.
+\item There is no use for the array allocated in host.
+\end{itemize}
+However, it is possible in this case for programmers to just tell OpenCL to allocate the memory needed in the device by using the flag CL\_MEM\_ALLOC\_HOST\_PTR when calling clCreateBuffer(). This flag tells the device to allocate memory given the size needed for the buffer, which will be initialized with a default value of the corresponding data type. This process eliminates the data transfer step and memory allocation step in host, which could boost the performance. Considering that there must be four iterations, it is a significant improvement.
+
+Allocating such a large array in device is always time consuming and there is no certain way to presume how much memory is needed to all point clouds and all iterations. To prevent repeating these steps each iteration and reserving too much memory, a check is implemented before executing the method. The check uses the given information of point cloud size, number of combinations to decide if a new, bigger piece of memory is needed in the corresponding iteration. If not, the program will reuse the reserved memory in the last iteration to improve efficiency. 
+
+The initial approach was to parallelize the transformation of each combination, which means running on 121 work units at the same time but the performance was not good enough: Kernel code takes very long to rune because of limited computing power of each work unit. Based on the numbers of work units available and the test data, it is possible to take a further step, to parallelize the transformation of each point in the point cloud for all rotation-shift combination. A total number of  121*1225 = 148225 work units is used in the example implementation, which uses roughly 1.4 \% of the work units available (a total of 16777216 work units). Because of optimized parallelism, the execution had been reduced significantly, to the area of around under 1 second for four iterations. 
+
+Note that the number of work items which are still available is very high and unused. This fact opens up an opportunity to create a “pipeline” to feed data sets  to the GPU and processes multiple different frames at the same time. Within the scope of this thesis, this aspect will not be discussed further. 
+The result of this step is a buffer object containing all the transformed points of all combinations. For each point in this large array, the combination  of rotation, shift and index the point can be calculated with this function, first with the index and corresponding combination of the point  :
+\begin{lstlisting}
+ 	index = global_index%size_of_point_cloud;
+ 	combination_index = global_index/size_of_point_cloud;
+\end{lstlisting}
+
+
+From the number of the iteration, the shift step and angle step are determined as following:
+\begin{lstlisting}
+	shift_step = index/max_rotation_step;
+    rotation_step = idex\%max_rotation_step;    
+\end{lstlisting}    
+
+    
+It is possible to have a look into the memory object and read the values inside the buffer with the API call clEnqueueReadBuffer(). This step is however not necessary since the buffer can be used as argument for the next kernel function without the need to initialize and allocate the memory again. 
+\newpage
+\section{Finding correspondences}
+Given the array of transformed point clouds, the next step would be finding the number of correspondences between each point cloud and the original point cloud. In the Point Cloud Library the correspondence matching function was implemented with the help of K-D-Tree, which is not included in the OpenCL implementation. The matching algorithm was also redesigned to adjust with the kernel syntax and the Point Cloud Library is therefore not used. The implementation of a K-D tree is impractical and complex in parallelism, hence it was not included.
+\subsection{Correspondence matching}
+The algorithm behind the correspondence match is simple: For each point of the original point cloud (also called “source”), an iteration through the model point cloud (called “target”) is executed to find a point in the target that has a distance to the source point smaller than a certain threshold, in this thesis the threshold was set at 0.2f. The program stops iterating once a correspondence is found and written into the result array. The distance between two points can be calculated as following:
+\begin{lstlisting}
+	if (sqrt(a+b+c)<0.02f) {       
+        correspondence_result[3*i]= (float)i;
+      	correspondence_result[3*i+1] =(float)k;
+	    correspondence_result[3*i+2] = sqrt(a+b+c);
+		..
+    }
+   
+\end{lstlisting}  
+
+Whereas input\_transformed is the array of transformed point clouds and point\_cloud\_ptr stands for the source point cloud. These calculations are carried out for each step of the loop until the first point that fulfills the requirement is found, the iteration stops and returns the result in form of a tuple, which consists of index of source point, index of matched point and distance between the two:
+\begin{lstlisting}
+       (index_source, index_matched, distance)
+\end{lstlisting}  
+
+It is clear that the tupel needs to be stored in a certain data structure for later analysis. In the original code, the result is saved in a vector of tuple, the two data structures which are not supported by OpenCL. The only choice available in this case is again a very big global array of floats. Another problem is that a std::vector data structure can be very flexible in size, which means that there is no certain method to replicate the same functionality in OpenCL. As a solution an array size should be predetermined with the only requirement: It should be big enough to store the results in the worst case scenario that there are so many matching points as possible whereas the limit is the size of the source point cloud.
+
+A closer look to the algorithm helped solving this problem: For each point in the source point cloud the algorithm looks for a correspondence in the target, which results into the max number of matching point pairs that is also the size of a source point cloud. Having the same problems of conflicting writing processes in parallelism as discussed in the first step, the array should have a size of :
+
+\begin{lstlisting}
+       Size = numberOfCombinations*sizeOfSourceArray
+\end{lstlisting}
+
+It is inevitable that the array allocated is much bigger than the size needed for all correspondences found in all combinations. This issue can not be resolved efficiently in a OpenCL context. A certain size can be set, in proportion to the size of  the source point cloud as a rule of thumb, but it is not waterproof and therefore not recommended. The redundant memory reservation call can be reduced using a size checker as the first step.
+
+Another mechanism is also used in this kernel function to improve the performance: An optimization on local work size and global work size. The system used in this thesis has an AMD graphic card, therefore the prefered local work size should be a nature multiple of 64. As mentioned before, there is a requirement to fulfill a this step: The global work size needs to be a multiple of local work size. This condition is in real life not easy to fulfill, since the number of work units needed can not always be a multiple of 64 ( or 32 for NVIDIA graphic cards). For example, in this iteration of ICP, the number of work units needed is 148225 , which is certainly not a multiple of 64 and can not be defined as global work size since the local work size is set.
+
+ A simple tweak could solve this problem without creating too much redundant code. A multiple of 64, which is the next number that greater than the number of work units, will be set as global work size. There is no need to reserve more memory for each array just because of the new global work size, the problem with array index overflow can be overcome with a simple check :
+
+\begin{lstlisting}
+	__private int i = get_global_id(0);
+	__private int max_number_of_points = intArgs[3];
+	if (i >= max_number_of_points) {
+        return;
+	}
+\end{lstlisting}
+
+Whereas the limit is the actual number of work size needed, passed as an argument to kernel function. The limit served as a threshold, if a work id is bigger than this threshold then the function will return without executing any calculation or writing into result array.
+
+Optimizing the local work size and global work size with threshold in kernel code theoretically has an positive impact to execution time of that kernel function, however not significantly. Because testing in an isolated environment is a challenging task, especially in the scope of milliseconds, it is hard to determine the exact improvement in performance, which is in many case not quite meaningful. For a more complicated  case, like the first step, a easy-to-debug, more intuitive method is used without the optimal local work size has higher priority. In the thesis this step is rather experimental, and not necessary yields a better result. 
+
+\subsection{Count Result}
+The last step of the iteration is to analyse the results from the second step, a rather less complicated task than the first two. Having the correspondences array from previous calculation, the task is to sum up the total of all matching points pairs and save it into a designated array of result. 
+
+Given the data type of result, it is necessary to determine which part of the array belongs to which rotation-shift combination with the help of global work id. Afterwards the kernel code iterates through the associating sub array to find and count all correspondences found. Since the results sub arrays have fixed size and all initialized with default float values, a match can be identified by checking the tupel, for example:
+
+\begin{lstlisting}
+	(a,b,c)
+\end{lstlisting}
+
+As mentioned previously, a and b stand for indexes of source and c for the distance between the two points. If a point does not have correspondence, c will be set as 0.0f, therefore a criteria of identification is c should not be 0.0f. In rare cases where the distance is really 0.0f, which is a perfect match, the algorithm should check if a and b are valid index number, meaning it could not be 0 at the same time. These cases are actually very rare, since the coordinations have a high number of decimal place, but worth checking to cover all bases. 
+
+This task does not require a high computing power since the iteration covers some thousands floats. Consequently it is not highly parallelized: In this case the number of work units used is also the number of combinations available. Each work unit will take care of the combination. There is a possible way to scale up parallelism of this task, but it might not be necessary since the execution time is still fast enough. The possibility mentioned is to divide the results to smaller sub-arrays, repeat the same process with each parts and sum up the result at the end. While it could improve the performance, this method creates too many more steps and leads to further complications (choose the right strategy for division, threshold to not overstepping to another combination..). Furthermore, the overhead of creating more kernel functions, queuing the functions (which should not be overlooked) might very well negate the improvement, hence this method was not implemented.
+
+\subsection{Analyse result}
+
+After getting a result array in form of shift-angle-count, the next step would be to find out the angle, step of the combination with highest count of matches to use as pivot for the next iteration. The function to excel this analysis is adopted from Ramona work with some adjustment to conform with the data types. New step and angle lengths are also re-determined with fixed changes (divide by 5.0f for both) regardless of result and number of combinations. The new values will be applied into the next iteration, explains why the four iterations can not be parallelized and the number of combinations in the next step can not be pre-determined.
+
+\subsection{Optimization possibilities}
+Finding a good strategy is the most critical to achieve a good performance in parallel programming, however optimization does not just end here. There are severals adjustments mentioned in each steps to improve the performance, but generally there are some more aspects to do the same deed:
+\begin{itemize}
+\item Reduction of object initialization. Every API calls, no matter how fast will take some time in the execution. Objects like kernels, arrays, memory objects do not need to be re initialized every time an iteration is executed.
+\item Minimize the number of arguments. While intuitive, it is not efficient to create a new memory buffer and argument  for each value presented. In this thesis all the values with the same data type, with exception of point clouds, are grouped into an array and pass the array to kernel function. This has reduced a lot of time  for creating memory objects and increase the performance significantly.
+\end{itemize}
+While a good performance is important and it is noble to achieve the best with given devices, but the program code should also be easy to maintain, readable and adaptable to changes. If all the measures are applied it would increase the complexity of the code and in some cases creates hard to debug errors. A balance between performance and readability should also be highly prioritized and worth considering.

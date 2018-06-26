@@ -1,0 +1,23 @@
+\BOOKMARK [0][-]{chapter.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.1.1}{Objectives of this Thesis}{chapter.1}% 2
+\BOOKMARK [1][-]{section.1.2}{Approaches}{chapter.1}% 3
+\BOOKMARK [0][-]{chapter.2}{Open Computing Language}{}% 4
+\BOOKMARK [1][-]{section.2.1}{Graphic Processing Unit}{chapter.2}% 5
+\BOOKMARK [1][-]{section.2.2}{OpenCL Framework}{chapter.2}% 6
+\BOOKMARK [2][-]{subsection.2.2.1}{Platform}{section.2.2}% 7
+\BOOKMARK [2][-]{subsection.2.2.2}{Memory model}{section.2.2}% 8
+\BOOKMARK [2][-]{subsection.2.2.3}{Execution steps of a OpenCL Program}{section.2.2}% 9
+\BOOKMARK [2][-]{subsection.2.2.4}{Global, local work size, work groups}{section.2.2}% 10
+\BOOKMARK [2][-]{subsection.2.2.5}{Kernel}{section.2.2}% 11
+\BOOKMARK [0][-]{chapter.3}{Shifting Algorithm with OpenCL}{}% 12
+\BOOKMARK [1][-]{section.3.1}{Hardware}{chapter.3}% 13
+\BOOKMARK [1][-]{section.3.2}{Program Input}{chapter.3}% 14
+\BOOKMARK [1][-]{section.3.3}{Process}{chapter.3}% 15
+\BOOKMARK [1][-]{section.3.4}{Concrete implementation}{chapter.3}% 16
+\BOOKMARK [2][-]{subsection.3.4.1}{Transformation matrix calculation and apply to point cloud}{section.3.4}% 17
+\BOOKMARK [1][-]{section.3.5}{Finding correspondences}{chapter.3}% 18
+\BOOKMARK [2][-]{subsection.3.5.1}{Correspondence matching}{section.3.5}% 19
+\BOOKMARK [2][-]{subsection.3.5.2}{Count Result}{section.3.5}% 20
+\BOOKMARK [2][-]{subsection.3.5.3}{Analyse result}{section.3.5}% 21
+\BOOKMARK [2][-]{subsection.3.5.4}{Optimization possibilities}{section.3.5}% 22
+\BOOKMARK [0][-]{chapter.4}{Result and conclusion}{}% 23

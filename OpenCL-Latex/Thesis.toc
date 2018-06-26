@@ -1,0 +1,30 @@
+\select@language {german}
+\select@language {english}
+\select@language {german}
+\select@language {english}
+\select@language {english}
+\select@language {german}
+\select@language {english}
+\contentsline {chapter}{\numberline {1}Introduction}{11}{chapter.1}
+\contentsline {section}{\numberline {1.1}Objectives of this Thesis}{11}{section.1.1}
+\contentsline {section}{\numberline {1.2}Approaches}{11}{section.1.2}
+\contentsline {chapter}{\numberline {2}Open Computing Language}{13}{chapter.2}
+\contentsline {section}{\numberline {2.1}Graphic Processing Unit}{13}{section.2.1}
+\contentsline {section}{\numberline {2.2}OpenCL Framework}{15}{section.2.2}
+\contentsline {subsection}{\numberline {2.2.1}Platform}{16}{subsection.2.2.1}
+\contentsline {subsection}{\numberline {2.2.2}Memory model}{16}{subsection.2.2.2}
+\contentsline {subsection}{\numberline {2.2.3}Execution steps of a OpenCL Program}{17}{subsection.2.2.3}
+\contentsline {subsection}{\numberline {2.2.4}Global, local work size, work groups}{20}{subsection.2.2.4}
+\contentsline {subsection}{\numberline {2.2.5}Kernel}{23}{subsection.2.2.5}
+\contentsline {chapter}{\numberline {3}Shifting Algorithm with OpenCL}{25}{chapter.3}
+\contentsline {section}{\numberline {3.1}Hardware}{25}{section.3.1}
+\contentsline {section}{\numberline {3.2}Program Input}{26}{section.3.2}
+\contentsline {section}{\numberline {3.3}Process}{27}{section.3.3}
+\contentsline {section}{\numberline {3.4}Concrete implementation}{27}{section.3.4}
+\contentsline {subsection}{\numberline {3.4.1}Transformation matrix calculation and apply to point cloud}{28}{subsection.3.4.1}
+\contentsline {section}{\numberline {3.5}Finding correspondences}{31}{section.3.5}
+\contentsline {subsection}{\numberline {3.5.1}Correspondence matching}{31}{subsection.3.5.1}
+\contentsline {subsection}{\numberline {3.5.2}Count Result}{33}{subsection.3.5.2}
+\contentsline {subsection}{\numberline {3.5.3}Analyse result}{33}{subsection.3.5.3}
+\contentsline {subsection}{\numberline {3.5.4}Optimization possibilities}{34}{subsection.3.5.4}
+\contentsline {chapter}{\numberline {4}Result and conclusion}{35}{chapter.4}
