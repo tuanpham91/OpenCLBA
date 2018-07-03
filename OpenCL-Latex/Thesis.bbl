@@ -27,6 +27,11 @@ NVIDIA.
 \newblock
   \url{http://www.nvidia.com/content/cudazone/download/OpenCL/NVIDIA_OpenCL_ProgrammingGuide.pdf}.
 
+\bibitem{openclinaction}
+M.~Scarpino.
+\newblock {\em OpenCL in Action: How to Accelerate Graphics and Computation}.
+\newblock Manning, 2012.
+
 \bibitem{ramona}
 Ramona Schneider.
 \newblock Modified iterative closest point algorithm design for needle pose and

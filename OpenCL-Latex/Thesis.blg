@@ -15,45 +15,45 @@ Warning--empty booktitle in nvidiaopencl
 Warning--empty year in nvidiaopencl
 Warning--empty booktitle in ramona
 Warning--empty booktitle in opencl
-You've used 7 entries,
+You've used 8 entries,
             2118 wiz_defined-function locations,
-            528 strings with 5148 characters,
-and the built_in function-call counts, 1999 in all, are:
-= -- 167
-> -- 80
+            532 strings with 5241 characters,
+and the built_in function-call counts, 2214 in all, are:
+= -- 186
+> -- 87
 < -- 1
-+ -- 33
-- -- 26
-* -- 116
-:= -- 315
-add.period$ -- 19
-call.type$ -- 7
-change.case$ -- 34
++ -- 36
+- -- 28
+* -- 124
+:= -- 353
+add.period$ -- 22
+call.type$ -- 8
+change.case$ -- 37
 chr.to.int$ -- 0
-cite$ -- 19
-duplicate$ -- 101
-empty$ -- 199
-format.name$ -- 26
-if$ -- 428
+cite$ -- 20
+duplicate$ -- 113
+empty$ -- 221
+format.name$ -- 28
+if$ -- 474
 int.to.chr$ -- 0
-int.to.str$ -- 7
-missing$ -- 7
-newline$ -- 36
-num.names$ -- 12
-pop$ -- 73
+int.to.str$ -- 8
+missing$ -- 9
+newline$ -- 41
+num.names$ -- 14
+pop$ -- 81
 preamble$ -- 1
-purify$ -- 27
+purify$ -- 30
 quote$ -- 0
-skip$ -- 58
+skip$ -- 64
 stack$ -- 0
-substring$ -- 63
-swap$ -- 17
+substring$ -- 68
+swap$ -- 18
 text.length$ -- 1
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 28
+type$ -- 30
 warning$ -- 12
-while$ -- 14
-width$ -- 8
-write$ -- 64
+while$ -- 16
+width$ -- 9
+write$ -- 74
 (There were 12 warnings)

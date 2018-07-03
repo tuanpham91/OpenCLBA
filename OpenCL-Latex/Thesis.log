@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2018.6.24)  26 JUN 2018 18:45
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2018.6.24)  28 JUN 2018 08:59
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -915,12 +915,12 @@ Package babel Info: Redefining german shorthand "~
 
 
 ] (./components/titlepage.tex
-LaTeX Font Info:    Try loading font information for U+msa on input line 40.
+LaTeX Font Info:    Try loading font information for U+msa on input line 38.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 40.
+LaTeX Font Info:    Try loading font information for U+msb on input line 38.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
@@ -928,7 +928,7 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 File: styles/informat.png Graphic file (type png)
 
 <use styles/informat.png>
-Package pdftex.def Info: styles/informat.png used on input line 51.
+Package pdftex.def Info: styles/informat.png used on input line 49.
 (pdftex.def)             Requested size: 113.81102pt x 113.81012pt.
 ) (./components/disclaimer.tex
 Package babel Info: Redefining german shorthand "f
@@ -1019,34 +1019,31 @@ Package pdftex.def Info: images/OCTimageEx.jpg used on input line 25.
 (pdftex.def)             Requested size: 142.26378pt x 284.52382pt.
 ) (./components/opencl.tex [12 <./images/OCTimageEx.jpg>]
 chapter 2.
-
-LaTeX Warning: Citation `wikipedia' on page 13 undefined on input line 4.
-
 [13
 
 
-] [14] <images/OpenCLModel.png, id=197, 860.21375pt x 465.74pt>
+] [14] <images/OpenCLModel.png, id=198, 860.21375pt x 465.74pt>
 File: images/OpenCLModel.png Graphic file (type png)
 
 <use images/OpenCLModel.png>
 Package pdftex.def Info: images/OpenCLModel.png used on input line 26.
 (pdftex.def)             Requested size: 227.62204pt x 123.23573pt.
  [15 <./images/OpenCLModel.png>]
-<images/Model.png, id=205, 543.02875pt x 410.53375pt>
+<images/Model.png, id=206, 543.02875pt x 410.53375pt>
 File: images/Model.png Graphic file (type png)
  <use images/Model.png>
 Package pdftex.def Info: images/Model.png used on input line 42.
 (pdftex.def)             Requested size: 227.62204pt x 172.08473pt.
 
 [16] [17 <./images/Model.png>] [18] [19]
-<images/clinfo.png, id=225, 898.35625pt x 428.60126pt>
+<images/clinfo.png, id=226, 898.35625pt x 428.60126pt>
 File: images/clinfo.png Graphic file (type png)
  <use images/clinfo.png>
 Package pdftex.def Info: images/clinfo.png used on input line 71.
 (pdftex.def)             Requested size: 341.43306pt x 162.89632pt.
 
 [20 <./images/clinfo.png>]
-<images/itemunit.png, id=232, 590.205pt x 528.97626pt>
+<images/itemunit.png, id=233, 590.205pt x 528.97626pt>
 File: images/itemunit.png Graphic file (type png)
 
 <use images/itemunit.png>
@@ -1124,7 +1121,7 @@ LaTeX Font Info:    Font shape `OML/cmr/m/n' in size <10.95> not available
 
 [31] [32] [33]) (./components/result.tex [34]
 chapter 4.
-<images/AllfouriterationRX460.png, id=363, 1264.725pt x 710.655pt>
+<images/AllfouriterationRX460.png, id=367, 1264.725pt x 710.655pt>
 File: images/AllfouriterationRX460.png Graphic file (type png)
 
 <use images/AllfouriterationRX460.png>
@@ -1135,14 +1132,14 @@ Package pdftex.def Info: images/AllfouriterationRX460.png used on input line 8.
 
 
  <./images/AllfouriterationRX460.png>] <images/AllfourIterationTITANX.png, id=3
-71, 1264.725pt x 710.655pt>
+75, 1264.725pt x 710.655pt>
 File: images/AllfourIterationTITANX.png Graphic file (type png)
 
 <use images/AllfourIterationTITANX.png>
 Package pdftex.def Info: images/AllfourIterationTITANX.png used on input line 1
 7.
 (pdftex.def)             Requested size: 398.33858pt x 223.82497pt.
- [36 <./images/AllfourIterationTITANX.png>] <images/EachstepAMD.png, id=379, 12
+ [36 <./images/AllfourIterationTITANX.png>] <images/EachstepAMD.png, id=383, 12
 64.725pt x 710.655pt>
 File: images/EachstepAMD.png Graphic file (type png)
 
@@ -1150,7 +1147,7 @@ File: images/EachstepAMD.png Graphic file (type png)
 Package pdftex.def Info: images/EachstepAMD.png used on input line 43.
 (pdftex.def)             Requested size: 398.33858pt x 223.82497pt.
  [37 <./images/EachstepAMD.png>]
-<images/EachStepNVIDIA.png, id=387, 1264.725pt x 710.655pt>
+<images/EachStepNVIDIA.png, id=391, 1264.725pt x 710.655pt>
 File: images/EachStepNVIDIA.png Graphic file (type png)
 
 <use images/EachStepNVIDIA.png>
@@ -1183,21 +1180,18 @@ Package rerunfilecheck Info: File `Thesis.out' has not changed.
 (rerunfilecheck)             Checksum: BE69095E11A49C489D1C06B22DD90AD9;1562.
 
 
-LaTeX Warning: There were undefined references.
-
-
 LaTeX Warning: There were multiply-defined labels.
 
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 61.
  ) 
 Here is how much of TeX's memory you used:
- 12160 strings out of 493029
- 177708 string characters out of 6136234
- 365161 words of memory out of 5000000
- 15314 multiletter control sequences out of 15000+600000
+ 12152 strings out of 493029
+ 177687 string characters out of 6136234
+ 365221 words of memory out of 5000000
+ 15305 multiletter control sequences out of 15000+600000
  15521 words of font info for 56 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 43i,8n,66p,1764b,1235s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 43i,9n,66p,1764b,1235s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/shar
 e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texl
@@ -1209,10 +1203,10 @@ public/amsfonts/cm/cmssbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/publ
 ic/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/ams
 fonts/cm/cmti10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/
 cm/cmtt10.pfb>
-Output written on Thesis.pdf (39 pages, 716607 bytes).
+Output written on Thesis.pdf (39 pages, 717459 bytes).
 PDF statistics:
- 482 PDF objects out of 1000 (max. 8388607)
- 410 compressed objects within 5 object streams
- 147 named destinations out of 1000 (max. 500000)
+ 485 PDF objects out of 1000 (max. 8388607)
+ 413 compressed objects within 5 object streams
+ 148 named destinations out of 1000 (max. 500000)
  235 words of extra memory for PDF output out of 10000 (max. 10000000)
 

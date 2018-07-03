@@ -24,7 +24,7 @@ OpenCL is a framework for writing programs that can be executed across heterogen
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=8cm]{images/OpenCLModel.png}
-	\caption{An examplary OCT image of the needle}
+	\caption{OpenCL Platform Model}
 	\label{ExampleOCTImage}
 \end{figure}
 \pagebreak
@@ -80,15 +80,15 @@ In the scope of this thesis, the number of threads available is far more than wh
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=10 cm]{images/itemunit.png}
-	\caption{Information about current available devices}
+	\caption{Work group and work unit}
 	\label{ExampleOCTImage}
 \end{figure}
 
-On the other hand, local work size can not be as arbitrary big as users want, it is constraint by the specification of the device. The limit of the local work size is also defined by the max number of work items per dimension, in the example it is 256 items per work group per dimension. Unlike the global work size, it is not obligatory to define the local work size, users can define it as NULL if they wish to. In this case, OpenCL will handle the local work size itself.
+On the other hand, local work size can not be as arbitrary big as users want, it is constraint by the specification of the device. The limit of the local work size is also defined by the max number of work items per dimension, in the example it is 256 items per work group per dimension. Unlike the global work size, it is not obligatory to define the local work size, users can define it as NULL if they wish to. In this case, OpenCL will handle the local work size itself\cite{openclinaction}.
 
 A work group is basically a set of work items that are grouped together. The number of work group can be dynamic, as it depends on the number of the global work size and the local work size. Grouping work items together can have certain positive effects on the performance, since work items in the same work group are synchronized much better and can have access to local memory, which could be advantageous. It is also critical to set the global work size to be a natural multiple of the local work size. For example, if a local work size of 128 is defined, then the global work size must be 128*n where n is a natural number.
 
-Each GPU vendor has developed their own optimization strategy with a prefered local work size definition. As mentioned before, the only constraint between the local and global work size is only that the local work size should be the natural divisor of global work size. Configuring the right local work size has a positive impact to the overall performance. NVIDIA recommends for their GPUs a multiple of 32 for local work size, while for AMD equivalent the recommendation is a multiple of 64. (SOURCE). The reason behind the performance improvement is the architecture of the GPU: A wavefront (fundamental work unit of AMD GPUS) consists of 64 work items, thusly a multiple of 64 local work size will not require a regroup of work-items, therefore provides better performance. The same explanation applies to NVIDIA GPUs.
+Each GPU vendor has developed their own optimization strategy with a prefered local work size definition. As mentioned before, the only constraint between the local and global work size is only that the local work size should be the natural divisor of global work size. Configuring the right local work size has a positive impact to the overall performance. NVIDIA recommends for their GPUs a multiple of 32 for local work size, while for AMD equivalent the recommendation is a multiple of 64. The reason behind the performance improvement is the architecture of the GPU: A wavefront (fundamental work unit of AMD GPUS) consists of 64 work items, thusly a multiple of 64 local work size will not require a regroup of work-items, therefore provides better performance. The same explanation applies to NVIDIA GPUs.
 
 Global, local work size and work group are very important terminologies in GPU Programming. A good knowledge and correct information of the specification of  the device can boost up the performance quite significantly.
 \newpage
@@ -101,15 +101,15 @@ There are several constraints to be concerned about while writing a kernel funct
 \begin{lstlisting}[language=C]
 __kernel void hello(__global int *a, __global int *b
 						, __global int *c) {
-        int gid = get\_global\_id(0);
-        C[gid] = a[gid]+b[gid];
+        int gid = get_global_id(0);
+        c[gid] = a[gid]+b[gid];
 }
 
 \end{lstlisting}
 
 Every kernel function, with an exception of auxiliary functions, must have the identifier “\_\_kernel” and void as return value. Passing parameters consists of three arrays, all of them have “\_\_global” as identifier, indicating the source of the arguments. There are three different kinds of identifiers in the memory model as mentioned before: “\_\_global”, “\_\_local”, “\_\_private”. Note that it is required to pass pointers to the function, regardless what data type it is: an array, an int, float or a customized data structure.
 
-There are some built in options of array representation in OpenCL. For each primitive data type there are severals options to represent an array with that type with a predefined size, for example: float4, int4, char4 et cetera. Users can also use normal array structures used in the C programming language.  As previously discussed, the maximum size of arrays is quite limited due to the lack of memory available. It is recommended to use global or local memory depending on the required array length. Following listing shows an example of TODO
+There are some built in options of array representation in OpenCL. For each primitive data type there are severals options to represent an array with that type with a predefined size, for example: float4, int4, char4 et cetera. Users can also use normal array structures used in the C programming language.  As previously discussed, the maximum size of arrays is quite limited due to the lack of memory available. It is recommended to use global or local memory depending on the required array length. 
 
 In kernel function, it is impossible to use functions from external libraries. However, the API supports standard C library with its useful arithmetic functions like max, min et cetera. With more complicated functions, for example the correspondence matching function which will be later implemented, it is recommended to divide the function into smaller parts and rewrite it into C conformed functions. It is often the case that a piece of code is quite often reused in kernel, therefore programmers have the possibility to pack it into an auxiliary function, which still follows the principle with identifiers for passing arguments.
 

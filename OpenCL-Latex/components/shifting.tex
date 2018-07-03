@@ -68,15 +68,15 @@ Adopting the method used in Ramonas work, the transformation matrix can be calcu
 The rotation matrix can be calculated as follow:
 
 \begin{lstlisting}
-rotating[0] = cos(angle\_temp);
-rotating[1] = -sin(angle\_temp);
-rotating[3] = sin(angle\_temp);
-rotating[4] = cos(angle\_temp);
+rotating[0] = cos(angle_temp);
+rotating[1] = -sin(angle_temp);
+rotating[3] = sin(angle_temp);
+rotating[4] = cos(angle_temp);
 \end{lstlisting}
 
 Whereas rotating is an array of float with size 9 (represents 3*3 matrix) and angle\_temp is the angle of current combination, which is:
 \begin{lstlisting}
-angle\_temp = (angle\_min+angle*angle\_step)*(0.01745328888);
+angle_temp = (angle_min+angle*angle_step)*(0.01745328888);
 \end{lstlisting}
 Then the first elements of transformation matrix can be calculated as follow :
 \begin{lstlisting}[language=C]
@@ -131,7 +131,7 @@ However, it is possible in this case for programmers to just tell OpenCL to allo
 
 Allocating such a large array in device is always time consuming and there is no certain way to presume how much memory is needed to all point clouds and all iterations. To prevent repeating these steps each iteration and reserving too much memory, a check is implemented before executing the method. The check uses the given information of point cloud size, number of combinations to decide if a new, bigger piece of memory is needed in the corresponding iteration. If not, the program will reuse the reserved memory in the last iteration to improve efficiency. 
 
-The initial approach was to parallelize the transformation of each combination, which means running on 121 work units at the same time but the performance was not good enough: Kernel code takes very long to rune because of limited computing power of each work unit. Based on the numbers of work units available and the test data, it is possible to take a further step, to parallelize the transformation of each point in the point cloud for all rotation-shift combination. A total number of  121*1225 = 148225 work units is used in the example implementation, which uses roughly 1.4 \% of the work units available (a total of 16777216 work units). Because of optimized parallelism, the execution had been reduced significantly, to the area of around under 1 second for four iterations. 
+The initial approach was to parallelize the transformation of each combination, which means running on 121 work units at the same time but the performance was not good enough: Kernel code takes very long to rune because of limited computing power of each work unit. Based on the numbers of work units available and the test data, it is possible to take a further step, to parallelize the transformation of each point in the point cloud for all rotation-shift combination. A total number of  121*1225 = 148225 work units is used in the example implementation, which uses roughly 1 \% of the work units available (a total of 16777216 work units). Because of optimized parallelism, the execution had been reduced significantly, to the area of around under 1 second for four iterations. 
 
 Note that the number of work items which are still available is very high and unused. This fact opens up an opportunity to create a “pipeline” to feed data sets  to the GPU and processes multiple different frames at the same time. Within the scope of this thesis, this aspect will not be discussed further. 
 The result of this step is a buffer object containing all the transformed points of all combinations. For each point in this large array, the combination  of rotation, shift and index the point can be calculated with this function, first with the index and corresponding combination of the point  :
@@ -144,7 +144,7 @@ The result of this step is a buffer object containing all the transformed points
 From the number of the iteration, the shift step and angle step are determined as following:
 \begin{lstlisting}[language=C]
 	shift_step = index/max_rotation_step;
-    	rotation_step = idex\%max_rotation_step;    
+    	rotation_step = index\%max_rotation_step;    
 \end{lstlisting}    
 
     
