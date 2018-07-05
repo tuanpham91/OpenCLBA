@@ -1,0 +1,7 @@
+- Hi everyone welcome to my .. with topic The Needle Detection and Reconstruction Based on OCT image with GPU Acceleration
+- First are some infos about the thesis:
+- The goal is .. recontruction of the needle with CAD model. 
+- An algorithm is developed .. by .. using ICP
+- The algorithm was a success, determine the rotation and position correctly
+- The only advantage is the execution time, which is .. 
+
