@@ -1,7 +1,54 @@
+Folie 1
 - Hi everyone welcome to my .. with topic The Needle Detection and Reconstruction Based on OCT image with GPU Acceleration
 - First are some infos about the thesis:
 - The goal is .. recontruction of the needle with CAD model. 
 - An algorithm is developed .. by .. using ICP
 - The algorithm was a success, determine the rotation and position correctly
-- The only advantage is the execution time, which is .. 
+- The only advantage is the execution time, which is .. for best processor
+- Task highly parallelized -> strength of GPU 
+- The goal : Implementation with GPU, accelerate the execution time.
+
+Folie 2 - GPU  Programming 
+
+- Some differences:
+	+ More threads available.
+	+ Better for highly parallelized tasks : image processing, computer graphics.
+	+ Draw back: external libraries are not usable
+	+ Require kernel code and extra preparation.
+- 2 Implementation :
+	+ 2 popular implementations : OPENCL and CUDA
+	+ OPENCL For both Vendors.
+	+ CUDA for NVIDIA, better optimizedd
+	+ In this case we use OpenCL
+
+
+Folie 3 - OpenCL 
+
+	- Developed by Khronos Group as freeware
+	- Crossplatform, parralel programming for diverse processors, not only GPU
+	- Using C++ kernel language
+	- Able to utilize multiple device in a programm
+	- Standardized Definition between devices
+
+Folie 4 Host and Device:
+	
+- Simple presentation of Host and Device Model
+- Connected via PCI Express
+- Host create assigment for device, prepare input data
+- Read and write memory from and to device.
+- Each
+Folie 5 : Memory
+
+- Important part of OpenCL
+- There are some different types of memory
+- private : available  for work unit.. local..
+- accesss speed :
+- size :
+
+Folie 6 Work flow:
+- For each input data set there will be 4 iterations
+- In each iterations the same process is repeated.
+- After each Iteration there will be an update.
+Details to Folie 7
+
 
